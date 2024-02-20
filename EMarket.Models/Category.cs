@@ -1,7 +1,7 @@
 ﻿using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 
-namespace EMarketWeb.Models;
+namespace EMarket.Models;
 
 public class Category
 {

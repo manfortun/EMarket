@@ -1,7 +1,7 @@
-﻿using EMarketWeb.Models;
+﻿using EMarket.Models;
 using Microsoft.EntityFrameworkCore;
 
-namespace EMarketWeb.Data;
+namespace EMarket.DataAccess.Data;
 
 public class ApplicationDbContext : DbContext
 {

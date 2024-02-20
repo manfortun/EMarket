@@ -1,4 +1,4 @@
-using EMarketWeb.Data;
+using EMarket.DataAccess.Data;
 using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);

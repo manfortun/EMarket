@@ -2,7 +2,7 @@
 
 #nullable disable
 
-namespace EMarketWeb.Migrations
+namespace EMarket.DataAccess.Migrations
 {
     /// <inheritdoc />
     public partial class AddCategoryTableToDb : Migration

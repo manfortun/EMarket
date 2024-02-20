@@ -1,10 +1,8 @@
-﻿using EMarketWeb.Data;
-using EMarketWeb.Models;
+﻿using EMarket.DataAccess.Data;
+using EMarket.Models;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.ChangeTracking;
 using System.Data;
-using System.Runtime.Intrinsics.Arm;
 
 namespace EMarketWeb.Controllers;
 
@@ -39,7 +37,7 @@ public class CategoryController : Controller
         
         if (ExecuteActionToDbContext(category, _dbContext.Categories.Add))
         {
-            TempData["response"] = "Category created successfully";
+            TempData["success"] = "Category created successfully";
             return RedirectToAction("Index");
         }
         else
@@ -71,7 +69,7 @@ public class CategoryController : Controller
 
         if(ExecuteActionToDbContext(category, _dbContext.Categories.Update))
         {
-            TempData["response"] = "Category edited successfully";
+            TempData["success"] = "Category edited successfully";
             return RedirectToAction("Index");
         }
         else
@@ -98,7 +96,7 @@ public class CategoryController : Controller
     {
         if (ExecuteActionToDbContext(category, _dbContext.Categories.Remove))
         {
-            TempData["response"] = "Category deleted successfully";
+            TempData["success"] = "Category deleted successfully";
             return RedirectToAction("Index");
         }
         else
