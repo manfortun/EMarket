@@ -4,6 +4,11 @@
     ViewData["Title"] = "Category";
 }
 
+@if (TempData["response"] != null)
+{
+    <h4>@TempData["response"]</h4>
+}
+
 <div class="container">
     <div class="row pt-4">
         <div class="col-6">
@@ -26,6 +31,7 @@
             <th>
                 Display Order
             </th>
+            <th></th>
         </tr>
     </thead>
     <tbody>
@@ -34,6 +40,16 @@
             <tr>
                 <td>@item.Name</td>
                 <td>@item.DisplayOrder</td>
+                <td class="text-end">
+                    <div class="w-70 btn-group" role="group">
+                        <a asp-controller="Category" asp-action="Edit" asp-route-id="@item.Id" class="btn btn-primary">
+                            <i class="bi bi-pencil-square"></i> Edit
+                        </a>
+                        <a asp-controller="Category" asp-action="Delete" asp-route-id="@item.Id" class="btn btn-danger">
+                            <i class="bi bi-trash3"></i> Delete
+                        </a>
+                    </div>
+                </td>
             </tr>
         }
     </tbody>

@@ -1,6 +1,10 @@
 ﻿using EMarketWeb.Data;
 using EMarketWeb.Models;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.ChangeTracking;
+using System.Data;
+using System.Runtime.Intrinsics.Arm;
 
 namespace EMarketWeb.Controllers;
 
@@ -16,7 +20,6 @@ public class CategoryController : Controller
     public IActionResult Index()
     {
         List<Category> categoryList = _dbContext.Categories.ToList();
-
         return View(categoryList);
     }
 
@@ -27,28 +30,133 @@ public class CategoryController : Controller
     }
 
     [HttpPost]
-    public IActionResult Create(Category model)
+    public IActionResult Create(Category category)
     {
-        // check if the category name is not unique
-        if (!IsCategoryNameUnique(model.Name))
+        if (!CanSave(category))
+        {
+            return View();
+        }
+        
+        if (ExecuteActionToDbContext(category, _dbContext.Categories.Add))
+        {
+            TempData["response"] = "Category created successfully";
+            return RedirectToAction("Index");
+        }
+        else
+        {
+            return BadRequest();
+        }
+    }
+
+    [HttpGet]
+    public IActionResult Edit(int? id)
+    {
+        if (id is null || id == 0)
+        {
+            return NotFound();
+        }
+
+        Category? category = _dbContext.Categories.Find(id);
+
+        return category is null ? NotFound() : View(category);
+    }
+
+    [HttpPost]
+    public IActionResult Edit(Category category)
+    {
+        if (!CanSave(category))
+        {
+            return View();
+        }
+
+        if(ExecuteActionToDbContext(category, _dbContext.Categories.Update))
+        {
+            TempData["response"] = "Category edited successfully";
+            return RedirectToAction("Index");
+        }
+        else
+        {
+            return BadRequest();
+        }
+    }
+
+    [HttpGet]
+    public IActionResult Delete(int? id)
+    {
+        if (!id.HasValue || id.Value == 0)
+        {
+            return NotFound();
+        }
+
+        Category? category = _dbContext.Categories.Find(id);
+
+        return category is null ? NotFound() : View(category);
+    }
+
+    [HttpPost]
+    public IActionResult Delete(Category category)
+    {
+        if (ExecuteActionToDbContext(category, _dbContext.Categories.Remove))
+        {
+            TempData["response"] = "Category deleted successfully";
+            return RedirectToAction("Index");
+        }
+        else
+        {
+            return BadRequest();
+        }
+    }
+
+    /// <summary>
+    /// Determines if a category can be saved based on a series of rules.
+    /// </summary>
+    /// <param name="category">The category to check.</param>
+    /// <returns>True if the category can be saved. Otherwise, false.</returns>
+    private bool CanSave(Category category)
+    {
+        if (!IsCategoryNameUnique(category))
         {
             ModelState.AddModelError(
-                key: nameof(model.Name),
+                key: nameof(Category.Name),
                 errorMessage: "This category name already exists.");
         }
 
-        if (ModelState.IsValid)
-        {
-            _dbContext.Categories.Add(model);
-            _dbContext.SaveChanges();
-            return RedirectToAction("Index");
-        }
-
-        return View();
+        return ModelState.IsValid;
     }
 
-    private bool IsCategoryNameUnique(string categoryName)
+    /// <summary>
+    /// Attempts to save the changes to DbContext.
+    /// </summary>
+    /// <param name="category">The category to perform the action to.</param>
+    /// <param name="action">The action to perform.</param>
+    /// <returns>True if saving is completed successfully. Otherwise, false.</returns>
+    private bool ExecuteActionToDbContext(Category category, Func<Category, EntityEntry<Category>> action)
     {
-        return !_dbContext.Categories.ToList().Any(x => x.Name.Equals(categoryName, StringComparison.OrdinalIgnoreCase));
+        try
+        {
+            action(category);
+            _dbContext.SaveChanges();
+            return true;
+        }
+        catch
+        {
+            return false;
+        }
+    }
+
+    /// <summary>
+    /// Checks if the provided category name is unique among existing categories, excluding the current category (if it exists).
+    /// </summary>
+    /// <param name="category">The category to check.</param>
+    /// <returns>True if the category name is unique. Otherwise, false.</returns>
+    private bool IsCategoryNameUnique(Category category)
+    {
+        ArgumentNullException.ThrowIfNull(category);
+
+        return !_dbContext.Categories
+            .Where(x => x.Id != category.Id)
+            .Select(x => x.Name)
+            .ToList()
+            .Contains(category.Name, StringComparer.OrdinalIgnoreCase);
     }
 }
