@@ -15,6 +15,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\EMarket.DataAccess\EMarket.DataAccess.csproj" />
+    <ProjectReference Include="..\EMarket.Utility\EMarket.Utility.csproj" />
   </ItemGroup>
 
 </Project>

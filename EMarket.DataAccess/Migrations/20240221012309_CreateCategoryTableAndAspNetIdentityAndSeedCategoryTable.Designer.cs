@@ -4,6 +4,7 @@ using EMarket.DataAccess.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace EMarket.DataAccess.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20240221012309_CreateCategoryTableAndAspNetIdentityAndSeedCategoryTable")]
+    partial class CreateCategoryTableAndAspNetIdentityAndSeedCategoryTable
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -102,103 +105,6 @@ namespace EMarket.DataAccess.Migrations
                             Id = 10,
                             DisplayOrder = 10,
                             Name = "Jewelry & Accessories"
-                        });
-                });
-
-            modelBuilder.Entity("EMarket.Models.Product", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<int>("CategoryId")
-                        .HasColumnType("int");
-
-                    b.Property<string>("Name")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<double>("UnitPrice")
-                        .HasColumnType("float");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("CategoryId");
-
-                    b.ToTable("Products");
-
-                    b.HasData(
-                        new
-                        {
-                            Id = 1,
-                            CategoryId = 1,
-                            Name = "T-Shirt",
-                            UnitPrice = 299.0
-                        },
-                        new
-                        {
-                            Id = 2,
-                            CategoryId = 2,
-                            Name = "Cellphone",
-                            UnitPrice = 13999.0
-                        },
-                        new
-                        {
-                            Id = 3,
-                            CategoryId = 3,
-                            Name = "Knife",
-                            UnitPrice = 240.0
-                        },
-                        new
-                        {
-                            Id = 4,
-                            CategoryId = 4,
-                            Name = "Lotion",
-                            UnitPrice = 250.0
-                        },
-                        new
-                        {
-                            Id = 5,
-                            CategoryId = 5,
-                            Name = "Rubber Shoes",
-                            UnitPrice = 5500.0
-                        },
-                        new
-                        {
-                            Id = 6,
-                            CategoryId = 6,
-                            Name = "Clean Code",
-                            UnitPrice = 2890.0
-                        },
-                        new
-                        {
-                            Id = 7,
-                            CategoryId = 7,
-                            Name = "Minecraft",
-                            UnitPrice = 150.0
-                        },
-                        new
-                        {
-                            Id = 8,
-                            CategoryId = 8,
-                            Name = "Fiber Cloth",
-                            UnitPrice = 40.0
-                        },
-                        new
-                        {
-                            Id = 9,
-                            CategoryId = 9,
-                            Name = "Goat's Milk",
-                            UnitPrice = 380.0
-                        },
-                        new
-                        {
-                            Id = 10,
-                            CategoryId = 10,
-                            Name = "14K Gold Necklace",
-                            UnitPrice = 21500.0
                         });
                 });
 
@@ -400,17 +306,6 @@ namespace EMarket.DataAccess.Migrations
                     b.ToTable("AspNetUserTokens", (string)null);
                 });
 
-            modelBuilder.Entity("EMarket.Models.Product", b =>
-                {
-                    b.HasOne("EMarket.Models.Category", "Category")
-                        .WithMany("Products")
-                        .HasForeignKey("CategoryId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Category");
-                });
-
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>
                 {
                     b.HasOne("Microsoft.AspNetCore.Identity.IdentityRole", null)
@@ -460,11 +355,6 @@ namespace EMarket.DataAccess.Migrations
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
-                });
-
-            modelBuilder.Entity("EMarket.Models.Category", b =>
-                {
-                    b.Navigation("Products");
                 });
 #pragma warning restore 612, 618
         }

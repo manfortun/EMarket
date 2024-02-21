@@ -1,8 +1,23 @@
-﻿@{
+﻿@model IEnumerable<Product>
+
+@{
     ViewData["Title"] = "Home Page";
 }
 
-<div class="text-center">
-    <h1 class="display-4">Welcome</h1>
-    <p>Learn about <a href="https://learn.microsoft.com/aspnet/core">building Web apps with ASP.NET Core</a>.</p>
+<div class="card-deck">
+    @if (Model is null)
+    {
+        <h6>There are no products listed. Try again later.</h6>
+    }
+    else
+    {
+        foreach (Product product in Model)
+        {
+            <div class="card m-3">
+                <div class="card-header">
+                    <h3>@product.Name</h3>
+                </div>
+            </div>
+        }
+    }
 </div>

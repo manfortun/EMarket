@@ -35,7 +35,7 @@ public class CategoryController : Controller
             return View();
         }
         
-        if (ExecuteActionToDbContext(category, _dbContext.Categories.Add))
+        if (TryExecuteActionToDbContext(category, _dbContext.Categories.Add))
         {
             TempData["success"] = "Category created successfully";
             return RedirectToAction("Index");
@@ -67,7 +67,7 @@ public class CategoryController : Controller
             return View();
         }
 
-        if(ExecuteActionToDbContext(category, _dbContext.Categories.Update))
+        if(TryExecuteActionToDbContext(category, _dbContext.Categories.Update))
         {
             TempData["success"] = "Category edited successfully";
             return RedirectToAction("Index");
@@ -94,7 +94,7 @@ public class CategoryController : Controller
     [HttpPost]
     public IActionResult Delete(Category category)
     {
-        if (ExecuteActionToDbContext(category, _dbContext.Categories.Remove))
+        if (TryExecuteActionToDbContext(category, _dbContext.Categories.Remove))
         {
             TempData["success"] = "Category deleted successfully";
             return RedirectToAction("Index");
@@ -128,7 +128,7 @@ public class CategoryController : Controller
     /// <param name="category">The category to perform the action to.</param>
     /// <param name="action">The action to perform.</param>
     /// <returns>True if saving is completed successfully. Otherwise, false.</returns>
-    private bool ExecuteActionToDbContext(Category category, Func<Category, EntityEntry<Category>> action)
+    private bool TryExecuteActionToDbContext(Category category, Func<Category, EntityEntry<Category>> action)
     {
         try
         {
