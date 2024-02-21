@@ -32,15 +32,14 @@ namespace EMarketWeb.Controllers
         [HttpPost]
         public IActionResult Search(string searchString)
         {
-            List<Product> products = _dbContext.Products?
+            IEnumerable<Product> products = _dbContext.Products?
                 .ToList()
-                .Where(x => SearchFunction(x, searchString))?
-                .ToList() ?? new List<Product>();
+                .Where(x => SearchPredicate(x, searchString)) ?? new List<Product>();
 
             return View("Index", products);
         }
 
-        private bool SearchFunction(Product product, string searchKey)
+        private bool SearchPredicate(Product product, string searchKey)
         {
             if (string.IsNullOrEmpty(searchKey)) return true;
 

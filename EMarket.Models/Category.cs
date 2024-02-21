@@ -18,4 +18,9 @@ public class Category
     public int DisplayOrder { get; set; }
 
     public virtual List<Product> Products { get; set; }
+
+    public Category()
+    {
+        Products = new List<Product>();
+    }
 }
