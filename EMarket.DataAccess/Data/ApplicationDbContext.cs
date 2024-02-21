@@ -30,16 +30,16 @@ public class ApplicationDbContext : IdentityDbContext
 
         Product[] seedProducts =
         {
-            new Product { Id = 1, Name = "T-Shirt", UnitPrice = 299.00, CategoryId = 1 },
-            new Product { Id = 2, Name = "Cellphone", UnitPrice = 13999.00, CategoryId = 2 },
-            new Product { Id = 3, Name = "Knife", UnitPrice = 240.00, CategoryId = 3 },
-            new Product { Id = 4, Name = "Lotion", UnitPrice = 250.00, CategoryId = 4 },
-            new Product { Id = 5, Name = "Rubber Shoes", UnitPrice = 5500.00, CategoryId = 5 },
-            new Product { Id = 6, Name = "Clean Code", UnitPrice = 2890.00, CategoryId = 6 },
-            new Product { Id = 7, Name = "Minecraft", UnitPrice = 150.00, CategoryId = 7 },
-            new Product { Id = 8, Name = "Fiber Cloth", UnitPrice = 40.00, CategoryId = 8 },
-            new Product { Id = 9, Name = "Goat's Milk", UnitPrice = 380.00, CategoryId = 9 },
-            new Product { Id = 10, Name = "14K Gold Necklace", UnitPrice = 21500.00, CategoryId = 10 }
+            new Product { Id = 1, Name = "T-Shirt", UnitPrice = 299.00, CategoryId = 1, ImageSource=string.Empty },
+            new Product { Id = 2, Name = "Cellphone", UnitPrice = 13999.00, CategoryId = 2, ImageSource=string.Empty },
+            new Product { Id = 3, Name = "Knife", UnitPrice = 240.00, CategoryId = 3, ImageSource=string.Empty },
+            new Product { Id = 4, Name = "Lotion", UnitPrice = 250.00, CategoryId = 4, ImageSource=string.Empty },
+            new Product { Id = 5, Name = "Rubber Shoes", UnitPrice = 5500.00, CategoryId = 5, ImageSource=string.Empty },
+            new Product { Id = 6, Name = "Clean Code", UnitPrice = 2890.00, CategoryId = 6, ImageSource=string.Empty },
+            new Product { Id = 7, Name = "Minecraft", UnitPrice = 150.00, CategoryId = 7, ImageSource=string.Empty },
+            new Product { Id = 8, Name = "Fiber Cloth", UnitPrice = 40.00, CategoryId = 8, ImageSource=string.Empty },
+            new Product { Id = 9, Name = "Goat's Milk", UnitPrice = 380.00, CategoryId = 9, ImageSource=string.Empty },
+            new Product { Id = 10, Name = "14K Gold Necklace", UnitPrice = 21500.00, CategoryId = 10, ImageSource=string.Empty }
         };
 
         modelBuilder.Entity<Product>()
@@ -52,4 +52,9 @@ public class ApplicationDbContext : IdentityDbContext
         modelBuilder.Entity<Product>().HasData(seedProducts);
     }
 
+    protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
+    {
+        base.OnConfiguring(optionsBuilder);
+        optionsBuilder.UseLazyLoadingProxies();
+    }
 }

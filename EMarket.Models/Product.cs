@@ -14,7 +14,9 @@ public class Product
     [DisplayName("Price")]
     public double UnitPrice { get; set; }
 
+    public string ImageSource { get; set; } = default!;
+
     public int CategoryId { get; set; }
 
-    public Category Category { get; set; }
+    public virtual Category Category { get; set; }
 }

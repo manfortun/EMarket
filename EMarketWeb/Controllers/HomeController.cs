@@ -29,6 +29,25 @@ namespace EMarketWeb.Controllers
             return View();
         }
 
+        [HttpPost]
+        public IActionResult Search(string searchString)
+        {
+            List<Product> products = _dbContext.Products?
+                .ToList()
+                .Where(x => SearchFunction(x, searchString))?
+                .ToList() ?? new List<Product>();
+
+            return View("Index", products);
+        }
+
+        private bool SearchFunction(Product product, string searchKey)
+        {
+            if (string.IsNullOrEmpty(searchKey)) return true;
+
+            return product.Name.Contains(searchKey, StringComparison.OrdinalIgnoreCase) ||
+                (product.Category?.Name?.Contains(searchKey, StringComparison.OrdinalIgnoreCase) ?? false);
+        }
+
         [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
         public IActionResult Error()
         {
