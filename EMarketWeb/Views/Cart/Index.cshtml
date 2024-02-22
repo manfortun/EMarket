@@ -1,0 +1,108 @@
+﻿@model Checkout
+
+@{
+    ViewData["Title"] = "Cart";
+    const string FORMAT = "N2";
+    double totalCheckout = Model.GetSumPurchase();
+}
+
+
+<div class="mb-5">
+    <div class="container-fluid">
+        <h1>Check out your items.</h1>
+    </div>
+</div>
+
+<div class="row">
+    <form class="col border p-3 d-flex flex-column">
+        <div class="justify-content-center align-items-center flex-grow-1">
+            <h2 class="mb-2">Checkout.</h2>
+            <p class="text-uppercase">Shipping details</p>
+            <hr/>
+            <div class="m-2">
+                <div class="row">
+                    <div class="col-md-6 form-group mb-3 p-1">
+                        <label asp-for="Receiver.FirstName"></label>
+                        <br/>
+                        <input asp-for="Receiver.FirstName" class="form-control">
+                    </div>
+                    <div class="col-md-6 form-group mb-3 p-1">
+                        <label asp-for="Receiver.LastName"></label>
+                        <br/>
+                        <input asp-for="Receiver.LastName" class="form-control"/>
+                    </div>
+                </div>
+                <div class="row form-group mb-3 p-1">
+                    <label asp-for="Receiver.ContactNo"></label>
+                    <br/>
+                    <input asp-for="Receiver.ContactNo" class="form-control"/>
+                </div>
+                <div class="row form-group mb-3 p-1">
+                    <label asp-for="Receiver.Address"></label>
+                    <input asp-for="Receiver.Address" class="form-control"/>
+                </div>
+                <div class="row form-group mb-3 p-1">
+                    <label asp-for="Receiver.Landmark"></label>
+                    <input asp-for="Receiver.Landmark" placeholder="Near a school, gym, etc." class="form-control"/>
+                </div>
+            </div>
+        </div>
+        <button class="btn btn-warning">Purchase Php @totalCheckout.ToString(FORMAT)</button>
+    </form>
+    <div class="col d-flex flex-column justify-content-center" style="margin-bottom: 70px">
+        @if (!Model.HasPurchases())
+        {
+            <h6>Add items to cart from the Home menu.</h6>
+        }
+        else
+        {
+            <div>
+                <label class="text-uppercase">Your Order</label>
+                <ul class="list-group" style="min-width: 450px; width: auto">
+                    @foreach (Cart cart in Model.Purchases)
+                    {
+                        <li class="list-group-item text-secondary">
+                            <div class="row align-items-center">
+                                <div class="col">
+                                    <div class="text-primary-emphasis">
+                                        <b>@cart.Product.Name</b>
+                                    </div>
+                                    <small>
+                                        @cart.Product.Category.Name
+                                    </small>
+                                </div>
+                                <div class="col justify-content-center align-items-center text-center">
+                                    <h5><b>@cart.Quantity</b></h5>
+                                </div>
+                                <div class="col text-end align-items-center">
+                                    <b>@((cart.Quantity * cart.Product.UnitPrice).ToString(FORMAT))</b>
+                                </div>
+                            </div>
+                        </li>
+                    }
+
+                    <li class="list-group-item">
+                        <div class="row align-items-center">
+                            <div class="col">
+                                <h5>
+                                    <b>Total</b>
+                                </h5>
+                                <small class="text-secondary">
+                                </small>
+                            </div>
+                            <div class="col justify-content-center align-items-center text-center">
+                                <h5><b>@Model.GetCountOfPurchases()</b><p class="text-secondary" style="font-size: 10px"> items</p></h5>
+                            </div>
+                            <div class="col text-end align-items-center">
+                                <h5><b>@totalCheckout.ToString(FORMAT)</b></h5>
+                            </div>
+                        </div>
+                    </li>
+
+                </ul>
+            </div>
+
+        }
+    </div>
+</div>
+    

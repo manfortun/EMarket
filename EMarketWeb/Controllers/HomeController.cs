@@ -1,5 +1,6 @@
 using EMarket.DataAccess.Data;
 using EMarket.Models;
+using EMarket.Utility;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
@@ -25,14 +26,13 @@ namespace EMarketWeb.Controllers
 
         public async Task<IActionResult> Index()
         {
-            string userId = await GetCurrentUserIdAsync();
+            string userId = await _userManager.GetUserIdAsync(User);
             SetCartCountOfUser(userId);
 
             string searchKey = GetSearchKey();
 
             var displayedProducts = _dbContext.Products?.ToList()
                 .Where(x => SearchPredicate(x, searchKey)) ?? [];
-
 
             return View(displayedProducts);
         }
@@ -52,7 +52,7 @@ namespace EMarketWeb.Controllers
         [HttpGet]
         public async Task<IActionResult> AddToCart(int productId)
         {
-            string userId = await GetCurrentUserIdAsync();
+            string userId = await _userManager.GetUserIdAsync(User);
             if (string.IsNullOrEmpty(userId)) return BadRequest();
 
             Cart? cart = _dbContext.Carts.FirstOrDefault(x => x.OwnerId == userId && x.ProductId == productId);
@@ -73,9 +73,7 @@ namespace EMarketWeb.Controllers
 
             SetCartCountOfUser(userId);
 
-            string searchKey = GetSearchKey();
-
-            return RedirectToAction("Index", "Home");
+            return RedirectToAction("Index");
         }
 
         [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
@@ -90,13 +88,6 @@ namespace EMarketWeb.Controllers
 
             return product.Name.Contains(searchKey, StringComparison.OrdinalIgnoreCase) ||
                 (product.Category?.Name?.Contains(searchKey, StringComparison.OrdinalIgnoreCase) ?? false);
-        }
-
-        private async Task<string> GetCurrentUserIdAsync()
-        {
-            IdentityUser? user = await _userManager.GetUserAsync(User);
-
-            return user is not null ? user.Id : string.Empty;
         }
 
         private void SetCartCountOfUser(string userId)
