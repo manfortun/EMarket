@@ -1,4 +1,6 @@
-﻿namespace EMarket.Models;
+﻿using Microsoft.AspNetCore.Identity;
+
+namespace EMarket.Models;
 
 public class Checkout
 {
@@ -8,11 +10,15 @@ public class Checkout
 
     public Checkout(
         IEnumerable<Cart> purchases,
-        string userId)
+        IdentityUser user)
     {
-        Receiver = new Receiver();
+        Receiver = new Receiver()
+        {
+            OwnerId = user.Id,
+        };
+
         Purchases = purchases;
-        UserId = userId;
+        UserId = user.Id;
     }
 
     public double GetSumPurchase()

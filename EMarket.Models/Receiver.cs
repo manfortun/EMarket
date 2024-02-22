@@ -1,10 +1,17 @@
-﻿using System.ComponentModel;
+﻿using Microsoft.AspNetCore.Identity;
+using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 
 namespace EMarket.Models;
 
 public class Receiver
 {
+    [Key]
+    public int Id { get; set; }
+
+    [Required]
+    public string OwnerId { get; set; }
+
     [Required]
     [DisplayName("First Name")]
     public string FirstName { get; set; } = default!;
@@ -15,11 +22,10 @@ public class Receiver
 
     [Required]
     [DisplayName("Contact No.")]
+    [RegularExpression(@"^\d{4}-\d{3}-\d{4}$", ErrorMessage = "Contact number must be in the format XXXX-XXX-XXXX.")]
     public string ContactNo { get; set; } = default!;
 
     [Required]
     [DisplayName("Complete Address")]
     public string Address { get; set; } = default!;
-
-    public string Landmark { get; set; } = default!;
 }

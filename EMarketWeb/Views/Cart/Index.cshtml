@@ -6,53 +6,62 @@
     double totalCheckout = Model.GetSumPurchase();
 }
 
-
-<div class="mb-5">
-    <div class="container-fluid">
-        <h1>Check out your items.</h1>
+@if (Model.HasPurchases())
+{
+    <div class="mb-5">
+        <div class="container-fluid">
+            <h1>Check out your items.</h1>
+        </div>
     </div>
-</div>
+}
 
 <div class="row">
-    <form class="col border p-3 d-flex flex-column">
-        <div class="justify-content-center align-items-center flex-grow-1">
-            <h2 class="mb-2">Checkout.</h2>
-            <p class="text-uppercase">Shipping details</p>
-            <hr/>
-            <div class="m-2">
-                <div class="row">
-                    <div class="col-md-6 form-group mb-3 p-1">
-                        <label asp-for="Receiver.FirstName"></label>
-                        <br/>
-                        <input asp-for="Receiver.FirstName" class="form-control">
+    @if (Model.HasPurchases())
+    {
+        <form class="col border p-3 d-flex flex-column">
+            <div class="justify-content-center align-items-center flex-grow-1">
+                <h2 class="mb-2">Checkout.</h2>
+                <p class="text-uppercase">Shipping details</p>
+                <hr/>
+                <div class="m-2">
+                    <div class="row">
+                        <input asp-for="Receiver.OwnerId" class="d-none"/>
+                        <input asp-for="Receiver.Id" class="d-none"/>
+                        <div class="col-md-6 form-group mb-3 p-1">
+                            <label asp-for="Receiver.FirstName"></label>
+                            <br/>
+                            <input asp-for="Receiver.FirstName" class="form-control">
+                            <span asp-validation-for="Receiver.FirstName" class="text-danger"></span>
+                        </div>
+                        <div class="col-md-6 form-group mb-3 p-1">
+                            <label asp-for="Receiver.LastName"></label>
+                            <br/>
+                            <input asp-for="Receiver.LastName" class="form-control"/>
+                            <span asp-validation-for="Receiver.LastName" class="text-danger"></span>
+                        </div>
                     </div>
-                    <div class="col-md-6 form-group mb-3 p-1">
-                        <label asp-for="Receiver.LastName"></label>
+                    <div class="row form-group mb-3 p-1">
+                        <label asp-for="Receiver.ContactNo"></label>
                         <br/>
-                        <input asp-for="Receiver.LastName" class="form-control"/>
+                        <input asp-for="Receiver.ContactNo" class="form-control"/>
+                        <span asp-validation-for="Receiver.ContactNo" class="text-danger"></span>
                     </div>
-                </div>
-                <div class="row form-group mb-3 p-1">
-                    <label asp-for="Receiver.ContactNo"></label>
-                    <br/>
-                    <input asp-for="Receiver.ContactNo" class="form-control"/>
-                </div>
-                <div class="row form-group mb-3 p-1">
-                    <label asp-for="Receiver.Address"></label>
-                    <input asp-for="Receiver.Address" class="form-control"/>
-                </div>
-                <div class="row form-group mb-3 p-1">
-                    <label asp-for="Receiver.Landmark"></label>
-                    <input asp-for="Receiver.Landmark" placeholder="Near a school, gym, etc." class="form-control"/>
+                    <div class="row form-group mb-3 p-1">
+                        <label asp-for="Receiver.Address"></label>
+                        <input asp-for="Receiver.Address" class="form-control"/>
+                        <span asp-validation-for="Receiver.Address" class="text-danger"></span>
+                    </div>
                 </div>
             </div>
-        </div>
-        <button class="btn btn-warning">Purchase Php @totalCheckout.ToString(FORMAT)</button>
-    </form>
+            <button type="submit" class="btn btn-warning" asp-action="Checkout" asp-route-receiver="@Model.Receiver">Purchase Php @totalCheckout.ToString(FORMAT)</button>
+        </form>
+    }
     <div class="col d-flex flex-column justify-content-center" style="margin-bottom: 70px">
         @if (!Model.HasPurchases())
         {
-            <h6>Add items to cart from the Home menu.</h6>
+            <div class="text-center">
+                <h6>Add items to cart from the Home menu.</h6>
+            </div>
         }
         else
         {
@@ -105,4 +114,3 @@
         }
     </div>
 </div>
-    
