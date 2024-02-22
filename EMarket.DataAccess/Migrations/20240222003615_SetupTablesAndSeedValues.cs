@@ -1,5 +1,4 @@
-﻿using System;
-using Microsoft.EntityFrameworkCore.Migrations;
+﻿using Microsoft.EntityFrameworkCore.Migrations;
 
 #nullable disable
 
@@ -8,7 +7,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace EMarket.DataAccess.Migrations
 {
     /// <inheritdoc />
-    public partial class CreateCategoryTableAndAspNetIdentityAndSeedCategoryTable : Migration
+    public partial class SetupTablesAndSeedValues : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -59,7 +58,8 @@ namespace EMarket.DataAccess.Migrations
                     Id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
                     Name = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: false),
-                    DisplayOrder = table.Column<int>(type: "int", nullable: false)
+                    DisplayOrder = table.Column<int>(type: "int", nullable: false),
+                    DisplayFlag = table.Column<bool>(type: "bit", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -172,21 +172,61 @@ namespace EMarket.DataAccess.Migrations
                         onDelete: ReferentialAction.Cascade);
                 });
 
+            migrationBuilder.CreateTable(
+                name: "Products",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    Name = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    UnitPrice = table.Column<double>(type: "float", nullable: false),
+                    ImageSource = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    CategoryId = table.Column<int>(type: "int", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Products", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_Products_Categories_CategoryId",
+                        column: x => x.CategoryId,
+                        principalTable: "Categories",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Restrict);
+                });
+
             migrationBuilder.InsertData(
                 table: "Categories",
-                columns: new[] { "Id", "DisplayOrder", "Name" },
+                columns: new[] { "Id", "DisplayFlag", "DisplayOrder", "Name" },
                 values: new object[,]
                 {
-                    { 1, 1, "Clothing & Apparel" },
-                    { 2, 2, "Electronics" },
-                    { 3, 3, "Home & Kitchen" },
-                    { 4, 4, "Health & Beauty" },
-                    { 5, 5, "Sports & Outdoors" },
-                    { 6, 6, "Books & Media" },
-                    { 7, 7, "Toys & Games" },
-                    { 8, 8, "Automotive" },
-                    { 9, 9, "Pets" },
-                    { 10, 10, "Jewelry & Accessories" }
+                    { 1, false, 0, "Uncategorized" },
+                    { 2, true, 1, "Clothing & Apparel" },
+                    { 3, true, 2, "Electronics" },
+                    { 4, true, 3, "Home & Kitchen" },
+                    { 5, true, 4, "Health & Beauty" },
+                    { 6, true, 5, "Sports & Outdoors" },
+                    { 7, true, 6, "Books & Media" },
+                    { 8, true, 7, "Toys & Games" },
+                    { 9, true, 8, "Automotive" },
+                    { 10, true, 9, "Pets" },
+                    { 11, true, 10, "Jewelry & Accessories" }
+                });
+
+            migrationBuilder.InsertData(
+                table: "Products",
+                columns: new[] { "Id", "CategoryId", "ImageSource", "Name", "UnitPrice" },
+                values: new object[,]
+                {
+                    { 1, 2, "~/images/OIP.jpg", "T-Shirt", 299.0 },
+                    { 2, 3, "~/images/cellphone.jpg", "Cellphone", 13999.0 },
+                    { 3, 4, "~/images/ec3596459302e2e8e4d586517816a69a.jpg", "Knife", 240.0 },
+                    { 4, 5, "~/images/lotion.jpg", "Lotion", 250.0 },
+                    { 5, 6, "~/images/rubbershoes.jpg", "Rubber Shoes", 5500.0 },
+                    { 6, 7, "~/images/cleancode.jpg", "Clean Code", 2890.0 },
+                    { 7, 8, "~/images/Minecraft.jpg", "Minecraft", 150.0 },
+                    { 8, 9, "~/images/fibrecloth.jpg", "Fibre Cloth", 40.0 },
+                    { 9, 10, "~/images/goatsmilk.jpg", "Goat's Milk", 380.0 },
+                    { 10, 11, "~/images/necklace.jpg", "14K Gold Necklace", 21500.0 }
                 });
 
             migrationBuilder.CreateIndex(
@@ -227,6 +267,11 @@ namespace EMarket.DataAccess.Migrations
                 column: "NormalizedUserName",
                 unique: true,
                 filter: "[NormalizedUserName] IS NOT NULL");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Products_CategoryId",
+                table: "Products",
+                column: "CategoryId");
         }
 
         /// <inheritdoc />
@@ -248,13 +293,16 @@ namespace EMarket.DataAccess.Migrations
                 name: "AspNetUserTokens");
 
             migrationBuilder.DropTable(
-                name: "Categories");
+                name: "Products");
 
             migrationBuilder.DropTable(
                 name: "AspNetRoles");
 
             migrationBuilder.DropTable(
                 name: "AspNetUsers");
+
+            migrationBuilder.DropTable(
+                name: "Categories");
         }
     }
 }

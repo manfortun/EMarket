@@ -17,7 +17,7 @@ public class CategoryController : Controller
 
     public IActionResult Index()
     {
-        List<Category> categoryList = _dbContext.Categories.ToList();
+        List<Category> categoryList = _dbContext.Categories.Where(x => x.DisplayFlag)?.ToList() ?? [];
         return View(categoryList);
     }
 
@@ -34,7 +34,7 @@ public class CategoryController : Controller
         {
             return View();
         }
-        
+
         if (TryExecuteActionToDbContext(category, _dbContext.Categories.Add))
         {
             TempData["success"] = "Category created successfully";
@@ -67,7 +67,7 @@ public class CategoryController : Controller
             return View();
         }
 
-        if(TryExecuteActionToDbContext(category, _dbContext.Categories.Update))
+        if (TryExecuteActionToDbContext(category, _dbContext.Categories.Update))
         {
             TempData["success"] = "Category edited successfully";
             return RedirectToAction("Index");

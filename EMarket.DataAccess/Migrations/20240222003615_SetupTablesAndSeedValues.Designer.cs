@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace EMarket.DataAccess.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20240221074328_AddImageSourceColToProductsTable")]
-    partial class AddImageSourceColToProductsTable
+    [Migration("20240222003615_SetupTablesAndSeedValues")]
+    partial class SetupTablesAndSeedValues
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -36,6 +36,9 @@ namespace EMarket.DataAccess.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
+                    b.Property<bool>("DisplayFlag")
+                        .HasColumnType("bit");
+
                     b.Property<int>("DisplayOrder")
                         .HasColumnType("int");
 
@@ -52,60 +55,77 @@ namespace EMarket.DataAccess.Migrations
                         new
                         {
                             Id = 1,
+                            DisplayFlag = false,
+                            DisplayOrder = 0,
+                            Name = "Uncategorized"
+                        },
+                        new
+                        {
+                            Id = 2,
+                            DisplayFlag = true,
                             DisplayOrder = 1,
                             Name = "Clothing & Apparel"
                         },
                         new
                         {
-                            Id = 2,
+                            Id = 3,
+                            DisplayFlag = true,
                             DisplayOrder = 2,
                             Name = "Electronics"
                         },
                         new
                         {
-                            Id = 3,
+                            Id = 4,
+                            DisplayFlag = true,
                             DisplayOrder = 3,
                             Name = "Home & Kitchen"
                         },
                         new
                         {
-                            Id = 4,
+                            Id = 5,
+                            DisplayFlag = true,
                             DisplayOrder = 4,
                             Name = "Health & Beauty"
                         },
                         new
                         {
-                            Id = 5,
+                            Id = 6,
+                            DisplayFlag = true,
                             DisplayOrder = 5,
                             Name = "Sports & Outdoors"
                         },
                         new
                         {
-                            Id = 6,
+                            Id = 7,
+                            DisplayFlag = true,
                             DisplayOrder = 6,
                             Name = "Books & Media"
                         },
                         new
                         {
-                            Id = 7,
+                            Id = 8,
+                            DisplayFlag = true,
                             DisplayOrder = 7,
                             Name = "Toys & Games"
                         },
                         new
                         {
-                            Id = 8,
+                            Id = 9,
+                            DisplayFlag = true,
                             DisplayOrder = 8,
                             Name = "Automotive"
                         },
                         new
                         {
-                            Id = 9,
+                            Id = 10,
+                            DisplayFlag = true,
                             DisplayOrder = 9,
                             Name = "Pets"
                         },
                         new
                         {
-                            Id = 10,
+                            Id = 11,
+                            DisplayFlag = true,
                             DisplayOrder = 10,
                             Name = "Jewelry & Accessories"
                         });
@@ -143,80 +163,80 @@ namespace EMarket.DataAccess.Migrations
                         new
                         {
                             Id = 1,
-                            CategoryId = 1,
-                            ImageSource = "",
+                            CategoryId = 2,
+                            ImageSource = "~/images/OIP.jpg",
                             Name = "T-Shirt",
                             UnitPrice = 299.0
                         },
                         new
                         {
                             Id = 2,
-                            CategoryId = 2,
-                            ImageSource = "",
+                            CategoryId = 3,
+                            ImageSource = "~/images/cellphone.jpg",
                             Name = "Cellphone",
                             UnitPrice = 13999.0
                         },
                         new
                         {
                             Id = 3,
-                            CategoryId = 3,
-                            ImageSource = "",
+                            CategoryId = 4,
+                            ImageSource = "~/images/ec3596459302e2e8e4d586517816a69a.jpg",
                             Name = "Knife",
                             UnitPrice = 240.0
                         },
                         new
                         {
                             Id = 4,
-                            CategoryId = 4,
-                            ImageSource = "",
+                            CategoryId = 5,
+                            ImageSource = "~/images/lotion.jpg",
                             Name = "Lotion",
                             UnitPrice = 250.0
                         },
                         new
                         {
                             Id = 5,
-                            CategoryId = 5,
-                            ImageSource = "",
+                            CategoryId = 6,
+                            ImageSource = "~/images/rubbershoes.jpg",
                             Name = "Rubber Shoes",
                             UnitPrice = 5500.0
                         },
                         new
                         {
                             Id = 6,
-                            CategoryId = 6,
-                            ImageSource = "",
+                            CategoryId = 7,
+                            ImageSource = "~/images/cleancode.jpg",
                             Name = "Clean Code",
                             UnitPrice = 2890.0
                         },
                         new
                         {
                             Id = 7,
-                            CategoryId = 7,
-                            ImageSource = "",
+                            CategoryId = 8,
+                            ImageSource = "~/images/Minecraft.jpg",
                             Name = "Minecraft",
                             UnitPrice = 150.0
                         },
                         new
                         {
                             Id = 8,
-                            CategoryId = 8,
-                            ImageSource = "",
-                            Name = "Fiber Cloth",
+                            CategoryId = 9,
+                            ImageSource = "~/images/fibrecloth.jpg",
+                            Name = "Fibre Cloth",
                             UnitPrice = 40.0
                         },
                         new
                         {
                             Id = 9,
-                            CategoryId = 9,
-                            ImageSource = "",
+                            CategoryId = 10,
+                            ImageSource = "~/images/goatsmilk.jpg",
                             Name = "Goat's Milk",
                             UnitPrice = 380.0
                         },
                         new
                         {
                             Id = 10,
-                            CategoryId = 10,
-                            ImageSource = "",
+                            CategoryId = 11,
+                            ImageSource = "~/images/necklace.jpg",
                             Name = "14K Gold Necklace",
                             UnitPrice = 21500.0
                         });
@@ -425,7 +445,7 @@ namespace EMarket.DataAccess.Migrations
                     b.HasOne("EMarket.Models.Category", "Category")
                         .WithMany("Products")
                         .HasForeignKey("CategoryId")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
                     b.Navigation("Category");

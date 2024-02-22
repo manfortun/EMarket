@@ -17,6 +17,9 @@ public class Category
     [DisplayName("Display Order")]
     public int DisplayOrder { get; set; }
 
+    [DefaultValue(true)]
+    public bool DisplayFlag { get; set; }
+
     public virtual List<Product> Products { get; set; }
 
     public Category()

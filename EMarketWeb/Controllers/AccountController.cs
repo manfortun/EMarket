@@ -1,5 +1,4 @@
 ﻿using EMarket.Models;
-using EMarket.Utility;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;

@@ -10,15 +10,12 @@
     </div>
 </div>
 
-@using (Html.BeginForm("Search", "Home", FormMethod.Post))
-{
-    <div>
-        <div class="input-group mb-3 w-25" style="min-width: fit-content">
-            @Html.TextBox("searchString", null, new { @class = "form-control", placeholder = "Looking for something?" })
-            <button class="btn btn-primary" type="submit">Search</button>
-        </div>
-    </div>
-}
+<div>
+    <form asp-action="Search" method="get">
+        <input type="text" name="searchString" placeholder="Looking for something?" />
+        <button class="btn btn-primary" type="submit">Search</button>
+    </form>
+</div>
 
 <div class="card-deck d-flex flex-wrap justify-content-center">
     @if (Model is null || Model.Count() < 1)
@@ -46,13 +43,15 @@
                     </div>
                 </div>
 
-                <div class="position-relative">
-                    <div class="position-absolute bottom-0 end-0 m-2">
-                        <button class="badge bg-outline-primary rounded-pill border-0 p-1">
-                            <i class="bi bi-plus text-primary" style="font-size: 20px"></i>
-                        </button>
+                    <div class="position-relative">
+                        <div class="position-absolute bottom-0 end-0 m-2">
+                            <button class="badge bg-outline-primary rounded-pill border-0 p-1" type="submit">
+                                <a asp-controller="Home" asp-action="AddToCart" asp-route-productId="@product.Id">
+                                    <i class="bi bi-plus text-primary" style="font-size: 20px"></i>
+                                </a>
+                            </button>
+                        </div>
                     </div>
-                </div>
 
             </div>
         }
