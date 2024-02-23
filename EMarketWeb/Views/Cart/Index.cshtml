@@ -54,7 +54,8 @@
                 <button type="submit" class="btn btn-warning" asp-action="Checkout" asp-route-receiver="@Model.Receiver">Purchase Php @totalCheckout.ToString(FORMAT)</button>
             </form>
         }
-        <div class="col d-flex flex-column justify-content-center mb-4">
+
+        <div class="col d-flex flex-column mb-4">
             @if (!Model.HasPurchases())
             {
                 <div class="text-center">

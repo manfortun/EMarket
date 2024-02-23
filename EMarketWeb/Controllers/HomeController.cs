@@ -13,7 +13,8 @@ public class HomeController : Controller
     private readonly ILogger<HomeController> _logger;
     private readonly ApplicationDbContext _dbContext;
     private readonly UserManager<IdentityUser> _userManager;
-    private string? _searchKey = default!;
+    private static string? _searchKey = default!;
+    private static HashSet<int> _categoriesInDisplay = default!;
 
     public HomeController(
         ILogger<HomeController> logger,
@@ -30,10 +31,13 @@ public class HomeController : Controller
         string userId = await _userManager.GetUserIdAsync(User);
         SetCartCountOfUser(userId);
 
-        _searchKey = GetSessionObject<string>(nameof(_searchKey));
-
         var displayedProducts = _dbContext.Products?.ToList()
-            .Where(x => SearchPredicate(x, _searchKey)) ?? [];
+            .Where(x => SearchPredicate(x, _searchKey) && _categoriesInDisplay.Intersect(x.GetCategoriesArray().Select(y => y.Id)).Any()) ?? [];
+
+        _categoriesInDisplay ??= _dbContext.Categories.Select(c => c.Id).ToHashSet();
+
+        TempData[nameof(_categoriesInDisplay)] = _categoriesInDisplay;
+        ViewBag.Categories = _dbContext.Categories.ToList();
 
         return View(displayedProducts);
     }
@@ -46,7 +50,17 @@ public class HomeController : Controller
 
     public IActionResult Search(string searchString)
     {
-        SetSessionObject(nameof(_searchKey), searchString);
+        _searchKey = searchString;
+
+        return RedirectToAction("Index");
+    }
+
+    public IActionResult Test(int test)
+    {
+        if(!_categoriesInDisplay.Add(test))
+        {
+            _categoriesInDisplay.Remove(test);
+        }
 
         return RedirectToAction("Index");
     }
@@ -104,19 +118,6 @@ public class HomeController : Controller
         ViewData["cartcount"] = _dbContext.Carts
             .Where(user => user.OwnerId == userId)
             .Sum(cart => cart.Quantity);
-    }
-
-    private void SetSessionObject<T>(string key, T value)
-    {
-        HttpContext.Session.SetString(key, JsonConvert.SerializeObject(value));
-    }
-
-    private T? GetSessionObject<T>(string key)
-    {
-        ISession session = HttpContext.Session;
-        string? value = session.GetString(key) ?? string.Empty;
-
-        return JsonConvert.DeserializeObject<T>(value);
     }
 
     private void ClearSession()
