@@ -17,8 +17,5 @@ public class Product
     [DefaultValue("~/image/no-image.jpg")]
     public string ImageSource { get; set; } = default!;
 
-    [DefaultValue(1)]
-    public int CategoryId { get; set; }
-
-    public virtual Category Category { get; set; }
+    public virtual List<ProductCategory> Category { get; set; }
 }

@@ -4,56 +4,82 @@
     ViewData["Title"] = "Home Page";
 }
 
-<div class="mb-5 bg-primary">
+<div class="bg-primary container-fluid p-2 pt-3 p-lg-5 mb-3">
     <div class="container-fluid">
-        <h1 class="text-light">Welcome to EMarket.</h1>
+        <h4 class="text-light text-uppercase">Your favorite</h4>
+        <h1 class="text-light">EMarket <i class="bi bi-shop"></i></h1>
     </div>
 </div>
 
-<div>
-    <form asp-action="Search" method="get">
-        <input type="text" name="searchString" placeholder="Looking for something?" />
-        <button class="btn btn-primary" type="submit">Search</button>
-    </form>
-</div>
 
-<div class="card-deck d-flex flex-wrap justify-content-center">
-    @if (Model is null || Model.Count() < 1)
-    {
-        <h6>There are no products listed. Try again later.</h6>
-    }
-    else
-    {
-        foreach (Product product in Model)
+<div class="row container-fluid p-lg-5">
+    <div class="col-lg-3">
+        <form asp-action="search" method="get">
+            <div class="input-group mb-3">
+                <input type="text" name="searchString" class="form-control" placeholder="Looking for something?" aria-label="Recipient's username" aria-describedby="button-addon2">
+                <button class="btn btn-primary" type="submit" id="button-addon2">Search</button>
+            </div>
+        </form>
+        <div class="container-sm w-auto d-none d-lg-block">
+            <fieldset class="form-group p-2">
+                <legend>Category</legend>
+                @foreach (var category in Model
+                    .SelectMany(m => m.Category)
+                    .DistinctBy(m => m.CategoryId)
+                    .OrderBy(m => m.Category.Name))
+                {
+                    <div class="form-check ms-3 ms-lg-0">
+                        <input class="form-check-input" type="checkbox" id="@category.CategoryId" />
+                        <label class="form-check-label" for="@category.CategoryId">
+                            @category.Category.Name
+                        </label>
+                    </div>
+                }
+            </fieldset>
+        </div>
+    </div>
+    <div class="col">
+        @if (Model is null || Model.Count() < 1)
         {
-            <div class="card m-2" style="width: 200px">
+            <h6>There are no products listed. Try again later.</h6>
+        }
+        else
+        {
+            <div class="card-deck d-flex flex-wrap justify-content-center justify-content-lg-start">
+                @foreach (Product product in Model)
+                {
+                    <div class="card me-lg-3 mt-2 mb-2 me-2 ms-lg-0 ms-2" style="width: 200px">
 
-                <div class="card-body text-center">
-                    <div style="height: 150px">
-                        <img class="card-img" style="height: inherit;object-fit:cover" src="@(string.IsNullOrEmpty(product.ImageSource) ? "~/images/no-image.jpg" : product.ImageSource)" asp-append-version="true"/>
-                    </div>
-                    <h6 class="card-title mt-4 mb-1">@product.Name</h6>
-                    <div class="row">    
-                        <small class="text-body-tertiary" style="font-size: 12px">
-                            @product.Category?.Name
-                        </small>
-                        <small class="card-text text-body-tertiary">
-                            Php @product.UnitPrice.ToString("N2")
-                        </small>
-                    </div>
-                </div>
+                        <a asp-controller="EditProduct" asp-route-itemId="@product.Id" style="text-decoration: none">
+                            <div class="card-body text-center">
+                                <div style="height: 150px">
+                                    <img class="card-img" style="height: inherit;object-fit:cover" src="@(string.IsNullOrEmpty(product.ImageSource) ? "~/images/no-image.jpg" : product.ImageSource)" asp-append-version="true"/>
+                                </div>
+                                <h6 class="card-title mt-4 mb-1 text-primary-emphasis">@product.Name</h6>
+                                <div class="row">    
+                                    <small class="text-body-tertiary" style="font-size: 12px">
+                                        @product.GetCategoriesFormattedString()
+                                    </small>
+                                    <small class="card-text text-body-tertiary">
+                                        Php @product.UnitPrice.ToString("N2")
+                                    </small>
+                                </div>
+                            </div>
+                        </a>
 
-                <div class="position-relative">
-                    <div class="position-absolute bottom-0 end-0 m-2">
-                        <button class="badge bg-outline-primary rounded-pill border-0 p-1" type="submit">
-                            <a asp-controller="Home" asp-action="AddToCart" asp-route-productId="@product.Id">
-                                <i class="bi bi-plus text-primary" style="font-size: 20px"></i>
-                            </a>
-                        </button>
-                    </div>
-                </div>
+                        <div class="position-relative">
+                            <div class="position-absolute bottom-0 end-0 m-2">
+                                <button class="badge bg-outline-primary rounded-pill border-0 p-1" type="submit">
+                                    <a asp-controller="Home" asp-action="AddToCart" asp-route-productId="@product.Id">
+                                        <i class="bi bi-plus text-primary" style="font-size: 20px"></i>
+                                    </a>
+                                </button>
+                            </div>
+                        </div>
 
+                    </div>
+                }
             </div>
         }
-    }
+    </div>
 </div>

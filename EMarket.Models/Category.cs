@@ -12,18 +12,4 @@ public class Category
     [MaxLength(100)]
     [DisplayName("Category Name")]
     public string Name { get; set; } = default!;
-
-    [Range(1, 100, ErrorMessage = "Display Order must be between 1-100.")]
-    [DisplayName("Display Order")]
-    public int DisplayOrder { get; set; }
-
-    [DefaultValue(true)]
-    public bool DisplayFlag { get; set; }
-
-    public virtual List<Product> Products { get; set; }
-
-    public Category()
-    {
-        Products = new List<Product>();
-    }
 }

@@ -1,8 +1,7 @@
-﻿using Microsoft.AspNetCore.Identity;
-using EMarket.Utility;
-using Microsoft.AspNetCore.Mvc;
-using EMarket.DataAccess.Data;
+﻿using EMarket.DataAccess.Data;
 using EMarket.Models;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Mvc;
 
 namespace EMarketWeb.Controllers
 {

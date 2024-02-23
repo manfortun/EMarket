@@ -4,6 +4,7 @@ using EMarket.DataAccess.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace EMarket.DataAccess.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20240223062358_RemoveDisplayFlagProperty")]
+    partial class RemoveDisplayFlagProperty
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -60,6 +63,9 @@ namespace EMarket.DataAccess.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
+                    b.Property<int>("DisplayOrder")
+                        .HasColumnType("int");
+
                     b.Property<string>("Name")
                         .IsRequired()
                         .HasMaxLength(100)
@@ -73,51 +79,61 @@ namespace EMarket.DataAccess.Migrations
                         new
                         {
                             Id = 1,
+                            DisplayOrder = 1,
                             Name = "Clothing & Apparel"
                         },
                         new
                         {
                             Id = 2,
+                            DisplayOrder = 2,
                             Name = "Electronics"
                         },
                         new
                         {
                             Id = 3,
+                            DisplayOrder = 3,
                             Name = "Home & Kitchen"
                         },
                         new
                         {
                             Id = 4,
+                            DisplayOrder = 4,
                             Name = "Health & Beauty"
                         },
                         new
                         {
                             Id = 5,
+                            DisplayOrder = 5,
                             Name = "Sports & Outdoors"
                         },
                         new
                         {
                             Id = 6,
+                            DisplayOrder = 6,
                             Name = "Books & Media"
                         },
                         new
                         {
                             Id = 7,
+                            DisplayOrder = 7,
                             Name = "Toys & Games"
                         },
                         new
                         {
                             Id = 8,
+                            DisplayOrder = 8,
                             Name = "Automotive"
                         },
                         new
                         {
                             Id = 9,
+                            DisplayOrder = 9,
                             Name = "Pets"
                         },
                         new
                         {
                             Id = 10,
+                            DisplayOrder = 10,
                             Name = "Jewelry & Accessories"
                         });
                 });

@@ -4,6 +4,7 @@ using EMarket.DataAccess.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace EMarket.DataAccess.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20240222081509_AddProductCategoryTableThenSeed")]
+    partial class AddProductCategoryTableThenSeed
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -60,6 +63,12 @@ namespace EMarket.DataAccess.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
+                    b.Property<bool>("DisplayFlag")
+                        .HasColumnType("bit");
+
+                    b.Property<int>("DisplayOrder")
+                        .HasColumnType("int");
+
                     b.Property<string>("Name")
                         .IsRequired()
                         .HasMaxLength(100)
@@ -73,51 +82,71 @@ namespace EMarket.DataAccess.Migrations
                         new
                         {
                             Id = 1,
+                            DisplayFlag = true,
+                            DisplayOrder = 1,
                             Name = "Clothing & Apparel"
                         },
                         new
                         {
                             Id = 2,
+                            DisplayFlag = true,
+                            DisplayOrder = 2,
                             Name = "Electronics"
                         },
                         new
                         {
                             Id = 3,
+                            DisplayFlag = true,
+                            DisplayOrder = 3,
                             Name = "Home & Kitchen"
                         },
                         new
                         {
                             Id = 4,
+                            DisplayFlag = true,
+                            DisplayOrder = 4,
                             Name = "Health & Beauty"
                         },
                         new
                         {
                             Id = 5,
+                            DisplayFlag = true,
+                            DisplayOrder = 5,
                             Name = "Sports & Outdoors"
                         },
                         new
                         {
                             Id = 6,
+                            DisplayFlag = true,
+                            DisplayOrder = 6,
                             Name = "Books & Media"
                         },
                         new
                         {
                             Id = 7,
+                            DisplayFlag = true,
+                            DisplayOrder = 7,
                             Name = "Toys & Games"
                         },
                         new
                         {
                             Id = 8,
+                            DisplayFlag = true,
+                            DisplayOrder = 8,
                             Name = "Automotive"
                         },
                         new
                         {
                             Id = 9,
+                            DisplayFlag = true,
+                            DisplayOrder = 9,
                             Name = "Pets"
                         },
                         new
                         {
                             Id = 10,
+                            DisplayFlag = true,
+                            DisplayOrder = 10,
                             Name = "Jewelry & Accessories"
                         });
                 });
@@ -129,6 +158,9 @@ namespace EMarket.DataAccess.Migrations
                         .HasColumnType("int");
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<int?>("CategoryId")
+                        .HasColumnType("int");
 
                     b.Property<string>("ImageSource")
                         .IsRequired()
@@ -142,6 +174,8 @@ namespace EMarket.DataAccess.Migrations
                         .HasColumnType("float");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("CategoryId");
 
                     b.ToTable("Products");
 
@@ -234,63 +268,6 @@ namespace EMarket.DataAccess.Migrations
                         .IsUnique();
 
                     b.ToTable("ProductCategories");
-
-                    b.HasData(
-                        new
-                        {
-                            ProductId = 1,
-                            CategoryId = 1
-                        },
-                        new
-                        {
-                            ProductId = 2,
-                            CategoryId = 2
-                        },
-                        new
-                        {
-                            ProductId = 3,
-                            CategoryId = 3
-                        },
-                        new
-                        {
-                            ProductId = 4,
-                            CategoryId = 4
-                        },
-                        new
-                        {
-                            ProductId = 5,
-                            CategoryId = 5
-                        },
-                        new
-                        {
-                            ProductId = 6,
-                            CategoryId = 6
-                        },
-                        new
-                        {
-                            ProductId = 7,
-                            CategoryId = 7
-                        },
-                        new
-                        {
-                            ProductId = 7,
-                            CategoryId = 6
-                        },
-                        new
-                        {
-                            ProductId = 8,
-                            CategoryId = 8
-                        },
-                        new
-                        {
-                            ProductId = 9,
-                            CategoryId = 9
-                        },
-                        new
-                        {
-                            ProductId = 10,
-                            CategoryId = 10
-                        });
                 });
 
             modelBuilder.Entity("EMarket.Models.Receiver", b =>
@@ -543,6 +520,13 @@ namespace EMarket.DataAccess.Migrations
                     b.Navigation("Product");
                 });
 
+            modelBuilder.Entity("EMarket.Models.Product", b =>
+                {
+                    b.HasOne("EMarket.Models.Category", null)
+                        .WithMany("Products")
+                        .HasForeignKey("CategoryId");
+                });
+
             modelBuilder.Entity("EMarket.Models.ProductCategory", b =>
                 {
                     b.HasOne("EMarket.Models.Category", "Category")
@@ -552,7 +536,7 @@ namespace EMarket.DataAccess.Migrations
                         .IsRequired();
 
                     b.HasOne("EMarket.Models.Product", "Product")
-                        .WithMany("Category")
+                        .WithMany()
                         .HasForeignKey("ProductId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
@@ -613,9 +597,9 @@ namespace EMarket.DataAccess.Migrations
                         .IsRequired();
                 });
 
-            modelBuilder.Entity("EMarket.Models.Product", b =>
+            modelBuilder.Entity("EMarket.Models.Category", b =>
                 {
-                    b.Navigation("Category");
+                    b.Navigation("Products");
                 });
 #pragma warning restore 612, 618
         }

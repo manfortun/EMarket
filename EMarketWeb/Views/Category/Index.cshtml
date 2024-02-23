@@ -17,35 +17,33 @@
     </div>
 </div>
 
-<table class="table table-striped table-hover">
-    <thead>
-        <tr>
-            <th>
-                Category Name
-            </th>
-            <th>
-                Display Order
-            </th>
-            <th></th>
-        </tr>
-    </thead>
-    <tbody>
-        @foreach (Category item in Model.OrderBy(x => x.DisplayOrder))
-        {
+<div class="container">
+    <table class="table table-striped table-hover">
+        <thead>
             <tr>
-                <td>@item.Name</td>
-                <td>@item.DisplayOrder</td>
-                <td class="text-end">
-                    <div class="w-70 btn-group" role="group">
-                        <a asp-controller="Category" asp-action="Edit" asp-route-id="@item.Id" class="btn btn-primary">
-                            <i class="bi bi-pencil-square"></i> Edit
-                        </a>
-                        <a asp-controller="Category" asp-action="Delete" asp-route-id="@item.Id" class="btn btn-danger">
-                            <i class="bi bi-trash3"></i> Delete
-                        </a>
-                    </div>
-                </td>
+                <th>
+                    Category Name
+                </th>
+                <th></th>
             </tr>
-        }
-    </tbody>
-</table>
+        </thead>
+        <tbody>
+            @foreach (Category item in Model)
+            {
+                <tr>
+                    <td class="align-middle">@item.Name</td>
+                    <td class="text-end">
+                        <div class="w-70 btn-group" role="group">
+                            <a asp-controller="Category" asp-action="Edit" asp-route-id="@item.Id" class="btn btn-primary">
+                                <i class="bi bi-pencil-square"></i> Edit
+                            </a>
+                            <a asp-controller="Category" asp-action="Delete" asp-route-id="@item.Id" class="btn btn-danger">
+                                <i class="bi bi-trash3"></i> Delete
+                            </a>
+                        </div>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>

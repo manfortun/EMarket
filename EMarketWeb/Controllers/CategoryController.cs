@@ -17,7 +17,7 @@ public class CategoryController : Controller
 
     public IActionResult Index()
     {
-        List<Category> categoryList = _dbContext.Categories.Where(x => x.DisplayFlag)?.ToList() ?? [];
+        List<Category> categoryList = _dbContext.Categories.ToList() ?? [];
         return View(categoryList);
     }
 

@@ -6,111 +6,107 @@
     double totalCheckout = Model.GetSumPurchase();
 }
 
-@if (Model.HasPurchases())
-{
-    <div class="mb-5">
-        <div class="container-fluid">
-            <h1>Check out your items.</h1>
-        </div>
-    </div>
-}
-
-<div class="row">
+<div class="container p-3">
     @if (Model.HasPurchases())
     {
-        <form class="col border p-3 d-flex flex-column">
-            <div class="justify-content-center align-items-center flex-grow-1">
-                <h2 class="mb-2">Checkout.</h2>
-                <p class="text-uppercase">Shipping details</p>
-                <hr/>
-                <div class="m-2">
-                    <div class="row">
-                        <input asp-for="Receiver.OwnerId" class="d-none"/>
-                        <input asp-for="Receiver.Id" class="d-none"/>
-                        <div class="col-md-6 form-group mb-3 p-1">
-                            <label asp-for="Receiver.FirstName"></label>
-                            <br/>
-                            <input asp-for="Receiver.FirstName" class="form-control">
-                            <span asp-validation-for="Receiver.FirstName" class="text-danger"></span>
+        <div class="mb-5">
+            <div class="container-fluid">
+                <h1>Check out your items.</h1>
+            </div>
+        </div>
+    }
+
+    <div class="row d-flex flex-column-reverse flex-lg-row">
+        @if (Model.HasPurchases())
+        {
+            <form class="col border p-3 d-flex flex-column" method="get">
+                <div class="justify-content-center align-items-center flex-grow-1">
+                    <h2 class="mb-2">Checkout.</h2>
+                    <p class="text-uppercase">Shipping details</p>
+                    <hr/>
+                    <div class="m-2">
+                        <div class="row">
+                            <input asp-for="Receiver.OwnerId" class="d-none"/>
+                            <input asp-for="Receiver.Id" class="d-none"/>
+                            <div class="col-md-6 mb-3 p-1 form-floating">
+                                <input asp-for="Receiver.FirstName" class="form-control">
+                                <label asp-for="Receiver.FirstName"></label>
+                                <span asp-validation-for="Receiver.FirstName" class="text-danger"></span>
+                            </div>
+                            <div class="col-md-6 mb-3 p-1 form-floating">
+                                <input asp-for="Receiver.LastName" class="form-control"/>
+                                <label asp-for="Receiver.LastName"></label>
+                                <span asp-validation-for="Receiver.LastName" class="text-danger"></span>
+                            </div>
                         </div>
-                        <div class="col-md-6 form-group mb-3 p-1">
-                            <label asp-for="Receiver.LastName"></label>
-                            <br/>
-                            <input asp-for="Receiver.LastName" class="form-control"/>
-                            <span asp-validation-for="Receiver.LastName" class="text-danger"></span>
+                        <div class="row mb-3 p-1 form-floating">
+                            <input asp-for="Receiver.ContactNo" class="form-control"/>
+                            <label asp-for="Receiver.ContactNo"></label>
+                            <span asp-validation-for="Receiver.ContactNo" class="text-danger"></span>
                         </div>
-                    </div>
-                    <div class="row form-group mb-3 p-1">
-                        <label asp-for="Receiver.ContactNo"></label>
-                        <br/>
-                        <input asp-for="Receiver.ContactNo" class="form-control"/>
-                        <span asp-validation-for="Receiver.ContactNo" class="text-danger"></span>
-                    </div>
-                    <div class="row form-group mb-3 p-1">
-                        <label asp-for="Receiver.Address"></label>
-                        <input asp-for="Receiver.Address" class="form-control"/>
-                        <span asp-validation-for="Receiver.Address" class="text-danger"></span>
+                        <div class="row mb-3 p-1 form-floating">
+                            <input asp-for="Receiver.Address" class="form-control"/>
+                            <label asp-for="Receiver.Address"></label>
+                            <span asp-validation-for="Receiver.Address" class="text-danger"></span>
+                        </div>
                     </div>
                 </div>
-            </div>
-            <button type="submit" class="btn btn-warning" asp-action="Checkout" asp-route-receiver="@Model.Receiver">Purchase Php @totalCheckout.ToString(FORMAT)</button>
-        </form>
-    }
-    <div class="col d-flex flex-column justify-content-center" style="margin-bottom: 70px">
-        @if (!Model.HasPurchases())
-        {
-            <div class="text-center">
-                <h6>Add items to cart from the Home menu.</h6>
-            </div>
+                <button type="submit" class="btn btn-warning" asp-action="Checkout" asp-route-receiver="@Model.Receiver">Purchase Php @totalCheckout.ToString(FORMAT)</button>
+            </form>
         }
-        else
-        {
-            <div>
-                <label class="text-uppercase">Your Order</label>
-                <ul class="list-group" style="min-width: 450px; width: auto">
-                    @foreach (Cart cart in Model.Purchases)
-                    {
-                        <li class="list-group-item text-secondary">
+        <div class="col d-flex flex-column justify-content-center mb-4">
+            @if (!Model.HasPurchases())
+            {
+                <div class="text-center">
+                    <h6>Add items to cart from the Home menu.</h6>
+                </div>
+            }
+            else
+            {
+                <div>
+                    <label class="text-uppercase">Your Order</label>
+                    <ul class="list-group" style="min-width: 450px; width: auto">
+                        @foreach (Cart cart in Model.Purchases)
+                        {
+                            <li class="list-group-item text-secondary">
+                                <div class="row align-items-center">
+                                    <div class="col">
+                                        <div class="text-primary-emphasis">
+                                            <b>@cart.Product.Name</b>
+                                        </div>
+                                    </div>
+                                    <div class="col justify-content-center align-items-center text-center">
+                                        <h5><b>@cart.Quantity</b></h5>
+                                    </div>
+                                    <div class="col text-end align-items-center">
+                                        <b>@((cart.Quantity * cart.Product.UnitPrice).ToString(FORMAT))</b>
+                                    </div>
+                                </div>
+                            </li>
+                        }
+
+                        <li class="list-group-item">
                             <div class="row align-items-center">
                                 <div class="col">
-                                    <div class="text-primary-emphasis">
-                                        <b>@cart.Product.Name</b>
-                                    </div>
-                                    <small>
-                                        @cart.Product.Category.Name
+                                    <h5>
+                                        <b>Total</b>
+                                    </h5>
+                                    <small class="text-secondary">
                                     </small>
                                 </div>
                                 <div class="col justify-content-center align-items-center text-center">
-                                    <h5><b>@cart.Quantity</b></h5>
+                                    <h5><b>@Model.GetCountOfPurchases()</b><p class="text-secondary" style="font-size: 10px"> items</p></h5>
                                 </div>
                                 <div class="col text-end align-items-center">
-                                    <b>@((cart.Quantity * cart.Product.UnitPrice).ToString(FORMAT))</b>
+                                    <h5><b>@totalCheckout.ToString(FORMAT)</b></h5>
                                 </div>
                             </div>
                         </li>
-                    }
 
-                    <li class="list-group-item">
-                        <div class="row align-items-center">
-                            <div class="col">
-                                <h5>
-                                    <b>Total</b>
-                                </h5>
-                                <small class="text-secondary">
-                                </small>
-                            </div>
-                            <div class="col justify-content-center align-items-center text-center">
-                                <h5><b>@Model.GetCountOfPurchases()</b><p class="text-secondary" style="font-size: 10px"> items</p></h5>
-                            </div>
-                            <div class="col text-end align-items-center">
-                                <h5><b>@totalCheckout.ToString(FORMAT)</b></h5>
-                            </div>
-                        </div>
-                    </li>
+                    </ul>
+                </div>
 
-                </ul>
-            </div>
-
-        }
+            }
+        </div>
     </div>
 </div>
