@@ -6,15 +6,19 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
 using System.Diagnostics;
+using System.Diagnostics.Eventing.Reader;
 
 namespace EMarketWeb.Controllers;
 
 public class HomeController : Controller
 {
+    private const int NO_OF_PRODUCTS_IN_PAGE = 11;
     private readonly ILogger<HomeController> _logger;
     private readonly ApplicationDbContext _dbContext;
     private readonly UserManager<IdentityUser> _userManager;
     private static string? _searchKey = default!;
+    private static int _currentPage = 1;
+    private static int _noOfPages = 0;
 
     public HomeController(
         ILogger<HomeController> logger,
@@ -43,12 +47,26 @@ public class HomeController : Controller
             categoriesInDisplay = allCategoryList.Select(c => c.Id).ToArray();
         }
 
-        var displayedProducts = _dbContext.Products?.ToList()
+        var displayableProducts = _dbContext.Products?.ToList()
             .Where(x => SearchPredicate(x, _searchKey) &&
             (categoriesInDisplay?.Intersect(x.GetCategoriesArray().Select(y => y.Id)).Any() ?? true)) ?? [];
 
+        var displayedProducts = displayableProducts
+            .Skip((_currentPage - 1) * NO_OF_PRODUCTS_IN_PAGE)
+            .Take(NO_OF_PRODUCTS_IN_PAGE);
+
+        while (!displayedProducts.Any() && _currentPage > 1)
+        {
+            _currentPage--;
+            displayedProducts = displayableProducts
+                .Skip((_currentPage - 1) * NO_OF_PRODUCTS_IN_PAGE)
+                .Take(NO_OF_PRODUCTS_IN_PAGE);
+        }
+
         SetSessionObject("categoriesInDisplay", categoriesInDisplay);
         TempData["categoriesInDisplay"] = categoriesInDisplay;
+        ViewBag.NoOfPages = _noOfPages = (int)Math.Ceiling((double)displayableProducts.Count() / NO_OF_PRODUCTS_IN_PAGE);
+        ViewBag.CurrentPage = _currentPage;
 
         return View(displayedProducts);
     }
@@ -132,6 +150,21 @@ public class HomeController : Controller
     public IActionResult AddProduct()
     {
         return RedirectToAction("Index", "AddProduct");
+    }
+
+    public IActionResult Hehe(int pageNo)
+    {
+        if (pageNo < 1)
+        {
+            pageNo = 1;
+        }
+        else if (pageNo > _noOfPages)
+        {
+            pageNo = _noOfPages;
+        }
+
+        _currentPage = pageNo;
+        return RedirectToAction("Index");
     }
 
     [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]

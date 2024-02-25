@@ -50,6 +50,23 @@
         }
         else
         {
+            <div>
+                <ul class="pagination pagination-sm">
+                    <li class="page-item">
+                        <a class="page-link" asp-action="Hehe" asp-route-pageNo="@(ViewBag.CurrentPage - 1)">&laquo;</a>
+                    </li>
+                    @foreach (var pageNo in Enumerable.Range(1, (int)ViewBag.NoOfPages))
+                    {
+                        <li class="page-item">
+                            <a class="page-link @(ViewBag.CurrentPage == pageNo ? "active" : "")" asp-action="Hehe" asp-route-pageNo="@pageNo">@pageNo</a>
+                        </li>
+                    }
+                    <li class="page-item">
+                        <a class="page-link" asp-action="Hehe" asp-route-pageNo="@(ViewBag.CurrentPage + 1)">&raquo;</a>
+                    </li>
+                </ul>
+            </div>
+
             <div class="card-deck d-flex flex-wrap justify-content-center justify-content-lg-start">
                 @foreach (Product product in Model)
                 {
