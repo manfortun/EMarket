@@ -7,9 +7,9 @@
     HashSet<int> test = new HashSet<int>();
 }
 
-<div class="container">
+<div class="container col-md-6 col-lg-5 mt-3">
     <form class="border p-3" method="post">
-        <div style="height: 200px; width: 200px;">
+        <div class="mx-auto d-block" style="height: 200px; width: 200px;">
             <img title="@Model.Name" class="card-img" style="max-height: 100%; max-width: 100%; object-fit: cover;" src="@(string.IsNullOrEmpty(Model.ImageSource) ? "~/images/no-image.jpg" : Model.ImageSource)" asp-append-version="true" />
         </div>
 
