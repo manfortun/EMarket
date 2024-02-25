@@ -3,24 +3,15 @@ using System.ComponentModel.DataAnnotations;
 
 namespace EMarket.Models.ViewModels;
 
-public class EditProductViewModel
+public class EditProductViewModel : Product
 {
-    [Key]
-    public int Id { get; set; }
-
-    public string Name { get; set; } = default!;
-
-    public double UnitPrice { get; set; }
-
-    public string ImageSource { get; set; } = default!;
-
     public int? NumberParameter { get; set; }
 
-    public string CategoriesStringed { get; set; } = default!;
+    public string? CategoriesStringed { get; set; }
 
     public void ToggleCategory(int categoryId)
     {
-        HashSet<int> tempCategoryHashSet = JsonConvert.DeserializeObject<int[]>(CategoriesStringed).ToHashSet();
+        HashSet<int> tempCategoryHashSet = GetCategories().ToHashSet();
 
         if (tempCategoryHashSet.Add(categoryId) == false)
         {
@@ -32,7 +23,7 @@ public class EditProductViewModel
 
     public bool HasCategory(int categoryId)
     {
-        HashSet<int> tempCategoryHashSet = JsonConvert.DeserializeObject<int[]>(CategoriesStringed).ToHashSet();
+        HashSet<int> tempCategoryHashSet = GetCategories().ToHashSet();
 
         return tempCategoryHashSet.Contains(categoryId);
     }
@@ -44,6 +35,28 @@ public class EditProductViewModel
 
     public int[] GetCategories()
     {
+        if (string.IsNullOrEmpty(CategoriesStringed))
+        {
+            return [];
+        }
+
         return JsonConvert.DeserializeObject<int[]>(CategoriesStringed);
+    }
+
+    public static EditProductViewModel Convert(Product product)
+    {
+        var viewModel = new EditProductViewModel
+        {
+            Name = product.Name,
+            UnitPrice = product.UnitPrice,
+            ImageSource = product.ImageSource,
+            Id = product.Id,
+            Description = product.Description,
+            DateCreated = product.DateCreated
+        };
+
+        viewModel.SetCategories(product.Category.Select(c => c.CategoryId).ToArray());
+
+        return viewModel;
     }
 }

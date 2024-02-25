@@ -34,16 +34,16 @@ public class ApplicationDbContext : IdentityDbContext
 
         Product[] seedProducts =
         [
-            new() { Id = 1, Name = "T-Shirt", UnitPrice = 299.00, ImageSource="~/images/OIP.jpg" },
-            new() { Id = 2, Name = "Cellphone", UnitPrice = 13999.00, ImageSource="~/images/cellphone.jpg" },
-            new() { Id = 3, Name = "Knife", UnitPrice = 240.00, ImageSource="~/images/ec3596459302e2e8e4d586517816a69a.jpg" },
-            new() { Id = 4, Name = "Lotion", UnitPrice = 250.00, ImageSource="~/images/lotion.jpg" },
-            new() { Id = 5, Name = "Rubber Shoes", UnitPrice = 5500.00, ImageSource="~/images/rubbershoes.jpg" },
-            new() { Id = 6, Name = "Clean Code", UnitPrice = 2890.00, ImageSource="~/images/cleancode.jpg" },
-            new() { Id = 7, Name = "Minecraft", UnitPrice = 150.00, ImageSource="~/images/Minecraft.jpg" },
-            new() { Id = 8, Name = "Fibre Cloth", UnitPrice = 40.00, ImageSource="~/images/fibrecloth.jpg" },
-            new() { Id = 9, Name = "Goat's Milk", UnitPrice = 380.00, ImageSource="~/images/goatsmilk.jpg" },
-            new() { Id = 10, Name = "14K Gold Necklace", UnitPrice = 21500.00, ImageSource="~/images/necklace.jpg" }
+            new() { Id = 1, Name = "T-Shirt", UnitPrice = 299.00, ImageSource="~/images/OIP.jpg", DateCreated = DateTime.Now.AddMonths(-1) },
+            new() { Id = 2, Name = "Cellphone", UnitPrice = 13999.00, ImageSource="~/images/cellphone.jpg", DateCreated = DateTime.Now.AddMonths(-1) },
+            new() { Id = 3, Name = "Knife", UnitPrice = 240.00, ImageSource="~/images/ec3596459302e2e8e4d586517816a69a.jpg", DateCreated = DateTime.Now.AddMonths(-1) },
+            new() { Id = 4, Name = "Lotion", UnitPrice = 250.00, ImageSource="~/images/lotion.jpg", DateCreated = DateTime.Now.AddMonths(-1) },
+            new() { Id = 5, Name = "Rubber Shoes", UnitPrice = 5500.00, ImageSource="~/images/rubbershoes.jpg", DateCreated = DateTime.Now.AddMonths(-1) },
+            new() { Id = 6, Name = "Clean Code", UnitPrice = 2890.00, ImageSource="~/images/cleancode.jpg", DateCreated = DateTime.Now.AddMonths(-1) },
+            new() { Id = 7, Name = "Minecraft", UnitPrice = 150.00, ImageSource="~/images/Minecraft.jpg", DateCreated = DateTime.Now.AddMonths(-1) },
+            new() { Id = 8, Name = "Fibre Cloth", UnitPrice = 40.00, ImageSource="~/images/fibrecloth.jpg", DateCreated = DateTime.Now.AddMonths(-1) },
+            new() { Id = 9, Name = "Goat's Milk", UnitPrice = 380.00, ImageSource="~/images/goatsmilk.jpg", DateCreated = DateTime.Now.AddMonths(-1) },
+            new() { Id = 10, Name = "14K Gold Necklace", UnitPrice = 21500.00, ImageSource="~/images/necklace.jpg", DateCreated = DateTime.Now.AddMonths(-1) }
         ];
 
         ProductCategory[] seedProductCategories =

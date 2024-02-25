@@ -1,4 +1,5 @@
-﻿using Microsoft.EntityFrameworkCore.Migrations;
+﻿using System;
+using Microsoft.EntityFrameworkCore.Migrations;
 
 #nullable disable
 
@@ -7,7 +8,7 @@
 namespace EMarket.DataAccess.Migrations
 {
     /// <inheritdoc />
-    public partial class SetupTablesAndSeedValues : Migration
+    public partial class Init : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -57,13 +58,45 @@ namespace EMarket.DataAccess.Migrations
                 {
                     Id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
-                    Name = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: false),
-                    DisplayOrder = table.Column<int>(type: "int", nullable: false),
-                    DisplayFlag = table.Column<bool>(type: "bit", nullable: false)
+                    Name = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: false)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_Categories", x => x.Id);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "Products",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    Name = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    UnitPrice = table.Column<double>(type: "float", nullable: false),
+                    ImageSource = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    Description = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: true),
+                    DateCreated = table.Column<DateTime>(type: "datetime2", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Products", x => x.Id);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "Receivers",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    OwnerId = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    FirstName = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    LastName = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    ContactNo = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Address = table.Column<string>(type: "nvarchar(max)", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Receivers", x => x.Id);
                 });
 
             migrationBuilder.CreateTable(
@@ -173,60 +206,106 @@ namespace EMarket.DataAccess.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "Products",
+                name: "Carts",
                 columns: table => new
                 {
                     Id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
-                    Name = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    UnitPrice = table.Column<double>(type: "float", nullable: false),
-                    ImageSource = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    ProductId = table.Column<int>(type: "int", nullable: false),
+                    OwnerId = table.Column<string>(type: "nvarchar(450)", nullable: false),
+                    Quantity = table.Column<int>(type: "int", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Carts", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_Carts_AspNetUsers_OwnerId",
+                        column: x => x.OwnerId,
+                        principalTable: "AspNetUsers",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_Carts_Products_ProductId",
+                        column: x => x.ProductId,
+                        principalTable: "Products",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "ProductCategories",
+                columns: table => new
+                {
+                    ProductId = table.Column<int>(type: "int", nullable: false),
                     CategoryId = table.Column<int>(type: "int", nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Products", x => x.Id);
+                    table.PrimaryKey("PK_ProductCategories", x => new { x.ProductId, x.CategoryId });
                     table.ForeignKey(
-                        name: "FK_Products_Categories_CategoryId",
+                        name: "FK_ProductCategories_Categories_CategoryId",
                         column: x => x.CategoryId,
                         principalTable: "Categories",
                         principalColumn: "Id",
-                        onDelete: ReferentialAction.Restrict);
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_ProductCategories_Products_ProductId",
+                        column: x => x.ProductId,
+                        principalTable: "Products",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.InsertData(
                 table: "Categories",
-                columns: new[] { "Id", "DisplayFlag", "DisplayOrder", "Name" },
+                columns: new[] { "Id", "Name" },
                 values: new object[,]
                 {
-                    { 1, false, 0, "Uncategorized" },
-                    { 2, true, 1, "Clothing & Apparel" },
-                    { 3, true, 2, "Electronics" },
-                    { 4, true, 3, "Home & Kitchen" },
-                    { 5, true, 4, "Health & Beauty" },
-                    { 6, true, 5, "Sports & Outdoors" },
-                    { 7, true, 6, "Books & Media" },
-                    { 8, true, 7, "Toys & Games" },
-                    { 9, true, 8, "Automotive" },
-                    { 10, true, 9, "Pets" },
-                    { 11, true, 10, "Jewelry & Accessories" }
+                    { 1, "Clothing & Apparel" },
+                    { 2, "Electronics" },
+                    { 3, "Home & Kitchen" },
+                    { 4, "Health & Beauty" },
+                    { 5, "Sports & Outdoors" },
+                    { 6, "Books & Media" },
+                    { 7, "Toys & Games" },
+                    { 8, "Automotive" },
+                    { 9, "Pets" },
+                    { 10, "Jewelry & Accessories" }
                 });
 
             migrationBuilder.InsertData(
                 table: "Products",
-                columns: new[] { "Id", "CategoryId", "ImageSource", "Name", "UnitPrice" },
+                columns: new[] { "Id", "DateCreated", "Description", "ImageSource", "Name", "UnitPrice" },
                 values: new object[,]
                 {
-                    { 1, 2, "~/images/OIP.jpg", "T-Shirt", 299.0 },
-                    { 2, 3, "~/images/cellphone.jpg", "Cellphone", 13999.0 },
-                    { 3, 4, "~/images/ec3596459302e2e8e4d586517816a69a.jpg", "Knife", 240.0 },
-                    { 4, 5, "~/images/lotion.jpg", "Lotion", 250.0 },
-                    { 5, 6, "~/images/rubbershoes.jpg", "Rubber Shoes", 5500.0 },
-                    { 6, 7, "~/images/cleancode.jpg", "Clean Code", 2890.0 },
-                    { 7, 8, "~/images/Minecraft.jpg", "Minecraft", 150.0 },
-                    { 8, 9, "~/images/fibrecloth.jpg", "Fibre Cloth", 40.0 },
-                    { 9, 10, "~/images/goatsmilk.jpg", "Goat's Milk", 380.0 },
-                    { 10, 11, "~/images/necklace.jpg", "14K Gold Necklace", 21500.0 }
+                    { 1, new DateTime(2024, 1, 25, 20, 3, 8, 437, DateTimeKind.Local).AddTicks(9323), null, "~/images/OIP.jpg", "T-Shirt", 299.0 },
+                    { 2, new DateTime(2024, 1, 25, 20, 3, 8, 437, DateTimeKind.Local).AddTicks(9330), null, "~/images/cellphone.jpg", "Cellphone", 13999.0 },
+                    { 3, new DateTime(2024, 1, 25, 20, 3, 8, 437, DateTimeKind.Local).AddTicks(9332), null, "~/images/ec3596459302e2e8e4d586517816a69a.jpg", "Knife", 240.0 },
+                    { 4, new DateTime(2024, 1, 25, 20, 3, 8, 437, DateTimeKind.Local).AddTicks(9333), null, "~/images/lotion.jpg", "Lotion", 250.0 },
+                    { 5, new DateTime(2024, 1, 25, 20, 3, 8, 437, DateTimeKind.Local).AddTicks(9336), null, "~/images/rubbershoes.jpg", "Rubber Shoes", 5500.0 },
+                    { 6, new DateTime(2024, 1, 25, 20, 3, 8, 437, DateTimeKind.Local).AddTicks(9338), null, "~/images/cleancode.jpg", "Clean Code", 2890.0 },
+                    { 7, new DateTime(2024, 1, 25, 20, 3, 8, 437, DateTimeKind.Local).AddTicks(9339), null, "~/images/Minecraft.jpg", "Minecraft", 150.0 },
+                    { 8, new DateTime(2024, 1, 25, 20, 3, 8, 437, DateTimeKind.Local).AddTicks(9341), null, "~/images/fibrecloth.jpg", "Fibre Cloth", 40.0 },
+                    { 9, new DateTime(2024, 1, 25, 20, 3, 8, 437, DateTimeKind.Local).AddTicks(9342), null, "~/images/goatsmilk.jpg", "Goat's Milk", 380.0 },
+                    { 10, new DateTime(2024, 1, 25, 20, 3, 8, 437, DateTimeKind.Local).AddTicks(9344), null, "~/images/necklace.jpg", "14K Gold Necklace", 21500.0 }
+                });
+
+            migrationBuilder.InsertData(
+                table: "ProductCategories",
+                columns: new[] { "CategoryId", "ProductId" },
+                values: new object[,]
+                {
+                    { 1, 1 },
+                    { 2, 2 },
+                    { 3, 3 },
+                    { 4, 4 },
+                    { 5, 5 },
+                    { 6, 6 },
+                    { 6, 7 },
+                    { 7, 7 },
+                    { 8, 8 },
+                    { 9, 9 },
+                    { 10, 10 }
                 });
 
             migrationBuilder.CreateIndex(
@@ -269,9 +348,25 @@ namespace EMarket.DataAccess.Migrations
                 filter: "[NormalizedUserName] IS NOT NULL");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Products_CategoryId",
-                table: "Products",
+                name: "IX_Carts_OwnerId",
+                table: "Carts",
+                column: "OwnerId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Carts_ProductId",
+                table: "Carts",
+                column: "ProductId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_ProductCategories_CategoryId",
+                table: "ProductCategories",
                 column: "CategoryId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_ProductCategories_ProductId_CategoryId",
+                table: "ProductCategories",
+                columns: new[] { "ProductId", "CategoryId" },
+                unique: true);
         }
 
         /// <inheritdoc />
@@ -293,7 +388,13 @@ namespace EMarket.DataAccess.Migrations
                 name: "AspNetUserTokens");
 
             migrationBuilder.DropTable(
-                name: "Products");
+                name: "Carts");
+
+            migrationBuilder.DropTable(
+                name: "ProductCategories");
+
+            migrationBuilder.DropTable(
+                name: "Receivers");
 
             migrationBuilder.DropTable(
                 name: "AspNetRoles");
@@ -303,6 +404,9 @@ namespace EMarket.DataAccess.Migrations
 
             migrationBuilder.DropTable(
                 name: "Categories");
+
+            migrationBuilder.DropTable(
+                name: "Products");
         }
     }
 }

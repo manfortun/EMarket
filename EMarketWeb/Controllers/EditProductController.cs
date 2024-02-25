@@ -35,7 +35,7 @@ namespace EMarketWeb.Controllers
             if (!ModelState.IsValid)
             {
                 string jsonString = viewModel.ToJson();
-                return View("Index", new { jsonString });
+                return RedirectToAction("Index", new { jsonString });
             }
 
             Product? product = _dbContext.Products
@@ -59,6 +59,22 @@ namespace EMarketWeb.Controllers
             _dbContext.SaveChanges();
 
             TempData["success"] = "Successfully modified product.";
+            return RedirectToAction("Index", "Home");
+        }
+
+        public IActionResult Delete(EditProductViewModel viewModel)
+        {
+            Product? product = _dbContext.Products.Find(viewModel.Id);
+
+            if (product is null)
+            {
+                return NotFound();
+            }
+
+            _dbContext.Products.Remove(product);
+            _dbContext.SaveChanges();
+
+            TempData["success"] = "Product successfully deleted.";
             return RedirectToAction("Index", "Home");
         }
 
@@ -86,6 +102,8 @@ namespace EMarketWeb.Controllers
             product.Name = viewModel.Name;
             product.ImageSource = viewModel.ImageSource;
             product.UnitPrice = viewModel.UnitPrice;
+            product.Description = viewModel.Description;
+            product.DateCreated = viewModel.DateCreated;
         }
 
         /// <summary>

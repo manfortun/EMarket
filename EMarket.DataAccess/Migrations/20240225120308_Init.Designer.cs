@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace EMarket.DataAccess.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20240223062358_RemoveDisplayFlagProperty")]
-    partial class RemoveDisplayFlagProperty
+    [Migration("20240225120308_Init")]
+    partial class Init
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -63,9 +63,6 @@ namespace EMarket.DataAccess.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
-                    b.Property<int>("DisplayOrder")
-                        .HasColumnType("int");
-
                     b.Property<string>("Name")
                         .IsRequired()
                         .HasMaxLength(100)
@@ -79,61 +76,51 @@ namespace EMarket.DataAccess.Migrations
                         new
                         {
                             Id = 1,
-                            DisplayOrder = 1,
                             Name = "Clothing & Apparel"
                         },
                         new
                         {
                             Id = 2,
-                            DisplayOrder = 2,
                             Name = "Electronics"
                         },
                         new
                         {
                             Id = 3,
-                            DisplayOrder = 3,
                             Name = "Home & Kitchen"
                         },
                         new
                         {
                             Id = 4,
-                            DisplayOrder = 4,
                             Name = "Health & Beauty"
                         },
                         new
                         {
                             Id = 5,
-                            DisplayOrder = 5,
                             Name = "Sports & Outdoors"
                         },
                         new
                         {
                             Id = 6,
-                            DisplayOrder = 6,
                             Name = "Books & Media"
                         },
                         new
                         {
                             Id = 7,
-                            DisplayOrder = 7,
                             Name = "Toys & Games"
                         },
                         new
                         {
                             Id = 8,
-                            DisplayOrder = 8,
                             Name = "Automotive"
                         },
                         new
                         {
                             Id = 9,
-                            DisplayOrder = 9,
                             Name = "Pets"
                         },
                         new
                         {
                             Id = 10,
-                            DisplayOrder = 10,
                             Name = "Jewelry & Accessories"
                         });
                 });
@@ -146,8 +133,14 @@ namespace EMarket.DataAccess.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
+                    b.Property<DateTime>("DateCreated")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("Description")
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
                     b.Property<string>("ImageSource")
-                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Name")
@@ -165,6 +158,7 @@ namespace EMarket.DataAccess.Migrations
                         new
                         {
                             Id = 1,
+                            DateCreated = new DateTime(2024, 1, 25, 20, 3, 8, 437, DateTimeKind.Local).AddTicks(9323),
                             ImageSource = "~/images/OIP.jpg",
                             Name = "T-Shirt",
                             UnitPrice = 299.0
@@ -172,6 +166,7 @@ namespace EMarket.DataAccess.Migrations
                         new
                         {
                             Id = 2,
+                            DateCreated = new DateTime(2024, 1, 25, 20, 3, 8, 437, DateTimeKind.Local).AddTicks(9330),
                             ImageSource = "~/images/cellphone.jpg",
                             Name = "Cellphone",
                             UnitPrice = 13999.0
@@ -179,6 +174,7 @@ namespace EMarket.DataAccess.Migrations
                         new
                         {
                             Id = 3,
+                            DateCreated = new DateTime(2024, 1, 25, 20, 3, 8, 437, DateTimeKind.Local).AddTicks(9332),
                             ImageSource = "~/images/ec3596459302e2e8e4d586517816a69a.jpg",
                             Name = "Knife",
                             UnitPrice = 240.0
@@ -186,6 +182,7 @@ namespace EMarket.DataAccess.Migrations
                         new
                         {
                             Id = 4,
+                            DateCreated = new DateTime(2024, 1, 25, 20, 3, 8, 437, DateTimeKind.Local).AddTicks(9333),
                             ImageSource = "~/images/lotion.jpg",
                             Name = "Lotion",
                             UnitPrice = 250.0
@@ -193,6 +190,7 @@ namespace EMarket.DataAccess.Migrations
                         new
                         {
                             Id = 5,
+                            DateCreated = new DateTime(2024, 1, 25, 20, 3, 8, 437, DateTimeKind.Local).AddTicks(9336),
                             ImageSource = "~/images/rubbershoes.jpg",
                             Name = "Rubber Shoes",
                             UnitPrice = 5500.0
@@ -200,6 +198,7 @@ namespace EMarket.DataAccess.Migrations
                         new
                         {
                             Id = 6,
+                            DateCreated = new DateTime(2024, 1, 25, 20, 3, 8, 437, DateTimeKind.Local).AddTicks(9338),
                             ImageSource = "~/images/cleancode.jpg",
                             Name = "Clean Code",
                             UnitPrice = 2890.0
@@ -207,6 +206,7 @@ namespace EMarket.DataAccess.Migrations
                         new
                         {
                             Id = 7,
+                            DateCreated = new DateTime(2024, 1, 25, 20, 3, 8, 437, DateTimeKind.Local).AddTicks(9339),
                             ImageSource = "~/images/Minecraft.jpg",
                             Name = "Minecraft",
                             UnitPrice = 150.0
@@ -214,6 +214,7 @@ namespace EMarket.DataAccess.Migrations
                         new
                         {
                             Id = 8,
+                            DateCreated = new DateTime(2024, 1, 25, 20, 3, 8, 437, DateTimeKind.Local).AddTicks(9341),
                             ImageSource = "~/images/fibrecloth.jpg",
                             Name = "Fibre Cloth",
                             UnitPrice = 40.0
@@ -221,6 +222,7 @@ namespace EMarket.DataAccess.Migrations
                         new
                         {
                             Id = 9,
+                            DateCreated = new DateTime(2024, 1, 25, 20, 3, 8, 437, DateTimeKind.Local).AddTicks(9342),
                             ImageSource = "~/images/goatsmilk.jpg",
                             Name = "Goat's Milk",
                             UnitPrice = 380.0
@@ -228,6 +230,7 @@ namespace EMarket.DataAccess.Migrations
                         new
                         {
                             Id = 10,
+                            DateCreated = new DateTime(2024, 1, 25, 20, 3, 8, 437, DateTimeKind.Local).AddTicks(9344),
                             ImageSource = "~/images/necklace.jpg",
                             Name = "14K Gold Necklace",
                             UnitPrice = 21500.0

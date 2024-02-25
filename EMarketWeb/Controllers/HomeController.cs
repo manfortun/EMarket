@@ -122,19 +122,16 @@ public class HomeController : Controller
             return NotFound();
         }
 
-        var viewModel = new EditProductViewModel
-        {
-            Name = product.Name,
-            UnitPrice = product.UnitPrice,
-            ImageSource = product.ImageSource,
-            Id = itemId,
-        };
-
-        viewModel.SetCategories(product.Category.Select(c => c.CategoryId).ToArray());
+        var viewModel = EditProductViewModel.Convert(product);
 
         string jsonString = viewModel.ToJson();
 
         return RedirectToAction("Index", "EditProduct", new { jsonString });
+    }
+
+    public IActionResult AddProduct()
+    {
+        return RedirectToAction("Index", "AddProduct");
     }
 
     [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
