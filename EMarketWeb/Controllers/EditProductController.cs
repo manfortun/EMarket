@@ -1,77 +1,59 @@
 ﻿using EMarket.DataAccess.Data;
 using EMarket.Models;
+using EMarket.Models.ViewModels;
 using EMarket.Utility;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 
 namespace EMarketWeb.Controllers
 {
     public class EditProductController : Controller
     {
-        private ILogger<HomeController> _logger;
         private ApplicationDbContext _dbContext;
         private UserManager<IdentityUser> _userManager;
-        private static HashSet<int> _productCategories = default!;
-        private string? _searchKey = default!;
 
         public EditProductController(
-        ILogger<HomeController> logger,
         ApplicationDbContext dbContext,
         UserManager<IdentityUser> userManager)
         {
-            _logger = logger;
             _dbContext = dbContext;
             _userManager = userManager;
         }
 
-        public IActionResult Index(int itemId, bool initial = true)
+        public IActionResult Index(string jsonString)
         {
-            Product? product = _dbContext.Products.Find(itemId);
+            var viewModel = jsonString.FromJson<EditProductViewModel>();
 
-            if (product is null)
-            {
-                return BadRequest();
-            }
+            ViewBag.Categories = _dbContext.Categories.ToList();
 
-            if (initial)
-            {
-                _productCategories = default!;
-            }
-
-            if (_productCategories is null)
-            {
-                _productCategories = product
-                    .GetCategoriesArray()
-                    .Select(x => x.Id)
-                    .ToHashSet();
-            }
-
-            SendToView(nameof(_productCategories), _productCategories.ToArray());
-
-            ViewBag.Categories = _dbContext.Categories
-                .OrderByDescending(x => _productCategories.Contains(x.Id))
-                .ThenBy(x => x.Name)
-                .ToList();
-
-            return View(product);
+            return View(viewModel);
         }
 
-        public IActionResult Submit(Product product)
+        public IActionResult Submit(EditProductViewModel viewModel)
         {
             if (!ModelState.IsValid)
             {
-                return View(product.Id);
+                string jsonString = viewModel.ToJson();
+                return View("Index", new { jsonString });
             }
 
-            var oldProductCategories = _dbContext.ProductCategories
-                .Where(pc => pc.ProductId == product.Id)
-                .ToList();
-            var newProductCategories = _productCategories
-                .Select(pc => new ProductCategory { ProductId = product.Id, CategoryId = pc})
-                .ToList();
+            Product? product = _dbContext.Products
+                .Include(p => p.Category)
+                .FirstOrDefault(p => p.Id == viewModel.Id);
 
-            _dbContext.ProductCategories.RemoveRange(oldProductCategories);
-            _dbContext.ProductCategories.AddRange(newProductCategories);
+            if (product is null)
+            {
+                return NotFound();
+            }
+
+            UpdateProductFromViewModel(viewModel, product);
+            
+            if (HasNewCategories(viewModel, product, out var newCategories))
+            {
+                _dbContext.ProductCategories.RemoveRange(product.Category);
+                _dbContext.ProductCategories.AddRange(newCategories);
+            }
 
             _dbContext.Update(product);
             _dbContext.SaveChanges();
@@ -80,35 +62,51 @@ namespace EMarketWeb.Controllers
             return RedirectToAction("Index", "Home");
         }
 
-        public IActionResult ModifyCategory(int itemId, int categoryId)
+        [HttpPost]
+        public IActionResult ModifyCategory(EditProductViewModel viewModel)
         {
-            Product? product = _dbContext.Products.Find(itemId);
-
-            if (product is null)
+            if (viewModel.NumberParameter is null)
             {
                 return BadRequest();
             }
 
-            if (_productCategories is null)
-            {
-                return BadRequest();
-            }
+            viewModel.ToggleCategory((int)viewModel.NumberParameter);
 
-            ProductCategory? productCategory = product.Category.FirstOrDefault(pc => pc.CategoryId == categoryId);
-
-            if (!_productCategories.Add(categoryId))
-            {
-                _productCategories.Remove(categoryId);
-            }
-
-            SendToView(nameof(_productCategories), _productCategories.ToArray());
-
-            return RedirectToAction("Index", new { itemId = itemId, initial = false });
+            string jsonString = viewModel.ToJson();
+            return RedirectToAction("Index", new { jsonString });
         }
 
         private void SendToView<T>(string key, T value)
         {
             TempData[key] = value;
+        }
+
+        private void UpdateProductFromViewModel(EditProductViewModel viewModel, Product product)
+        {
+            product.Name = viewModel.Name;
+            product.ImageSource = viewModel.ImageSource;
+            product.UnitPrice = viewModel.UnitPrice;
+        }
+
+        private bool HasNewCategories(EditProductViewModel viewModel, Product product, out List<ProductCategory> newCategories)
+        {
+            newCategories = new List<ProductCategory>();
+
+            var oldCategoryList = product.Category.Select(c => c.CategoryId).ToArray();
+            var newCategoryList = viewModel.GetCategories();
+
+            bool hasChanges = oldCategoryList.Except(newCategoryList).Any();
+
+            if (hasChanges && newCategoryList?.Any() == true)
+            {
+                newCategories = newCategoryList.Select(c => new ProductCategory
+                {
+                    ProductId = viewModel.Id,
+                    CategoryId = c
+                }).ToList();
+            }
+
+            return hasChanges;
         }
     }
 }

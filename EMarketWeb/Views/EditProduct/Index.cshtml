@@ -1,21 +1,19 @@
-﻿@model Product
+﻿@model EditProductViewModel
 
 @{
     ViewData["Title"] = "Edit Product";
-    List<int> productCategoryIds = Model.GetCategoriesArray().Select(x => x.Id).ToList();
-    int[] data = (int[])(TempData["_productCategories"] ?? new int[0]);
-    HashSet<int> test = new HashSet<int>();
 }
 
 <div class="container col-md-6 col-lg-5 mt-3">
-    <form class="border p-3" method="post">
+    <form class="border p-3" method="post" asp-action="modifycategory" id="categoryForm">
         <div class="mx-auto d-block" style="height: 200px; width: 200px;">
             <img title="@Model.Name" class="card-img" style="max-height: 100%; max-width: 100%; object-fit: cover;" src="@(string.IsNullOrEmpty(Model.ImageSource) ? "~/images/no-image.jpg" : Model.ImageSource)" asp-append-version="true" />
         </div>
 
-        <input asp-for="Id" class="d-none" />
-        <input asp-for="ImageSource" class="d-none" />
-        <input asp-for="Category" class="d-none" />
+        <input asp-for="Id" hidden />
+        <input asp-for="ImageSource" hidden />
+        <input asp-for="CategoriesStringed" hidden />
+        <input asp-for="NumberParameter" id="numberParameter" value="0" hidden />
         <div class="form-floating mb-3">
             <input asp-for="Name" class="form-control" />
             <label asp-for="Name"></label>
@@ -26,18 +24,17 @@
             <label asp-for="UnitPrice"></label>
         </div>
 
-        <label asp-for="Category">Categories</label>
+        <label asp-for="CategoriesStringed">Categories</label>
 
         <div class="input-group mb-3" style="width: 100%">
             <div class="d-flex border flex-wrap">
                 @foreach (Category category in ViewBag.Categories)
                 {
-                    bool isExist = data.Contains(category.Id);
+                    bool isExist = Model.HasCategory(category.Id);
                     string color = isExist ? "bg-success" : "bg-light";
                     string icon = isExist ? "bi-check-lg" : "bi-x-lg";
 
-                    bool isChecked = productCategoryIds.Contains(category.Id);
-                    <a asp-action="ModifyCategory" asp-route-itemId="@Model.Id" asp-route-categoryId="@category.Id" style="text-decoration: none">
+                    <a type="button" class="submit-button" data-value="@category.Id">
                         <span class="badge rounded-pill p-2 m-2 me-0 form-group @(color)" style="cursor: pointer">
                             <i class="bi @(icon)"></i>
                             <span class="me-2 ms-2">@category.Name</span>
@@ -48,13 +45,22 @@
         </div>
 
         <div class="d-grid gap-2 d-md-flex justify-content-md-end">
-            <button class="btn btn-primary ml-md-auto ps-5 pe-5" type="submit" asp-action="Submit">Save</button>
+            <button class="btn btn-primary ml-md-auto ps-5 pe-5" asp-action="Submit" type="submit">Save</button>
         </div>
     </form>
 </div>
 
 @section Scripts {
     @{
-        <partial name="_ValidationScriptsPartial" />
+            <partial name="_ValidationScriptsPartial" />
     }
+    <script>
+        document.querySelectorAll('.submit-button').forEach(button => {
+            button.addEventListener('click', function () {
+                const value = this.getAttribute('data-value');
+                document.getElementById('numberParameter').value = value;
+                document.getElementById('categoryForm').submit();
+            })
+        })
+    </script>
 }

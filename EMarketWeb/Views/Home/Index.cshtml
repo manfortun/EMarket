@@ -54,7 +54,7 @@
                 {
                     <div class="card me-lg-3 mt-2 mb-2 me-2 ms-lg-0 ms-2" style="width: 200px">
 
-                        <a asp-controller="EditProduct" asp-route-itemId="@product.Id" style="text-decoration: none">
+                        <a asp-action="Edit" asp-route-itemId="@product.Id" style="text-decoration: none">
                             <div class="card-body text-center">
                                 <div style="height: 150px">
                                     <img class="card-img" style="height: inherit;object-fit:cover" src="@(string.IsNullOrEmpty(product.ImageSource) ? "~/images/no-image.jpg" : product.ImageSource)" asp-append-version="true"/>

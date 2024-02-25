@@ -19,7 +19,7 @@
     <div class="row d-flex flex-column-reverse flex-lg-row">
         @if (Model.HasPurchases())
         {
-            <form class="col border p-3 d-flex flex-column" method="get">
+            <form class="col border p-3 d-flex flex-column" method="post">
                 <div class="justify-content-center align-items-center flex-grow-1">
                     <h2 class="mb-2">Checkout.</h2>
                     <p class="text-uppercase">Shipping details</p>
@@ -51,7 +51,7 @@
                         </div>
                     </div>
                 </div>
-                <button type="submit" class="btn btn-warning" asp-action="Checkout" asp-route-receiver="@Model.Receiver">Purchase Php @totalCheckout.ToString(FORMAT)</button>
+                <button type="submit" class="btn btn-warning" asp-action="checkout" asp-route-receiver="@Model.Receiver">Purchase Php @totalCheckout.ToString(FORMAT)</button>
             </form>
         }
 

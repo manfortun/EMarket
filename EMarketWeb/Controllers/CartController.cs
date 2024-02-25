@@ -25,28 +25,26 @@ namespace EMarketWeb.Controllers
             return View(checkoutModel);
         }
 
-        public async Task<IActionResult> Checkout(Receiver receiver)
+        public IActionResult Checkout(Receiver receiver)
         {
-            if (ModelState.IsValid)
+            if (!ModelState.IsValid)
             {
-                try
-                {
-                    ClearCart();
-                    _dbContext.Receivers.Add(receiver);
-                    _dbContext.SaveChanges();
-                    TempData["success"] = "Successfully checked out your cart!";
-                }
-                catch
-                {
-                    return BadRequest();
-                }
-
-                return RedirectToAction("Index", "Home");
+                return RedirectToAction("Index");
             }
 
-            Checkout? checkoutModel = await GetCheckoutModelAsync();
+            try
+            {
+                ClearCart();
+                _dbContext.Receivers.Add(receiver);
+                _dbContext.SaveChanges();
+                TempData["success"] = "Successfully checked out your cart!";
+            }
+            catch
+            {
+                return BadRequest();
+            }
 
-            return checkoutModel is not null ? View("Index", checkoutModel) : BadRequest();
+            return RedirectToAction("Index", "Home");
         }
 
         private IEnumerable<Cart> GetUserCart(string userId)

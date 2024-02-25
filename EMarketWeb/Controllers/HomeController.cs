@@ -1,5 +1,6 @@
 using EMarket.DataAccess.Data;
 using EMarket.Models;
+using EMarket.Models.ViewModels;
 using EMarket.Utility;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
@@ -107,6 +108,30 @@ public class HomeController : Controller
         SetCartCountOfUser(userId);
 
         return RedirectToAction("Index");
+    }
+
+    public IActionResult Edit(int itemId)
+    {
+        Product? product = _dbContext.Products.Find(itemId);
+
+        if (product is null)
+        {
+            return NotFound();
+        }
+
+        var viewModel = new EditProductViewModel
+        {
+            Name = product.Name,
+            UnitPrice = product.UnitPrice,
+            ImageSource = product.ImageSource,
+            Id = itemId,
+        };
+
+        viewModel.SetCategories(product.Category.Select(c => c.CategoryId).ToArray());
+
+        string jsonString = viewModel.ToJson();
+
+        return RedirectToAction("Index", "EditProduct", new { jsonString });
     }
 
     [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
