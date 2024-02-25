@@ -95,7 +95,8 @@ namespace EMarketWeb.Controllers
             var oldCategoryList = product.Category.Select(c => c.CategoryId).ToArray();
             var newCategoryList = viewModel.GetCategories();
 
-            bool hasChanges = oldCategoryList.Except(newCategoryList).Any();
+            bool hasChanges = oldCategoryList.Length != newCategoryList.Length ||
+                oldCategoryList.Except(newCategoryList).Any();
 
             if (hasChanges && newCategoryList?.Any() == true)
             {

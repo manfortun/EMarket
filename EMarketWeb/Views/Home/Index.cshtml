@@ -26,7 +26,8 @@
             <fieldset class="form-group p-2">
                 <legend>Category</legend>
                 @foreach (var category in ((List<Category>)ViewBag.Categories)
-                    .OrderBy(m => m.Name))
+                    .OrderBy(m => m.Id < 0)
+                    .ThenBy(m => m.Name))
                 {
                     bool isChecked = categoriesInDisplay.Contains(category.Id);
 

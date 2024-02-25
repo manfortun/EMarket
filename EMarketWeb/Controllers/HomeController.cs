@@ -33,9 +33,14 @@ public class HomeController : Controller
 
         int[]? categoriesInDisplay = GetSessionObject<int[]>("categoriesInDisplay");
 
+        List<Category> allCategoryList = _dbContext.Categories.ToList();
+        allCategoryList.Add(CategoryExtension.GetUncategorizedCategory());
+
+        ViewBag.Categories = allCategoryList;
+
         if (categoriesInDisplay is null)
         {
-            categoriesInDisplay = _dbContext.Categories.Select(c => c.Id).ToArray();
+            categoriesInDisplay = allCategoryList.Select(c => c.Id).ToArray();
         }
 
         var displayedProducts = _dbContext.Products?.ToList()
@@ -44,8 +49,6 @@ public class HomeController : Controller
 
         SetSessionObject("categoriesInDisplay", categoriesInDisplay);
         SendToView("categoriesInDisplay", categoriesInDisplay);
-
-        ViewBag.Categories = _dbContext.Categories.ToList();
 
         return View(displayedProducts);
     }

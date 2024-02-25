@@ -4,6 +4,7 @@ namespace EMarket.Utility;
 
 public static class ProductExtension
 {
+
     public static string GetCategoriesFormattedString(this Product product)
     {
         string[] categoryNames = product
@@ -11,18 +12,16 @@ public static class ProductExtension
             .Select(c => c.Name)
             .ToArray();
 
-        if (categoryNames.Length < 1 )
-        {
-            return "Uncategorized";
-        }
-        else
-        {
-            return string.Join(", ", product.Category.Select(c => c.Category.Name).ToArray());
-        }
+        return string.Join(", ", categoryNames);
     }
 
     public static Category[] GetCategoriesArray(this Product product)
     {
+        if (product.Category is null || product.Category.Count < 1)
+        {
+            return [ CategoryExtension.GetUncategorizedCategory() ]; 
+        }
+
         return product.Category.Select(c => c.Category).ToArray();
     }
 }
