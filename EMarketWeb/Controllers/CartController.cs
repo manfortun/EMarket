@@ -47,12 +47,21 @@ namespace EMarketWeb.Controllers
             return RedirectToAction("Index", "Home");
         }
 
+        /// <summary>
+        /// Get the user's cart from database
+        /// </summary>
+        /// <param name="userId">ID of the user</param>
+        /// <returns>IEnumerable<Cart> of user</returns>
         private IEnumerable<Cart> GetUserCart(string userId)
         {
             IEnumerable<Cart> carts = _dbContext.Carts.Where(c => c.OwnerId == userId).ToList() ?? [];
             return carts;
         }
 
+        /// <summary>
+        /// Removes the record of the cart from database
+        /// </summary>
+        /// <exception cref="InvalidProgramException"></exception>
         private async void ClearCart()
         {
             Checkout? checkoutModel = await GetCheckoutModelAsync();
@@ -65,6 +74,10 @@ namespace EMarketWeb.Controllers
             _dbContext.Carts.RemoveRange(checkoutModel.Purchases);
         }
 
+        /// <summary>
+        /// Creates a Checkout model of the current logged in user
+        /// </summary>
+        /// <returns>Checkout model of the user</returns>
         private async Task<Checkout?> GetCheckoutModelAsync()
         {
             IdentityUser? user = await _userManager.GetUserAsync(User);

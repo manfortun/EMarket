@@ -76,6 +76,11 @@ namespace EMarketWeb.Controllers
             return RedirectToAction("Index", new { jsonString });
         }
 
+        /// <summary>
+        /// Updates the product based on the new information from the ViewModel
+        /// </summary>
+        /// <param name="viewModel">The ViewModel with the updated properties</param>
+        /// <param name="product">The product to update</param>
         private void UpdateProductFromViewModel(EditProductViewModel viewModel, Product product)
         {
             product.Name = viewModel.Name;
@@ -83,6 +88,13 @@ namespace EMarketWeb.Controllers
             product.UnitPrice = viewModel.UnitPrice;
         }
 
+        /// <summary>
+        /// Checks if it is necessary to update the category records of a product in the database
+        /// </summary>
+        /// <param name="viewModel">The model in the view layer</param>
+        /// <param name="product">The original model from the database</param>
+        /// <param name="newCategories">The new category list of the product</param>
+        /// <returns>True if there are changes in categories. Otherwise, false</returns>
         private bool HasNewCategories(EditProductViewModel viewModel, Product product, out List<ProductCategory> newCategories)
         {
             newCategories = new List<ProductCategory>();

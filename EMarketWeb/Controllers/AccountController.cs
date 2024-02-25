@@ -53,6 +53,11 @@ namespace EMarketWeb.Controllers
             return RedirectToAction("Login", "Account");
         }
 
+        /// <summary>
+        /// Attempts to sign in using credentials
+        /// </summary>
+        /// <param name="credentials">Login credentials</param>
+        /// <returns>SignInResult of the attempt</returns>
         private async Task<SignInResult> TrySignInAsync(LoginCredentials credentials)
         {
             return await _signInManager.PasswordSignInAsync(

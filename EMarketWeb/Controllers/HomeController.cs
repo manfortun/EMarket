@@ -48,7 +48,7 @@ public class HomeController : Controller
             (categoriesInDisplay?.Intersect(x.GetCategoriesArray().Select(y => y.Id)).Any() ?? true)) ?? [];
 
         SetSessionObject("categoriesInDisplay", categoriesInDisplay);
-        SendToView("categoriesInDisplay", categoriesInDisplay);
+        TempData["categoriesInDisplay"] = categoriesInDisplay;
 
         return View(displayedProducts);
     }
@@ -143,6 +143,12 @@ public class HomeController : Controller
         return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
     }
 
+    /// <summary>
+    /// Checks if a product passes a search key
+    /// </summary>
+    /// <param name="product">Product to check</param>
+    /// <param name="searchKey">Search key</param>
+    /// <returns>True if the product passes the search key. Otherwise, false</returns>
     private bool SearchPredicate(Product product, string? searchKey)
     {
         if (string.IsNullOrEmpty(searchKey)) return true;
@@ -157,6 +163,10 @@ public class HomeController : Controller
             categories.Any(c => c.Name.Contains(searchKey, StringComparison.OrdinalIgnoreCase));
     }
 
+    /// <summary>
+    /// Sets the number of items in the cart in the navbar
+    /// </summary>
+    /// <param name="userId"></param>
     private void SetCartCountOfUser(string userId)
     {
         ViewData["cartcount"] = _dbContext.Carts
@@ -164,11 +174,23 @@ public class HomeController : Controller
             .Sum(cart => cart.Quantity);
     }
 
+    /// <summary>
+    /// Sets the object to the session data
+    /// </summary>
+    /// <typeparam name="T">Data type of the object to store</typeparam>
+    /// <param name="key">Key of the object to store</param>
+    /// <param name="value">The object to store</param>
     private void SetSessionObject<T>(string key, T value)
     {
         HttpContext.Session.SetString(key, JsonConvert.SerializeObject(value));
     }
 
+    /// <summary>
+    /// Obtains an object from the session data
+    /// </summary>
+    /// <typeparam name="T">Type of the object to get</typeparam>
+    /// <param name="key">Key of the object stored</param>
+    /// <returns>The object stored from the session</returns>
     private T? GetSessionObject<T>(string key)
     {
         ISession session = HttpContext.Session;
@@ -177,13 +199,11 @@ public class HomeController : Controller
         return JsonConvert.DeserializeObject<T>(value);
     }
 
+    /// <summary>
+    /// Clears the current session
+    /// </summary>
     private void ClearSession()
     {
         HttpContext.Session.Clear();
-    }
-
-    private void SendToView<T>(string key, T value)
-    {
-        TempData[key] = value;
     }
 }
