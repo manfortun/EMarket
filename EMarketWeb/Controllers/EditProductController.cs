@@ -76,11 +76,6 @@ namespace EMarketWeb.Controllers
             return RedirectToAction("Index", new { jsonString });
         }
 
-        private void SendToView<T>(string key, T value)
-        {
-            TempData[key] = value;
-        }
-
         private void UpdateProductFromViewModel(EditProductViewModel viewModel, Product product)
         {
             product.Name = viewModel.Name;

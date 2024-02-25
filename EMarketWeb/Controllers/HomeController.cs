@@ -182,11 +182,6 @@ public class HomeController : Controller
         HttpContext.Session.Clear();
     }
 
-    private void RemoveSessionObject(string key)
-    {
-        HttpContext.Session.Remove(key);
-    }
-
     private void SendToView<T>(string key, T value)
     {
         TempData[key] = value;
