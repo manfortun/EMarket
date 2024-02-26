@@ -1,10 +1,9 @@
-﻿@model IEnumerable<Product>
-
+﻿@using EMarketWeb.Services
 @{
     ViewData["Title"] = "Home Page";
-    int[] categoriesInDisplay = (int[])(TempData["categoriesInDisplay"] ?? new int[0]);
+    PageInfo<Product> pageInfo = ViewBag.PageInfo;
+    CategoryFilterService categoryFilter = ViewBag.CategoryFilter;
 }
-
 
 <div class="bg-primary container-fluid p-2 pt-3 p-lg-5 mb-3">
     <div class="container-fluid">
@@ -12,7 +11,6 @@
         <h1 class="text-light">EMarket <i class="bi bi-shop"></i></h1>
     </div>
 </div>
-
 
 <div class="row container-fluid p-lg-5">
     <div class="col-lg-3">
@@ -25,15 +23,13 @@
         <div class="container-sm w-auto d-none d-lg-block">
             <fieldset class="form-group p-2">
                 <legend>Category</legend>
-                @foreach (var category in ((List<Category>)ViewBag.Categories)
+                @foreach (var category in categoryFilter.Categories
                     .OrderBy(m => m.Id < 0)
                     .ThenBy(m => m.Name))
                 {
-                    bool isChecked = categoriesInDisplay.Contains(category.Id);
-
                     <form method="post" asp-action="oncategoryticked" asp-route-categoryId="@category.Id">
                         <div class="form-check ms-3 ms-lg-0">
-                            <input class="form-check-input" type="checkbox" id="@category.Id" onchange="this.form.submit()" @(isChecked ? "checked" : "")/>
+                            <input class="form-check-input" type="checkbox" id="@category.Id" onchange="this.form.submit()" @(categoryFilter.IsDisplayed(category.Id) ? "checked" : "")/>
                             <label class="form-check-label" for="@category.Id">
                                 @category.Name
                             </label>
@@ -44,7 +40,7 @@
         </div>
     </div>
     <div class="col">
-        @if (Model is null || Model.Count() < 1)
+        @if (!pageInfo.ActiveItems.Any())
         {
             <h6>There are no products listed. Try again later.</h6>
         }
@@ -53,22 +49,22 @@
             <div>
                 <ul class="pagination pagination-sm">
                     <li class="page-item">
-                        <a class="page-link" asp-action="Navigate" asp-route-pageNo="@(ViewBag.CurrentPage - 1)">&laquo;</a>
+                        <a class="page-link" asp-action="Navigate" asp-route-pageNo="@(pageInfo.ActivePage - 1)">&laquo;</a>
                     </li>
-                    @foreach (var pageNo in Enumerable.Range(1, (int)ViewBag.NoOfPages))
+                    @foreach (var pageNo in Enumerable.Range(1, pageInfo.NoOfPages))
                     {
                         <li class="page-item">
-                            <a class="page-link @(ViewBag.CurrentPage == pageNo ? "active" : "")" asp-action="Navigate" asp-route-pageNo="@pageNo">@pageNo</a>
+                            <a class="page-link @(pageInfo.ActivePage == pageNo ? "active" : "")" asp-action="Navigate" asp-route-pageNo="@pageNo">@pageNo</a>
                         </li>
                     }
                     <li class="page-item">
-                        <a class="page-link" asp-action="Navigate" asp-route-pageNo="@(ViewBag.CurrentPage + 1)">&raquo;</a>
+                        <a class="page-link" asp-action="Navigate" asp-route-pageNo="@(pageInfo.ActivePage + 1)">&raquo;</a>
                     </li>
                 </ul>
             </div>
 
             <div class="card-deck d-flex flex-wrap justify-content-center justify-content-lg-start">
-                @foreach (Product product in Model)
+                @foreach (Product product in pageInfo.ActiveItems)
                 {
                     <div class="card me-lg-3 mt-2 mb-2 me-2 ms-lg-0 ms-2 position-relative" style="width: 200px; min-height: 200px" title="@product.Description">
 

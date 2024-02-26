@@ -1,4 +1,5 @@
 ﻿using EMarket.Models;
+using EMarketWeb.Services.Interfaces;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
@@ -10,10 +11,14 @@ namespace EMarketWeb.Controllers
     public class AccountController : Controller
     {
         private SignInManager<IdentityUser> _signInManager;
+        private IUserCache _userService;
 
-        public AccountController(SignInManager<IdentityUser> signInManager)
+        public AccountController(
+            SignInManager<IdentityUser> signInManager,
+            IUserCache userService)
         {
             _signInManager = signInManager;
+            _userService = userService;
         }
 
         [HttpGet]
@@ -48,7 +53,7 @@ namespace EMarketWeb.Controllers
         {
             await _signInManager.SignOutAsync();
 
-            HttpContext.Session.Clear();
+            _userService.ClearUserCache();
 
             return RedirectToAction("Login", "Account");
         }

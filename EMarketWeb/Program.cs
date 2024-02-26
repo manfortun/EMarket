@@ -33,6 +33,7 @@ builder.Services.AddIdentity<IdentityUser, IdentityRole>(options =>
 
 builder.Services.AddTransient<UserValidator<IdentityUser>>();
 builder.Services.AddTransient<IImageService, WebRootImageService>();
+builder.Services.AddSingleton<IUserCache, UserCache>();
 
 builder.Services.AddMvc(options =>
 {

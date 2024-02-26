@@ -2,74 +2,61 @@ using EMarket.DataAccess.Data;
 using EMarket.Models;
 using EMarket.Models.ViewModels;
 using EMarket.Utility;
+using EMarketWeb.Services;
+using EMarketWeb.Services.Interfaces;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
-using Newtonsoft.Json;
 using System.Diagnostics;
+using System.Security.Claims;
 
 namespace EMarketWeb.Controllers;
 
 public class HomeController : Controller
 {
-    private const int NO_OF_PRODUCTS_IN_PAGE = 11;
     private readonly ILogger<HomeController> _logger;
     private readonly ApplicationDbContext _dbContext;
     private readonly UserManager<IdentityUser> _userManager;
+    private static readonly PageInfo<Product> _pageInfo = new(noOfItemsPerPage: 11);
+    private readonly ICategoryFilterService _categoryFilter = default!;
     private static string? _searchKey = default!;
-    private static int _currentPage = 1;
-    private static int _noOfPages = 0;
 
     public HomeController(
         ILogger<HomeController> logger,
         ApplicationDbContext dbContext,
-        UserManager<IdentityUser> userManager)
+        UserManager<IdentityUser> userManager,
+        IUserCache userCache)
     {
         _logger = logger;
         _dbContext = dbContext;
         _userManager = userManager;
+        _categoryFilter = userCache.Get<CategoryFilterService>();
     }
 
     public async Task<IActionResult> Index()
     {
-        string userId = await _userManager.GetUserIdAsync(User);
-        SetCartCountOfUser(userId);
+        await InitCartCountOfUserAsync(User);
 
-        List<Category> allCategoryList = _dbContext.Categories.ToList();
-        allCategoryList.Add(CategoryExtension.GetUncategorizedCategory());
-
-        ViewBag.Categories = allCategoryList;
-
-        int[]? filteredCategories = GetSessionObject<int[]>("categoriesInDisplay");
-
-        if (filteredCategories is null)
+        if (!_categoryFilter.IsCategoriesSet)
         {
-            filteredCategories = allCategoryList.Select(c => c.Id).ToArray();
+            _categoryFilter.SetCategories(GetExtendedCategoriesList());
         }
 
-        var filteredProducts = GetFilteredProducts(filteredCategories);
-        var productsToDisplay = filteredProducts.GoToPage(_currentPage, NO_OF_PRODUCTS_IN_PAGE, out _currentPage);
+        int[] selectedCategories = _categoryFilter.GetSelectedCategories();
 
-        SetSessionObject("categoriesInDisplay", filteredCategories);
-        TempData["categoriesInDisplay"] = filteredCategories;
-        ViewBag.NoOfPages = _noOfPages = filteredProducts.GetMaxNoOfPages(NO_OF_PRODUCTS_IN_PAGE);
-        ViewBag.CurrentPage = _currentPage;
+        var filteredProducts = _dbContext.Products.ToList()
+            .AddFilter(_searchKey)
+            .AddFilter(selectedCategories);
 
-        return View(productsToDisplay);
-    }
+        _pageInfo.RefreshNoOfPages(filteredProducts);
 
-    private IEnumerable<Product> GetFilteredProducts(int[] filteredCategories)
-    {
-        // filter based on search key and checked categories
-        var filteredProducts = _dbContext.Products?.ToList()
-            .Where(x => SearchPredicate(x, _searchKey) &&
-            (filteredCategories?.Intersect(x.GetCategoryIdsArray()).Any() ?? true)) ?? [];
+        ViewBag.PageInfo = _pageInfo;
+        ViewBag.CategoryFilter = _categoryFilter;
 
-        return filteredProducts ?? [];
+        return View();
     }
 
     public IActionResult Privacy()
     {
-        ClearSession();
         return View();
     }
 
@@ -82,19 +69,7 @@ public class HomeController : Controller
 
     public IActionResult OnCategoryTicked(int categoryId)
     {
-        int[]? categoriesInDisplay = GetSessionObject<int[]>("categoriesInDisplay");
-        List<int> tempCategoriesInDisplayList = categoriesInDisplay?.ToList() ?? [];
-
-        if (tempCategoriesInDisplayList.Contains(categoryId))
-        {
-            tempCategoriesInDisplayList.Remove(categoryId);
-        }
-        else
-        {
-            tempCategoriesInDisplayList.Add(categoryId);
-        }
-
-        SetSessionObject("categoriesInDisplay", tempCategoriesInDisplayList.ToArray());
+        _categoryFilter.Toggle(categoryId);
 
         return RedirectToAction("Index");
     }
@@ -102,7 +77,6 @@ public class HomeController : Controller
     [HttpGet]
     public async Task<IActionResult> AddToCart(int productId)
     {
-        ClearSession();
         string userId = await _userManager.GetUserIdAsync(User);
         if (string.IsNullOrEmpty(userId)) return BadRequest();
 
@@ -122,7 +96,7 @@ public class HomeController : Controller
         cart.Quantity++;
         _dbContext.SaveChanges();
 
-        SetCartCountOfUser(userId);
+        InitCartCountOfUser(userId);
 
         return RedirectToAction("Index");
     }
@@ -150,16 +124,8 @@ public class HomeController : Controller
 
     public IActionResult Navigate(int pageNo)
     {
-        if (pageNo < 1)
-        {
-            pageNo = 1;
-        }
-        else if (pageNo > _noOfPages)
-        {
-            pageNo = _noOfPages;
-        }
+        _pageInfo.GoToPage(pageNo);
 
-        _currentPage = pageNo;
         return RedirectToAction("Index");
     }
 
@@ -170,30 +136,23 @@ public class HomeController : Controller
     }
 
     /// <summary>
-    /// Checks if a product passes a search key
+    /// Obtains all available categories including the 'Uncategorized' category
     /// </summary>
-    /// <param name="product">Product to check</param>
-    /// <param name="searchKey">Search key</param>
-    /// <returns>True if the product passes the search key. Otherwise, false</returns>
-    private bool SearchPredicate(Product product, string? searchKey)
+    /// <returns></returns>
+    private List<Category> GetExtendedCategoriesList()
     {
-        if (string.IsNullOrEmpty(searchKey)) return true;
+        var categoryListFromDb = _dbContext.Categories.ToList();
+        // the 'Uncategorized' category is added to the list
+        categoryListFromDb.Add(CategoryExtension.GetUncategorizedCategory());
 
-        var categoryIds = _dbContext.ProductCategories
-            .Where(pc => pc.ProductId == product.Id)
-            .Select(pc => pc.CategoryId);
-
-        var categories = _dbContext.Categories.Where(c => categoryIds.Contains(c.Id)).ToList();
-
-        return product.Name.Contains(searchKey, StringComparison.OrdinalIgnoreCase) ||
-            categories.Any(c => c.Name.Contains(searchKey, StringComparison.OrdinalIgnoreCase));
+        return categoryListFromDb;
     }
 
     /// <summary>
     /// Sets the number of items in the cart in the navbar
     /// </summary>
     /// <param name="userId"></param>
-    private void SetCartCountOfUser(string userId)
+    private void InitCartCountOfUser(string userId)
     {
         ViewData["cartcount"] = _dbContext.Carts
             .Where(user => user.OwnerId == userId)
@@ -201,35 +160,13 @@ public class HomeController : Controller
     }
 
     /// <summary>
-    /// Sets the object to the session data
+    /// Sets the number of items in the cart in the navbar
     /// </summary>
-    /// <typeparam name="T">Data type of the object to store</typeparam>
-    /// <param name="key">Key of the object to store</param>
-    /// <param name="value">The object to store</param>
-    private void SetSessionObject<T>(string key, T value)
+    /// <param name="userId"></param>
+    private async Task InitCartCountOfUserAsync(ClaimsPrincipal principal)
     {
-        HttpContext.Session.SetString(key, JsonConvert.SerializeObject(value));
-    }
+        string userId = await _userManager.GetUserIdAsync(principal);
 
-    /// <summary>
-    /// Obtains an object from the session data
-    /// </summary>
-    /// <typeparam name="T">Type of the object to get</typeparam>
-    /// <param name="key">Key of the object stored</param>
-    /// <returns>The object stored from the session</returns>
-    private T? GetSessionObject<T>(string key)
-    {
-        ISession session = HttpContext.Session;
-        string? value = session.GetString(key) ?? string.Empty;
-
-        return JsonConvert.DeserializeObject<T>(value);
-    }
-
-    /// <summary>
-    /// Clears the current session
-    /// </summary>
-    private void ClearSession()
-    {
-        HttpContext.Session.Clear();
+        InitCartCountOfUser(userId);
     }
 }

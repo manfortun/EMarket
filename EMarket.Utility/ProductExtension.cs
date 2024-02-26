@@ -1,4 +1,5 @@
 ﻿using EMarket.Models;
+using Microsoft.EntityFrameworkCore;
 
 namespace EMarket.Utility;
 
@@ -28,5 +29,46 @@ public static class ProductExtension
     public static int[] GetCategoryIdsArray(this Product product)
     {
         return product.GetCategoriesArray().Select(c => c.Id).ToArray();
+    }
+
+    public static List<Product> AddFilter(this List<Product> items, string? searchKey)
+    {
+        if (!items.Any() || string.IsNullOrEmpty(searchKey))
+        {
+            return items;
+        }
+
+        // filter based on search key
+        var filteredProducts = items.Where(item =>
+        {
+            if (item.Name.Contains(searchKey))
+            {
+                return true;
+            }
+
+            string[] categoryNames = item.Category?.Select(c => c.Category.Name).ToArray() ?? [];
+
+            if (categoryNames.Contains(searchKey)) return true;
+
+            return false;
+        }).ToList();
+
+        return filteredProducts ?? [];
+    }
+
+    public static List<Product> AddFilter(this List<Product> items, int[] categories)
+    {
+        if (!items.Any() || categories.Length == 0)
+        {
+            return items;
+        }
+
+        var filteredProducts = items.Where(item =>
+        {
+            int[] itemCatIds = item.GetCategoryIdsArray();
+            return categories.Intersect(itemCatIds).Any();
+        }).ToList();
+
+        return filteredProducts;
     }
 }
