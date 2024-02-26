@@ -12,7 +12,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace EMarket.DataAccess.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20240225120308_Init")]
+    [Migration("20240226050729_Init")]
     partial class Init
     {
         /// <inheritdoc />
@@ -158,7 +158,7 @@ namespace EMarket.DataAccess.Migrations
                         new
                         {
                             Id = 1,
-                            DateCreated = new DateTime(2024, 1, 25, 20, 3, 8, 437, DateTimeKind.Local).AddTicks(9323),
+                            DateCreated = new DateTime(2024, 1, 26, 13, 7, 29, 482, DateTimeKind.Local).AddTicks(7287),
                             ImageSource = "~/images/OIP.jpg",
                             Name = "T-Shirt",
                             UnitPrice = 299.0
@@ -166,7 +166,7 @@ namespace EMarket.DataAccess.Migrations
                         new
                         {
                             Id = 2,
-                            DateCreated = new DateTime(2024, 1, 25, 20, 3, 8, 437, DateTimeKind.Local).AddTicks(9330),
+                            DateCreated = new DateTime(2024, 1, 26, 13, 7, 29, 482, DateTimeKind.Local).AddTicks(7294),
                             ImageSource = "~/images/cellphone.jpg",
                             Name = "Cellphone",
                             UnitPrice = 13999.0
@@ -174,7 +174,7 @@ namespace EMarket.DataAccess.Migrations
                         new
                         {
                             Id = 3,
-                            DateCreated = new DateTime(2024, 1, 25, 20, 3, 8, 437, DateTimeKind.Local).AddTicks(9332),
+                            DateCreated = new DateTime(2024, 1, 26, 13, 7, 29, 482, DateTimeKind.Local).AddTicks(7296),
                             ImageSource = "~/images/ec3596459302e2e8e4d586517816a69a.jpg",
                             Name = "Knife",
                             UnitPrice = 240.0
@@ -182,7 +182,7 @@ namespace EMarket.DataAccess.Migrations
                         new
                         {
                             Id = 4,
-                            DateCreated = new DateTime(2024, 1, 25, 20, 3, 8, 437, DateTimeKind.Local).AddTicks(9333),
+                            DateCreated = new DateTime(2024, 1, 26, 13, 7, 29, 482, DateTimeKind.Local).AddTicks(7327),
                             ImageSource = "~/images/lotion.jpg",
                             Name = "Lotion",
                             UnitPrice = 250.0
@@ -190,7 +190,7 @@ namespace EMarket.DataAccess.Migrations
                         new
                         {
                             Id = 5,
-                            DateCreated = new DateTime(2024, 1, 25, 20, 3, 8, 437, DateTimeKind.Local).AddTicks(9336),
+                            DateCreated = new DateTime(2024, 1, 26, 13, 7, 29, 482, DateTimeKind.Local).AddTicks(7329),
                             ImageSource = "~/images/rubbershoes.jpg",
                             Name = "Rubber Shoes",
                             UnitPrice = 5500.0
@@ -198,7 +198,7 @@ namespace EMarket.DataAccess.Migrations
                         new
                         {
                             Id = 6,
-                            DateCreated = new DateTime(2024, 1, 25, 20, 3, 8, 437, DateTimeKind.Local).AddTicks(9338),
+                            DateCreated = new DateTime(2024, 1, 26, 13, 7, 29, 482, DateTimeKind.Local).AddTicks(7330),
                             ImageSource = "~/images/cleancode.jpg",
                             Name = "Clean Code",
                             UnitPrice = 2890.0
@@ -206,7 +206,7 @@ namespace EMarket.DataAccess.Migrations
                         new
                         {
                             Id = 7,
-                            DateCreated = new DateTime(2024, 1, 25, 20, 3, 8, 437, DateTimeKind.Local).AddTicks(9339),
+                            DateCreated = new DateTime(2024, 1, 26, 13, 7, 29, 482, DateTimeKind.Local).AddTicks(7332),
                             ImageSource = "~/images/Minecraft.jpg",
                             Name = "Minecraft",
                             UnitPrice = 150.0
@@ -214,7 +214,7 @@ namespace EMarket.DataAccess.Migrations
                         new
                         {
                             Id = 8,
-                            DateCreated = new DateTime(2024, 1, 25, 20, 3, 8, 437, DateTimeKind.Local).AddTicks(9341),
+                            DateCreated = new DateTime(2024, 1, 26, 13, 7, 29, 482, DateTimeKind.Local).AddTicks(7335),
                             ImageSource = "~/images/fibrecloth.jpg",
                             Name = "Fibre Cloth",
                             UnitPrice = 40.0
@@ -222,7 +222,7 @@ namespace EMarket.DataAccess.Migrations
                         new
                         {
                             Id = 9,
-                            DateCreated = new DateTime(2024, 1, 25, 20, 3, 8, 437, DateTimeKind.Local).AddTicks(9342),
+                            DateCreated = new DateTime(2024, 1, 26, 13, 7, 29, 482, DateTimeKind.Local).AddTicks(7336),
                             ImageSource = "~/images/goatsmilk.jpg",
                             Name = "Goat's Milk",
                             UnitPrice = 380.0
@@ -230,7 +230,7 @@ namespace EMarket.DataAccess.Migrations
                         new
                         {
                             Id = 10,
-                            DateCreated = new DateTime(2024, 1, 25, 20, 3, 8, 437, DateTimeKind.Local).AddTicks(9344),
+                            DateCreated = new DateTime(2024, 1, 26, 13, 7, 29, 482, DateTimeKind.Local).AddTicks(7338),
                             ImageSource = "~/images/necklace.jpg",
                             Name = "14K Gold Necklace",
                             UnitPrice = 21500.0
