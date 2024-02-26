@@ -123,9 +123,6 @@ public class HomeController : Controller
             _dbContext.Carts.Add(cart);
         }
 
-
-
-
         cart.Quantity++;
         _dbContext.SaveChanges();
 

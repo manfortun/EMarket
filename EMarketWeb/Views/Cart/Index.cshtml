@@ -1,9 +1,12 @@
-﻿@model Checkout
+﻿@model Checkout;
 
 @{
     ViewData["Title"] = "Cart";
     const string FORMAT = "N2";
-    double totalCheckout = Model.GetSumPurchase();
+    double totalCheckout = Checkout.GetSumPurchase(ViewBag.Carts);
+    bool isEditMode = ViewBag.IsEditMode;
+    string shippingDetailsProp = isEditMode ? "disabled" : "";
+    string editBtnProp = isEditMode ? "" : "d-none";
 }
 
 <div class="container p-3">
@@ -17,97 +20,110 @@
     }
 
     <div class="row d-flex flex-column-reverse flex-lg-row">
-        @if (Model.HasPurchases())
+        @if (!Model.HasPurchases())
         {
-            <form class="col border p-3 d-flex flex-column" method="post">
-                <div class="justify-content-center align-items-center flex-grow-1">
-                    <h2 class="mb-2">Checkout.</h2>
-                    <p class="text-uppercase">Shipping details</p>
-                    <hr/>
-                    <div class="m-2">
-                        <div class="row">
-                            <input asp-for="Receiver.OwnerId" class="d-none"/>
-                            <input asp-for="Receiver.Id" class="d-none"/>
-                            <div class="col-md-6 mb-3 p-1 form-floating">
-                                <input asp-for="Receiver.FirstName" class="form-control">
-                                <label asp-for="Receiver.FirstName"></label>
-                                <span asp-validation-for="Receiver.FirstName" class="text-danger"></span>
+            <div class="text-center">
+                <h6>Add items to cart from the Home menu.</h6>
+            </div>
+        }
+        else
+        {
+            <form class="col p-3 d-flex flex-column-reverse flex-lg-row" method="post">
+                <div class="col container border p-3 me-lg-2">
+                    <div class="justify-content-center align-items-center flex-grow-1">
+                        <h2 class="mb-2">Checkout.</h2>
+                        <p class="text-uppercase">Shipping details</p>
+                        <hr/>
+                        <div class="m-2">
+                            <div class="row">
+                                <input asp-for="OwnerId" hidden/>
+                                <input asp-for="Id" hidden/>
+                                <input asp-for="PurchasesStringed" hidden />
+                                <div class="col-md-6 mb-3 p-1 form-floating">
+                                    <input asp-for="FirstName" class="form-control" disabled="@isEditMode">
+                                    <label asp-for="FirstName"></label>
+                                    <span asp-validation-for="FirstName" class="text-danger"></span>
+                                </div>
+                                <div class="col-md-6 mb-3 p-1 form-floating">
+                                    <input asp-for="LastName" class="form-control" disabled="@isEditMode" />
+                                    <label asp-for="LastName"></label>
+                                    <span asp-validation-for="LastName" class="text-danger"></span>
+                                </div>
                             </div>
-                            <div class="col-md-6 mb-3 p-1 form-floating">
-                                <input asp-for="Receiver.LastName" class="form-control"/>
-                                <label asp-for="Receiver.LastName"></label>
-                                <span asp-validation-for="Receiver.LastName" class="text-danger"></span>
+                            <div class="row mb-3 p-1 form-floating">
+                                <input asp-for="ContactNo" class="form-control" disabled="@isEditMode" />
+                                <label asp-for="ContactNo"></label>
+                                <span asp-validation-for="ContactNo" class="text-danger"></span>
                             </div>
-                        </div>
-                        <div class="row mb-3 p-1 form-floating">
-                            <input asp-for="Receiver.ContactNo" class="form-control"/>
-                            <label asp-for="Receiver.ContactNo"></label>
-                            <span asp-validation-for="Receiver.ContactNo" class="text-danger"></span>
-                        </div>
-                        <div class="row mb-3 p-1 form-floating">
-                            <input asp-for="Receiver.Address" class="form-control"/>
-                            <label asp-for="Receiver.Address"></label>
-                            <span asp-validation-for="Receiver.Address" class="text-danger"></span>
+                            <div class="row mb-3 p-1 form-floating">
+                                <input asp-for="Address" class="form-control" disabled="@isEditMode" />
+                                <label asp-for="Address"></label>
+                                <span asp-validation-for="Address" class="text-danger"></span>
+                            </div>
                         </div>
                     </div>
+                    <div class="container col-md-5 p-0 text-end">
+                        <button type="submit" class="btn btn-warning w-100" asp-action="checkout" disabled="@isEditMode">Purchase Php @totalCheckout.ToString(FORMAT)</button>
+                    </div>
                 </div>
-                <button type="submit" class="btn btn-warning" asp-action="checkout" asp-route-receiver="@Model.Receiver">Purchase Php @totalCheckout.ToString(FORMAT)</button>
-            </form>
-        }
 
-        <div class="col d-flex flex-column mb-4">
-            @if (!Model.HasPurchases())
-            {
-                <div class="text-center">
-                    <h6>Add items to cart from the Home menu.</h6>
-                </div>
-            }
-            else
-            {
-                <div>
-                    <label class="text-uppercase">Your Order</label>
-                    <ul class="list-group" style="min-width: 450px; width: auto">
-                        @foreach (Cart cart in Model.Purchases)
-                        {
-                            <li class="list-group-item text-secondary">
-                                <div class="row align-items-center">
-                                    <div class="col">
-                                        <div class="text-primary-emphasis">
-                                            <b>@cart.Product.Name</b>
+                <div class="col d-flex flex-column mb-4">
+                    <div>
+                        <div class="d-flex mb-1">
+                            <label class="text-uppercase flex-grow-1">Your Order</label>
+                            <button type="submit" asp-action="canceleditmode" class="text-uppercase btn btn-sm @(isEditMode ? "" : "d-none")">
+                                Cancel
+                            </button>
+                            <button type="submit" asp-action="toggleeditmode" class="btn btn-sm @(isEditMode ? "btn-warning" : "btn-primary")">
+                                <i class="bi @(isEditMode ? "bi-floppy" : "bi-pencil")"></i>
+                            </button>
+                        </div>
+                        <ul class="list-group" style="min-width: 450px; width: auto">
+                            @foreach (Cart cart in ViewBag.Carts)
+                            {
+                                <li class="list-group-item text-secondary">
+                                    <div class="row align-items-center">
+                                        <div class="col">
+                                            <div class="text-primary-emphasis">
+                                                <b>@cart.Product.Name</b>
+                                            </div>
+                                        </div>
+
+                                        <div class="col justify-content-center align-items-center text-center d-flex">
+                                            <button asp-action="setcount" asp-route-cartId="@cart.Id" asp-route-alterVal="-1" class="btn btn-sm bg-danger @editBtnProp">-</button>
+                                            <h5 style="min-width: 50px"><b>@cart.Quantity</b></h5>
+                                            <button asp-action="setcount" asp-route-cartId="@cart.Id" asp-route-alterVal="1" class="btn btn-sm bg-success @editBtnProp">+</button>
+                                        </div>
+
+                                        <div class="col text-end align-items-center">
+                                            <b>@((cart.Quantity * cart.Product.UnitPrice).ToString(FORMAT))</b>
                                         </div>
                                     </div>
+                                </li>
+                            }
+
+                            <li class="list-group-item">
+                                <div class="row align-items-center">
+                                    <div class="col">
+                                        <h5>
+                                            <b>Total</b>
+                                        </h5>
+                                        <small class="text-secondary">
+                                        </small>
+                                    </div>
                                     <div class="col justify-content-center align-items-center text-center">
-                                        <h5><b>@cart.Quantity</b></h5>
+                                        <h5><b>@Checkout.GetCountOfPurchases(ViewBag.Carts)</b><p class="text-secondary" style="font-size: 10px"> items</p></h5>
                                     </div>
                                     <div class="col text-end align-items-center">
-                                        <b>@((cart.Quantity * cart.Product.UnitPrice).ToString(FORMAT))</b>
+                                        <h5><b>@totalCheckout.ToString(FORMAT)</b></h5>
                                     </div>
                                 </div>
                             </li>
-                        }
 
-                        <li class="list-group-item">
-                            <div class="row align-items-center">
-                                <div class="col">
-                                    <h5>
-                                        <b>Total</b>
-                                    </h5>
-                                    <small class="text-secondary">
-                                    </small>
-                                </div>
-                                <div class="col justify-content-center align-items-center text-center">
-                                    <h5><b>@Model.GetCountOfPurchases()</b><p class="text-secondary" style="font-size: 10px"> items</p></h5>
-                                </div>
-                                <div class="col text-end align-items-center">
-                                    <h5><b>@totalCheckout.ToString(FORMAT)</b></h5>
-                                </div>
-                            </div>
-                        </li>
-
-                    </ul>
+                        </ul>
+                    </div>
                 </div>
-
-            }
-        </div>
+            </form>
+        }
     </div>
 </div>
