@@ -13,20 +13,17 @@ namespace EMarketWeb.Controllers;
 
 public class HomeController : Controller
 {
-    private readonly ILogger<HomeController> _logger;
     private readonly ApplicationDbContext _dbContext;
     private readonly UserManager<IdentityUser> _userManager;
     private static readonly PageInfo<Product> _pageInfo = new(noOfItemsPerPage: 11);
-    private readonly ICategoryFilterService _categoryFilter = default!;
+    private readonly ICategoryFilterService _categoryFilter;
     private static string? _searchKey = default!;
 
     public HomeController(
-        ILogger<HomeController> logger,
         ApplicationDbContext dbContext,
         UserManager<IdentityUser> userManager,
         IUserCache userCache)
     {
-        _logger = logger;
         _dbContext = dbContext;
         _userManager = userManager;
         _categoryFilter = userCache.Get<CategoryFilterService>();

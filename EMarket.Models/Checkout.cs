@@ -34,7 +34,7 @@ public class Checkout : Receiver, ICloneable
 
     public void SetPurchases(IEnumerable<Cart> purchases)
     {
-        int[] purchaseIds = purchases is null || !purchases.Any() ? [] 
+        int[] purchaseIds = purchases is null || !purchases.Any() ? []
             : purchases.Select(p => p.Id).ToArray();
 
         PurchasesStringed = JsonConvert.SerializeObject(purchaseIds);

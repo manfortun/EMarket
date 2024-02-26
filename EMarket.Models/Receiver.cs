@@ -1,5 +1,4 @@
-﻿using Microsoft.AspNetCore.Identity;
-using System.ComponentModel;
+﻿using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 
 namespace EMarket.Models;
@@ -10,7 +9,7 @@ public class Receiver
     public int Id { get; set; }
 
     [Required]
-    public string OwnerId { get; set; }
+    public string OwnerId { get; set; } = string.Empty;
 
     [Required]
     [DisplayName("First Name")]

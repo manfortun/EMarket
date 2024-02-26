@@ -1,5 +1,4 @@
 ﻿using EMarketWeb.Services.Interfaces;
-using System.Diagnostics.CodeAnalysis;
 
 namespace EMarketWeb.Services;
 
@@ -27,7 +26,7 @@ public class UserCache : IUserCache
         if (!_userCache.ContainsKey(typeof(T)))
         {
             _userCache[typeof(T)] = new T();
-        }    
+        }
         return (T)_userCache[typeof(T)];
     }
 }

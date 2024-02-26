@@ -20,7 +20,7 @@ public static class ProductExtension
     {
         if (product.Category is null || product.Category.Count < 1)
         {
-            return [ CategoryExtension.GetUncategorizedCategory() ]; 
+            return [CategoryExtension.GetUncategorizedCategory()];
         }
 
         return product.Category.Select(c => c.Category).ToArray();
@@ -53,7 +53,7 @@ public static class ProductExtension
             return false;
         }).ToList();
 
-        return filteredProducts ?? [];
+        return filteredProducts;
     }
 
     public static List<Product> AddFilter(this List<Product> items, int[] categories)

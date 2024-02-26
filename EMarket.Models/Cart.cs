@@ -18,7 +18,7 @@ public class Cart
     [DefaultValue(0)]
     public int Quantity { get; set; }
 
-    public virtual Product Product { get; set; }
+    public virtual Product Product { get; set; } = default!;
 
-    public virtual IdentityUser Owner { get; set; }
+    public virtual IdentityUser Owner { get; set; } = default!;
 }

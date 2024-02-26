@@ -1,5 +1,4 @@
 ﻿using Newtonsoft.Json;
-using System.ComponentModel.DataAnnotations;
 
 namespace EMarket.Models.ViewModels;
 
@@ -13,7 +12,7 @@ public class EditProductViewModel : Product
     {
         HashSet<int> tempCategoryHashSet = GetCategories().ToHashSet();
 
-        if (tempCategoryHashSet.Add(categoryId) == false)
+        if (!tempCategoryHashSet.Add(categoryId))
         {
             tempCategoryHashSet.Remove(categoryId);
         }
@@ -55,7 +54,7 @@ public class EditProductViewModel : Product
             DateCreated = product.DateCreated
         };
 
-        viewModel.SetCategories(product.Category.Select(c => c.CategoryId).ToArray());
+        viewModel.SetCategories(product.Category?.Select(c => c.CategoryId).ToArray() ?? []);
 
         return viewModel;
     }

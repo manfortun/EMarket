@@ -3,7 +3,6 @@ using EMarket.Models;
 using EMarket.Models.ViewModels;
 using EMarket.Utility;
 using EMarketWeb.Services.Interfaces;
-using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
@@ -49,7 +48,7 @@ namespace EMarketWeb.Controllers
             }
 
             UpdateProductFromViewModel(viewModel, product);
-            
+
             if (HasNewCategories(viewModel, product, out var newCategories))
             {
                 if (product.Category is not null)
