@@ -43,11 +43,11 @@
             <div class="d-flex border flex-wrap">
                 @foreach (Category category in ViewBag.Categories)
                 {
-                    bool isExist = Model.HasCategory(category.Id);
+                    bool isExist = Model?.HasCategory(category.Id) ?? false;
                     string color = isExist ? "bg-success" : "bg-light";
                     string icon = isExist ? "bi-check-lg" : "bi-x-lg";
 
-                    <a type="button" class="submit-button" data-value="@category.Id">
+                    <a class="submit-button" data-value="@category.Id">
                         <span class="badge rounded-pill p-2 m-2 me-0 form-group @(color)" style="cursor: pointer">
                             <i class="bi @(icon)"></i>
                             <span class="me-2 ms-2">@category.Name</span>

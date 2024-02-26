@@ -48,7 +48,7 @@ namespace EMarketWeb.Controllers
                 {
                     return NotFound();
                 }
-                _carts = GetUserCart(userId);
+                _carts = GetUserCart(_dbContext, userId);
             }
 
             ViewBag.IsEditMode = _isEditMode;
@@ -57,7 +57,7 @@ namespace EMarketWeb.Controllers
             return View(_checkout);
         }
 
-        public IActionResult Checkout(Checkout checkoutWrapper)
+        public async Task<IActionResult> Checkout(Checkout checkoutWrapper)
         {
             if (!ModelState.IsValid)
             {
@@ -67,7 +67,7 @@ namespace EMarketWeb.Controllers
 
             try
             {
-                ClearCart();
+                await ClearCart();
                 var receiver = new Receiver
                 {
                     Id = checkoutWrapper.Id,
@@ -99,10 +99,10 @@ namespace EMarketWeb.Controllers
             {
                 _tempCheckout = (Checkout)checkout.Clone();
             }
-            else if (_checkout is not null)
+            else if (_tempCheckout is not null)
             {
+                _tempCheckout.SetPurchases(_carts);
                 _checkout = _tempCheckout;
-                _checkout.SetPurchases(_carts);
 
                 Cart[] originalCart = _dbContext.Carts
                     .Where(c => c.OwnerId == checkout.OwnerId)
@@ -134,8 +134,11 @@ namespace EMarketWeb.Controllers
         public IActionResult CancelEditMode()
         {
             _isEditMode = false;
-            _checkout = (Checkout)_tempCheckout.Clone();
             _carts = default!;
+            if (_tempCheckout is not null)
+            {
+                _checkout = (Checkout)_tempCheckout.Clone();
+            }
 
             return RedirectToAction("Index", new { init = false });
         }
@@ -147,7 +150,7 @@ namespace EMarketWeb.Controllers
                 return BadRequest();
             }
 
-            Cart? cart = _carts.FirstOrDefault(c => c.Id == cartId);
+            Cart? cart = _carts.Find(c => c.Id == cartId);
 
             if (cart is null)
             {
@@ -171,9 +174,9 @@ namespace EMarketWeb.Controllers
         /// </summary>
         /// <param name="userId">ID of the user</param>
         /// <returns>IEnumerable<Cart> of user</returns>
-        private List<Cart> GetUserCart(string userId)
+        private List<Cart> GetUserCart(ApplicationDbContext dbContext, string userId)
         {
-            List<Cart> carts = _dbContext.Carts.Where(c => c.OwnerId == userId).ToList() ?? [];
+            List<Cart> carts = dbContext.Carts.Where(c => c.OwnerId == userId).ToList();
             return carts;
         }
 
@@ -181,7 +184,7 @@ namespace EMarketWeb.Controllers
         /// Removes the record of the cart from database
         /// </summary>
         /// <exception cref="InvalidProgramException"></exception>
-        private async void ClearCart()
+        private async Task ClearCart()
         {
             Checkout? checkoutModel = await GetCheckoutModelAsync();
 
@@ -195,7 +198,7 @@ namespace EMarketWeb.Controllers
             foreach (var id in purchaseIds)
             {
                 Cart? cart = _dbContext.Carts.Find(id);
-                if (cart is Cart) _dbContext.Carts.Remove(cart);
+                if (cart is not null) _dbContext.Carts.Remove(cart);
             }
         }
 
@@ -212,7 +215,7 @@ namespace EMarketWeb.Controllers
                 return null;
             }
 
-            IEnumerable<Cart> carts = GetUserCart(userId);
+            IEnumerable<Cart> carts = GetUserCart(_dbContext, userId);
 
             return new Checkout(carts, userId);
         }
