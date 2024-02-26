@@ -16,7 +16,7 @@ public class HomeController : Controller
     private readonly ApplicationDbContext _dbContext;
     private readonly UserManager<IdentityUser> _userManager;
     private static readonly PageInfo<Product> _pageInfo = new(noOfItemsPerPage: 11);
-    private readonly ICategoryFilterService _categoryFilter;
+    private readonly CategoryFilterService _categoryFilter;
     private static string? _searchKey = default!;
 
     public HomeController(

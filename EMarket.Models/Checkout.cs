@@ -19,7 +19,7 @@ public class Checkout : Receiver, ICloneable
     public bool HasPurchases()
     {
         int[] purchases = GetPurchases();
-        return purchases.Any();
+        return purchases.Length != 0;
     }
 
     public int[] GetPurchases()

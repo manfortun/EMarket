@@ -33,7 +33,7 @@ public static class ProductExtension
 
     public static List<Product> AddFilter(this List<Product> items, string? searchKey)
     {
-        if (!items.Any() || string.IsNullOrEmpty(searchKey))
+        if (items.Count == 0 || string.IsNullOrEmpty(searchKey))
         {
             return items;
         }
@@ -58,7 +58,7 @@ public static class ProductExtension
 
     public static List<Product> AddFilter(this List<Product> items, int[] categories)
     {
-        if (!items.Any() || categories.Length == 0)
+        if (items.Count == 0 || categories.Length == 0)
         {
             return items;
         }

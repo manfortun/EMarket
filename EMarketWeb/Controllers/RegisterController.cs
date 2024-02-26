@@ -10,16 +10,13 @@ namespace EMarketWeb.Controllers
     [AllowAnonymous]
     public class RegisterController : Controller
     {
-        private readonly ApplicationDbContext _dbContext;
         private readonly UserManager<IdentityUser> _userManager;
         private readonly SignInManager<IdentityUser> _signInManager;
 
         public RegisterController(
-            ApplicationDbContext dbContext,
             UserManager<IdentityUser> userManager,
             SignInManager<IdentityUser> signInManager)
         {
-            _dbContext = dbContext;
             _userManager = userManager;
             _signInManager = signInManager;
         }

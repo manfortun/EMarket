@@ -124,7 +124,7 @@ namespace EMarketWeb.Controllers
         /// </summary>
         /// <param name="viewModel">The ViewModel with the updated properties</param>
         /// <param name="product">The product to update</param>
-        private void UpdateProductFromViewModel(EditProductViewModel viewModel, Product product)
+        private static void UpdateProductFromViewModel(EditProductViewModel viewModel, Product product)
         {
             product.Name = viewModel.Name;
             product.ImageSource = viewModel.ImageSource;
@@ -140,7 +140,7 @@ namespace EMarketWeb.Controllers
         /// <param name="product">The original model from the database</param>
         /// <param name="newCategories">The new category list of the product</param>
         /// <returns>True if there are changes in categories. Otherwise, false</returns>
-        private bool HasNewCategories(EditProductViewModel viewModel, Product product, out List<ProductCategory> newCategories)
+        private static bool HasNewCategories(EditProductViewModel viewModel, Product product, out List<ProductCategory> newCategories)
         {
             newCategories = new List<ProductCategory>();
 

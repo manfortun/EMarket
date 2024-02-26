@@ -10,7 +10,7 @@ public class EditProductViewModel : Product
 
     public void ToggleCategory(int categoryId)
     {
-        HashSet<int> tempCategoryHashSet = GetCategories().ToHashSet();
+        HashSet<int> tempCategoryHashSet = [.. GetCategories()];
 
         if (!tempCategoryHashSet.Add(categoryId))
         {
@@ -22,7 +22,7 @@ public class EditProductViewModel : Product
 
     public bool HasCategory(int categoryId)
     {
-        HashSet<int> tempCategoryHashSet = GetCategories().ToHashSet();
+        HashSet<int> tempCategoryHashSet = [.. GetCategories()];
 
         return tempCategoryHashSet.Contains(categoryId);
     }

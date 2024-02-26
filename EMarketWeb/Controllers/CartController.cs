@@ -34,10 +34,7 @@ namespace EMarketWeb.Controllers
             }
 
             // obtain checkout model
-            if (_checkout is null)
-            {
-                _checkout = await GetCheckoutModelAsync();
-            }
+            _checkout ??= await GetCheckoutModelAsync();
 
             // obtain user cart
             if (!_isEditMode)
@@ -104,9 +101,8 @@ namespace EMarketWeb.Controllers
                 _tempCheckout.SetPurchases(_carts);
                 _checkout = _tempCheckout;
 
-                Cart[] originalCart = _dbContext.Carts
-                    .Where(c => c.OwnerId == checkout.OwnerId)
-                    .ToArray();
+                Cart[] originalCart = [.. _dbContext.Carts
+                    .Where(c => c.OwnerId == checkout.OwnerId)];
 
                 _dbContext.Carts.RemoveRange(originalCart);
                 await _dbContext.SaveChangesAsync();
@@ -174,9 +170,9 @@ namespace EMarketWeb.Controllers
         /// </summary>
         /// <param name="userId">ID of the user</param>
         /// <returns>IEnumerable<Cart> of user</returns>
-        private List<Cart> GetUserCart(ApplicationDbContext dbContext, string userId)
+        private static List<Cart> GetUserCart(ApplicationDbContext dbContext, string userId)
         {
-            List<Cart> carts = dbContext.Carts.Where(c => c.OwnerId == userId).ToList();
+            List<Cart> carts = [.. dbContext.Carts.Where(c => c.OwnerId == userId)];
             return carts;
         }
 
@@ -186,12 +182,8 @@ namespace EMarketWeb.Controllers
         /// <exception cref="InvalidProgramException"></exception>
         private async Task ClearCart()
         {
-            Checkout? checkoutModel = await GetCheckoutModelAsync();
-
-            if (checkoutModel is null)
-            {
+            Checkout? checkoutModel = await GetCheckoutModelAsync() ??
                 throw new InvalidProgramException();
-            }
 
             int[] purchaseIds = checkoutModel.GetPurchases();
 

@@ -1,4 +1,5 @@
-﻿using Microsoft.EntityFrameworkCore.Migrations;
+﻿using System;
+using Microsoft.EntityFrameworkCore.Migrations;
 
 #nullable disable
 
@@ -277,16 +278,16 @@ namespace EMarket.DataAccess.Migrations
                 columns: new[] { "Id", "DateCreated", "Description", "ImageSource", "Name", "UnitPrice" },
                 values: new object[,]
                 {
-                    { 1, new DateTime(2024, 1, 26, 13, 7, 29, 482, DateTimeKind.Local).AddTicks(7287), null, "~/images/OIP.jpg", "T-Shirt", 299.0 },
-                    { 2, new DateTime(2024, 1, 26, 13, 7, 29, 482, DateTimeKind.Local).AddTicks(7294), null, "~/images/cellphone.jpg", "Cellphone", 13999.0 },
-                    { 3, new DateTime(2024, 1, 26, 13, 7, 29, 482, DateTimeKind.Local).AddTicks(7296), null, "~/images/ec3596459302e2e8e4d586517816a69a.jpg", "Knife", 240.0 },
-                    { 4, new DateTime(2024, 1, 26, 13, 7, 29, 482, DateTimeKind.Local).AddTicks(7327), null, "~/images/lotion.jpg", "Lotion", 250.0 },
-                    { 5, new DateTime(2024, 1, 26, 13, 7, 29, 482, DateTimeKind.Local).AddTicks(7329), null, "~/images/rubbershoes.jpg", "Rubber Shoes", 5500.0 },
-                    { 6, new DateTime(2024, 1, 26, 13, 7, 29, 482, DateTimeKind.Local).AddTicks(7330), null, "~/images/cleancode.jpg", "Clean Code", 2890.0 },
-                    { 7, new DateTime(2024, 1, 26, 13, 7, 29, 482, DateTimeKind.Local).AddTicks(7332), null, "~/images/Minecraft.jpg", "Minecraft", 150.0 },
-                    { 8, new DateTime(2024, 1, 26, 13, 7, 29, 482, DateTimeKind.Local).AddTicks(7335), null, "~/images/fibrecloth.jpg", "Fibre Cloth", 40.0 },
-                    { 9, new DateTime(2024, 1, 26, 13, 7, 29, 482, DateTimeKind.Local).AddTicks(7336), null, "~/images/goatsmilk.jpg", "Goat's Milk", 380.0 },
-                    { 10, new DateTime(2024, 1, 26, 13, 7, 29, 482, DateTimeKind.Local).AddTicks(7338), null, "~/images/necklace.jpg", "14K Gold Necklace", 21500.0 }
+                    { 1, new DateTime(2024, 1, 26, 22, 38, 45, 364, DateTimeKind.Local).AddTicks(1007), null, "~/images/OIP.jpg", "T-Shirt", 299.0 },
+                    { 2, new DateTime(2024, 1, 26, 22, 38, 45, 364, DateTimeKind.Local).AddTicks(1014), null, "~/images/cellphone.jpg", "Cellphone", 13999.0 },
+                    { 3, new DateTime(2024, 1, 26, 22, 38, 45, 364, DateTimeKind.Local).AddTicks(1016), null, "~/images/ec3596459302e2e8e4d586517816a69a.jpg", "Knife", 240.0 },
+                    { 4, new DateTime(2024, 1, 26, 22, 38, 45, 364, DateTimeKind.Local).AddTicks(1017), null, "~/images/lotion.jpg", "Lotion", 250.0 },
+                    { 5, new DateTime(2024, 1, 26, 22, 38, 45, 364, DateTimeKind.Local).AddTicks(1019), null, "~/images/rubbershoes.jpg", "Rubber Shoes", 5500.0 },
+                    { 6, new DateTime(2024, 1, 26, 22, 38, 45, 364, DateTimeKind.Local).AddTicks(1020), null, "~/images/cleancode.jpg", "Clean Code", 2890.0 },
+                    { 7, new DateTime(2024, 1, 26, 22, 38, 45, 364, DateTimeKind.Local).AddTicks(1022), null, "~/images/Minecraft.jpg", "Minecraft", 150.0 },
+                    { 8, new DateTime(2024, 1, 26, 22, 38, 45, 364, DateTimeKind.Local).AddTicks(1024), null, "~/images/fibrecloth.jpg", "Fibre Cloth", 40.0 },
+                    { 9, new DateTime(2024, 1, 26, 22, 38, 45, 364, DateTimeKind.Local).AddTicks(1025), null, "~/images/goatsmilk.jpg", "Goat's Milk", 380.0 },
+                    { 10, new DateTime(2024, 1, 26, 22, 38, 45, 364, DateTimeKind.Local).AddTicks(1027), null, "~/images/necklace.jpg", "14K Gold Necklace", 21500.0 }
                 });
 
             migrationBuilder.InsertData(
