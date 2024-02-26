@@ -11,18 +11,14 @@ namespace EMarketWeb.Controllers
 {
     public class EditProductController : Controller
     {
-        private readonly string[] validFileExtensions = ["jpg", "jpeg", "png"];
-        private ApplicationDbContext _dbContext;
-        private UserManager<IdentityUser> _userManager;
+        private readonly ApplicationDbContext _dbContext;
         private readonly IImageService _imgService;
 
         public EditProductController(
         ApplicationDbContext dbContext,
-        UserManager<IdentityUser> userManager,
         IImageService imgService)
         {
             _dbContext = dbContext;
-            _userManager = userManager;
             _imgService = imgService;
         }
 
@@ -56,7 +52,11 @@ namespace EMarketWeb.Controllers
             
             if (HasNewCategories(viewModel, product, out var newCategories))
             {
-                _dbContext.ProductCategories.RemoveRange(product.Category);
+                if (product.Category is not null)
+                {
+                    _dbContext.ProductCategories.RemoveRange(product.Category);
+                }
+
                 _dbContext.ProductCategories.AddRange(newCategories);
             }
 
@@ -145,13 +145,13 @@ namespace EMarketWeb.Controllers
         {
             newCategories = new List<ProductCategory>();
 
-            var oldCategoryList = product.Category.Select(c => c.CategoryId).ToArray();
+            var oldCategoryList = product.Category?.Select(c => c.CategoryId).ToArray() ?? [];
             var newCategoryList = viewModel.GetCategories();
 
             bool hasChanges = oldCategoryList.Length != newCategoryList.Length ||
                 oldCategoryList.Except(newCategoryList).Any();
 
-            if (hasChanges && newCategoryList?.Any() == true)
+            if (hasChanges)
             {
                 newCategories = newCategoryList.Select(c => new ProductCategory
                 {
