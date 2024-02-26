@@ -24,4 +24,9 @@ public static class ProductExtension
 
         return product.Category.Select(c => c.Category).ToArray();
     }
+
+    public static int[] GetCategoryIdsArray(this Product product)
+    {
+        return product.GetCategoriesArray().Select(c => c.Id).ToArray();
+    }
 }

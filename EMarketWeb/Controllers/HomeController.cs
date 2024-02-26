@@ -6,7 +6,6 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
 using System.Diagnostics;
-using System.Diagnostics.Eventing.Reader;
 
 namespace EMarketWeb.Controllers;
 
@@ -35,40 +34,37 @@ public class HomeController : Controller
         string userId = await _userManager.GetUserIdAsync(User);
         SetCartCountOfUser(userId);
 
-        int[]? categoriesInDisplay = GetSessionObject<int[]>("categoriesInDisplay");
-
         List<Category> allCategoryList = _dbContext.Categories.ToList();
         allCategoryList.Add(CategoryExtension.GetUncategorizedCategory());
 
         ViewBag.Categories = allCategoryList;
 
-        if (categoriesInDisplay is null)
+        int[]? filteredCategories = GetSessionObject<int[]>("categoriesInDisplay");
+
+        if (filteredCategories is null)
         {
-            categoriesInDisplay = allCategoryList.Select(c => c.Id).ToArray();
+            filteredCategories = allCategoryList.Select(c => c.Id).ToArray();
         }
 
-        var displayableProducts = _dbContext.Products?.ToList()
-            .Where(x => SearchPredicate(x, _searchKey) &&
-            (categoriesInDisplay?.Intersect(x.GetCategoriesArray().Select(y => y.Id)).Any() ?? true)) ?? [];
+        var filteredProducts = GetFilteredProducts(filteredCategories);
+        var productsToDisplay = filteredProducts.GoToPage(_currentPage, NO_OF_PRODUCTS_IN_PAGE, out _currentPage);
 
-        var displayedProducts = displayableProducts
-            .Skip((_currentPage - 1) * NO_OF_PRODUCTS_IN_PAGE)
-            .Take(NO_OF_PRODUCTS_IN_PAGE);
-
-        while (!displayedProducts.Any() && _currentPage > 1)
-        {
-            _currentPage--;
-            displayedProducts = displayableProducts
-                .Skip((_currentPage - 1) * NO_OF_PRODUCTS_IN_PAGE)
-                .Take(NO_OF_PRODUCTS_IN_PAGE);
-        }
-
-        SetSessionObject("categoriesInDisplay", categoriesInDisplay);
-        TempData["categoriesInDisplay"] = categoriesInDisplay;
-        ViewBag.NoOfPages = _noOfPages = (int)Math.Ceiling((double)displayableProducts.Count() / NO_OF_PRODUCTS_IN_PAGE);
+        SetSessionObject("categoriesInDisplay", filteredCategories);
+        TempData["categoriesInDisplay"] = filteredCategories;
+        ViewBag.NoOfPages = _noOfPages = filteredProducts.GetMaxNoOfPages(NO_OF_PRODUCTS_IN_PAGE);
         ViewBag.CurrentPage = _currentPage;
 
-        return View(displayedProducts);
+        return View(productsToDisplay);
+    }
+
+    private IEnumerable<Product> GetFilteredProducts(int[] filteredCategories)
+    {
+        // filter based on search key and checked categories
+        var filteredProducts = _dbContext.Products?.ToList()
+            .Where(x => SearchPredicate(x, _searchKey) &&
+            (filteredCategories?.Intersect(x.GetCategoryIdsArray()).Any() ?? true)) ?? [];
+
+        return filteredProducts ?? [];
     }
 
     public IActionResult Privacy()
