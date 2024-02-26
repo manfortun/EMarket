@@ -1,4 +1,6 @@
 using EMarket.DataAccess.Data;
+using EMarketWeb.Services;
+using EMarketWeb.Services.Interfaces;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc.Authorization;
@@ -30,6 +32,7 @@ builder.Services.AddIdentity<IdentityUser, IdentityRole>(options =>
     .AddDefaultTokenProviders();
 
 builder.Services.AddTransient<UserValidator<IdentityUser>>();
+builder.Services.AddTransient<IImageService, WebRootImageService>();
 
 builder.Services.AddMvc(options =>
 {

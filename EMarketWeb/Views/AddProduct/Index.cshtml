@@ -1,19 +1,25 @@
 ﻿@model EditProductViewModel
 
 @{
-    ViewData["Title"] = "Edit Product";
+    ViewData["Title"] = "Add Product";
 }
 
 <div class="container col-md-6 col-lg-5 mt-3">
     <form class="border p-3" method="post" asp-action="modifycategory" id="categoryForm">
-        <div class="mx-auto d-block" style="height: 200px; width: 200px;">
-            @* <img title="@Model.Name" class="card-img" style="max-height: 100%; max-width: 100%; object-fit: cover;" src="@(string.IsNullOrEmpty(Model.ImageSource) ? "~/images/no-image.jpg" : Model.ImageSource)" asp-append-version="true" /> *@
+        <div class="mx-auto d-block m-3 position-relative" style="height: 200px; width: 200px;">
+            <img title="@Model.Name" class="card-img rounded shadow-sm" style="max-height: 100%; max-width: 100%; object-fit: cover;" src="@(string.IsNullOrEmpty(Model.ImageSource) ? "~/images/no-image.jpg" : Model.ImageSource)" asp-append-version="true" />
         </div>
 
         <input asp-for="Id" hidden />
-        <input asp-for="ImageSource" hidden />
+        <input asp-for="ImageSource" id="modelImageInput" hidden />
         <input asp-for="CategoriesStringed" hidden />
         <input asp-for="NumberParameter" id="numberParameter" value="0" hidden />
+        <input asp-for="DateCreated" hidden />
+        <div class=" mb-3">
+            <input asp-for="ImageSource" class="form-control" type="file" name="file" id="imageSourceInput" oninput="setImageSource()" value="@Model?.ImageSource?.Split('/').Last()"/>
+            <button type="submit" asp-action="changeimage" id="submitImageBtn" hidden></button>
+        </div>
+
         <div class="form-floating mb-3">
             <input asp-for="Name" class="form-control" />
             <label asp-for="Name"></label>
@@ -27,7 +33,7 @@
         </div>
 
         <div class="form-floating mb-3">
-            <input asp-for="Description" class="form-control" />
+            <input asp-for="Description" class="form-control"/>
             <label asp-for="Description"></label>
         </div>
 
@@ -52,22 +58,46 @@
         </div>
 
         <div class="d-grid gap-2 d-md-flex justify-content-md-end">
-            <button class="btn btn-primary ml-md-auto ps-5 pe-5" asp-action="Save" type="submit">Save</button>
+            <button class="btn btn-primary ml-md-auto ps-5 pe-5" asp-action="save" type="submit">Save</button>
         </div>
     </form>
 </div>
 
 @section Scripts {
-    @{
-        <partial name="_ValidationScriptsPartial" />
-    }
     <script>
         document.querySelectorAll('.submit-button').forEach(button => {
             button.addEventListener('click', function () {
                 const value = this.getAttribute('data-value');
                 document.getElementById('numberParameter').value = value;
                 document.getElementById('categoryForm').submit();
-            })
-        })
+            });
+        });
+
+        function setImageSource() {
+            var fileInput = document.getElementById('imageSourceInput');
+            var file = fileInput.files[0];
+
+            var formData = new FormData();
+            formData.append('file', file);
+
+            var fileName = '';
+
+            var xhr = new XMLHttpRequest();
+            xhr.open('POST', '/AddProduct/Upload', true);
+            xhr.onload = function () {
+                if (xhr.status === 200) {
+                    fileName = xhr.responseText;
+
+                    document.getElementById('modelImageInput').value = fileName;
+                    document.getElementById('submitImageBtn').click();
+
+                    console.log('File uploaded successfully');
+                } else {
+                    document.getElementById('submitImageBtn').click();
+                    console.error('Failed to upload file');
+                }
+            };
+            xhr.send(formData);
+        }
     </script>
 }

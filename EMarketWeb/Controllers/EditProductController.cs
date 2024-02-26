@@ -2,6 +2,7 @@
 using EMarket.Models;
 using EMarket.Models.ViewModels;
 using EMarket.Utility;
+using EMarketWeb.Services.Interfaces;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -10,15 +11,19 @@ namespace EMarketWeb.Controllers
 {
     public class EditProductController : Controller
     {
+        private readonly string[] validFileExtensions = ["jpg", "jpeg", "png"];
         private ApplicationDbContext _dbContext;
         private UserManager<IdentityUser> _userManager;
+        private readonly IImageService _imgService;
 
         public EditProductController(
         ApplicationDbContext dbContext,
-        UserManager<IdentityUser> userManager)
+        UserManager<IdentityUser> userManager,
+        IImageService imgService)
         {
             _dbContext = dbContext;
             _userManager = userManager;
+            _imgService = imgService;
         }
 
         public IActionResult Index(string jsonString)
@@ -58,6 +63,8 @@ namespace EMarketWeb.Controllers
             _dbContext.Update(product);
             _dbContext.SaveChanges();
 
+            _ = _imgService.RemoveExcept([.. _dbContext.Products.Select(p => p.ImageSource)]);
+
             TempData["success"] = "Successfully modified product.";
             return RedirectToAction("Index", "Home");
         }
@@ -88,6 +95,27 @@ namespace EMarketWeb.Controllers
 
             viewModel.ToggleCategory((int)viewModel.NumberParameter);
 
+            string jsonString = viewModel.ToJson();
+            return RedirectToAction("Index", new { jsonString });
+        }
+
+        [HttpPost]
+        public IActionResult Upload(IFormFile file)
+        {
+            if (!_imgService.IsValid(file))
+            {
+                TempData["error"] = "The file selected is not an image.";
+                return BadRequest("Please select a correct image format.");
+            }
+
+            _imgService.Upload(file, out string finalizedFileName);
+
+            return Content($"~/images/{finalizedFileName}");
+        }
+
+        [HttpPost]
+        public IActionResult ChangeImage(EditProductViewModel viewModel)
+        {
             string jsonString = viewModel.ToJson();
             return RedirectToAction("Index", new { jsonString });
         }
