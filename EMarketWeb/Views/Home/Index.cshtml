@@ -53,16 +53,16 @@
             <div>
                 <ul class="pagination pagination-sm">
                     <li class="page-item">
-                        <a class="page-link" asp-action="Hehe" asp-route-pageNo="@(ViewBag.CurrentPage - 1)">&laquo;</a>
+                        <a class="page-link" asp-action="Navigate" asp-route-pageNo="@(ViewBag.CurrentPage - 1)">&laquo;</a>
                     </li>
                     @foreach (var pageNo in Enumerable.Range(1, (int)ViewBag.NoOfPages))
                     {
                         <li class="page-item">
-                            <a class="page-link @(ViewBag.CurrentPage == pageNo ? "active" : "")" asp-action="Hehe" asp-route-pageNo="@pageNo">@pageNo</a>
+                            <a class="page-link @(ViewBag.CurrentPage == pageNo ? "active" : "")" asp-action="Navigate" asp-route-pageNo="@pageNo">@pageNo</a>
                         </li>
                     }
                     <li class="page-item">
-                        <a class="page-link" asp-action="Hehe" asp-route-pageNo="@(ViewBag.CurrentPage + 1)">&raquo;</a>
+                        <a class="page-link" asp-action="Navigate" asp-route-pageNo="@(ViewBag.CurrentPage + 1)">&raquo;</a>
                     </li>
                 </ul>
             </div>

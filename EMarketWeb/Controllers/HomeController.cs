@@ -123,6 +123,9 @@ public class HomeController : Controller
             _dbContext.Carts.Add(cart);
         }
 
+
+
+
         cart.Quantity++;
         _dbContext.SaveChanges();
 
@@ -152,7 +155,7 @@ public class HomeController : Controller
         return RedirectToAction("Index", "AddProduct");
     }
 
-    public IActionResult Hehe(int pageNo)
+    public IActionResult Navigate(int pageNo)
     {
         if (pageNo < 1)
         {
