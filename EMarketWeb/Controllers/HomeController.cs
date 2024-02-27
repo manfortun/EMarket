@@ -46,6 +46,16 @@ public class HomeController : Controller
  
         _categoryFilter.SetCategories(GetExtendedCategoriesList());
 
+        _ = GetItems();
+
+        ViewBag.PageInfo = _pageInfo;
+        ViewBag.CategoryFilter = _categoryFilter;
+
+        return View();
+    }
+
+    public IActionResult GetItems()
+    {
         int[] selectedCategories = _categoryFilter.GetSelectedCategories();
 
         var filteredProducts = _dbContext.Products.ToList()
@@ -54,10 +64,12 @@ public class HomeController : Controller
 
         _pageInfo.RefreshNoOfPages(filteredProducts);
 
-        ViewBag.PageInfo = _pageInfo;
-        ViewBag.CategoryFilter = _categoryFilter;
+        if (_pageInfo.NoOfPages < 1)
+        {
+            return NoContent();
+        }
 
-        return View();
+        return PartialView("HomeItemsDisplay", _pageInfo);
     }
 
     private async Task<bool> IsUserVerified(ClaimsPrincipal user)
@@ -74,11 +86,18 @@ public class HomeController : Controller
         return View();
     }
 
+    [HttpGet]
     public IActionResult Search(string searchString)
     {
-        _searchKey = searchString;
+        PageInfo<Product> searchInfo = new PageInfo<Product>(12);
+        searchInfo.RefreshNoOfPages(_pageInfo.Items.ToList().AddFilter(searchString));
 
-        return RedirectToAction("Index");
+        if (searchInfo.NoOfPages < 1)
+        {
+            return NoContent();
+        }
+
+        return PartialView("HomeItemsDisplay", searchInfo);
     }
 
     public IActionResult OnCategoryTicked(int categoryId)

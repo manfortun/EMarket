@@ -1,4 +1,5 @@
-﻿@using EMarketWeb.Services
+﻿@model PageInfo<Product>
+
 @{
     ViewData["Title"] = "Home Page";
     PageInfo<Product> pageInfo = ViewBag.PageInfo;
@@ -26,12 +27,10 @@
 
 <div class="row container-fluid p-lg-5">
     <div class="col-lg-3">
-        <form asp-action="search" method="get">
-            <div class="input-group mb-3">
-                <input type="text" name="searchString" class="form-control" placeholder="Looking for something?" aria-label="Recipient's username" aria-describedby="button-addon2">
-                <button class="btn btn-primary" type="submit" id="button-addon2">Search</button>
-            </div>
-        </form>
+        <div class="input-group mb-3">
+            <input type="text" id="searchString" class="form-control" placeholder="Looking for something?"
+            aria-label="Recipient's username" aria-describedby="button-addon2" oninput="search(this.value)">
+        </div>
         <div class="container-sm w-auto d-none d-lg-block">
             <fieldset class="form-group p-2">
                 <legend>Category</legend>
@@ -52,41 +51,36 @@
         </div>
     </div>
     <div class="col">
-        @if (!pageInfo.ActiveItems.Any())
-        {
-            <h6>There are no products listed. Try again later.</h6>
-        }
-        else
-        {
-            @if (pageInfo.NoOfPages > 1)
-            {
-                <div class="container-fluid ps-0">
-                    <ul class="pagination pagination-sm">
-                        <li class="page-item">
-                            <a class="page-link" asp-action="Navigate" asp-route-pageNo="@(pageInfo.ActivePage - 1)">&laquo;</a>
-                        </li>
-                        @foreach (var pageNo in Enumerable.Range(1, pageInfo.NoOfPages))
-                        {
-                            <li class="page-item">
-                                <a class="page-link @(pageInfo.ActivePage == pageNo ? "active" : "")" asp-action="Navigate" asp-route-pageNo="@pageNo">@pageNo</a>
-                            </li>
-                        }
-                        <li class="page-item">
-                            <a class="page-link" asp-action="Navigate" asp-route-pageNo="@(pageInfo.ActivePage + 1)">&raquo;</a>
-                        </li>
-                    </ul>
-                </div>
-            }
+        <div id="message" class="d-flex justify-content-center"></div>
 
-            <div class="card-deck d-flex flex-wrap justify-content-start ps-0">
-                @foreach (Product product in pageInfo.ActiveItems)
-                {
-                    <div class="me-lg-3 mt-2 mb-2 me-2 ms-lg-0">
-                        @await Html.PartialAsync("_ProductCard", product)
-                    </div>
-                }
+        @if (Model.NoOfPages > 1)
+        {
+            <div class="container-fluid ps-0">
+                <ul class="pagination pagination-sm">
+                    <li class="page-item">
+                        <a class="page-link" asp-action="Navigate" asp-route-pageNo="@(Model.ActivePage - 1)">&laquo;</a>
+                    </li>
+                    @foreach (var pageNo in Enumerable.Range(1, Model.NoOfPages))
+                    {
+                        <li class="page-item">
+                            <a class="page-link @(Model.ActivePage == pageNo ? "active" : "")" asp-action="Navigate" asp-route-pageNo="@pageNo">@pageNo</a>
+                        </li>
+                    }
+                    <li class="page-item">
+                        <a class="page-link" asp-action="Navigate" asp-route-pageNo="@(Model.ActivePage + 1)">&raquo;</a>
+                    </li>
+                </ul>
             </div>
         }
+
+        <div class="card-deck d-flex flex-wrap justify-content-start ps-0" id="itemsDisplay">
+            @foreach (Product product in pageInfo.ActiveItems)
+            {
+                <div class="me-lg-3 mt-2 mb-2 me-2 ms-lg-0">
+                    @await Html.PartialAsync("_ProductCard", product)
+                </div>
+            }
+        </div>
     </div>
 </div>
 
@@ -94,7 +88,71 @@
     <script src="~/lib/jquery/dist/jquery.min.js"></script>
     <script src="//cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/js/toastr.min.js"></script>
     <script>
+        getItems();
         navigate(0);
+
+        function getItems() {
+            $.ajax({
+                url: '/Home/GetItems',
+                type: 'GET',
+                success: function (result, textStatus, xhr) {
+                    if (xhr.status == 204) {
+                        showItems(false);
+                        document.getElementById('message').innerHTML = '<h6>There are no products listed. <a href="/AddProduct">Try adding one!</a></h6>';
+                    } else {
+                        $('#itemsDisplay').html(result);
+                        showItems(true);
+                    }
+                },
+                error: function () {
+                    console.log('Problem occured.');
+                }
+            });
+        }
+
+        function search(searchString) {
+            $.ajax({
+                url: '/Home/Search',
+                type: 'GET',
+                data: { searchString: searchString },
+                success: function (result, textStatus, xhr) {
+                    if (xhr.status == 204) {
+                        console.log('huh');
+                        showItems(false);
+                        document.getElementById('message').innerHTML = '<h6>No match found.</h6>';
+                    } else {
+                        $('#itemsDisplay').html(result);
+                        showItems(true);
+                    }
+                },
+                error: function () {
+                    console.log('Problem occured.');
+                }
+            });
+        }
+
+        function showItems(isShown) {
+            var message = $('#message');
+            var itemsDisplay = $('#itemsDisplay');
+
+            if (isShown) {
+                if (itemsDisplay.hasClass('d-none')) {
+                    itemsDisplay.removeClass('d-none');
+                }
+
+                if (message.hasClass('d-none') == false) {
+                    message.addClass('d-none');
+                }
+            } else {
+                if (itemsDisplay.hasClass('d-none') == false) {
+                    itemsDisplay.addClass('d-none');
+                }
+
+                if (message.hasClass('d-none')) {
+                    message.removeClass('d-none');
+                }
+            }
+        }
 
         function navigate(direction) {
             var container = $('#featuredProductContainer');
@@ -117,10 +175,29 @@
                         container.addClass('d-none');
                         container.removeClass('d-flex');
                         container.removeClass('d-lg-flex');
-                        console.log('huh');
                     }
                 }
             });
+        }
+
+        function showItemsContainer(isShown) {
+            if (isShown) {
+                if (container.hasClass('d-none')) {
+                    container.removeClass('d-none');
+                    container.addClass('d-flex');
+                    container.addClass('d-lg-flex');
+                }
+            } else {
+                if (container.hasClass('d-none') == false) {
+                    container.addClass('d-none');
+                    container.removeClass('d-flex');
+                    container.removeClass('d-lg-flex');
+                }
+            }
+        }
+
+        function displayItems(items) {
+            $('#featuredProductDiv').html(result);
         }
 
         function addtocart(productId) {

@@ -1,0 +1,8 @@
+﻿@model PageInfo<Product>
+
+@foreach (Product product in Model.ActiveItems)
+{
+    <div class="me-lg-3 mt-2 mb-2 me-2 ms-lg-0">
+        @await Html.PartialAsync("_ProductCard", product)
+    </div>
+}
