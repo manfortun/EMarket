@@ -146,7 +146,7 @@ public class HomeController : Controller
 
     public IActionResult GetProductCardView(int indexNo)
     {
-        Product? product = _pageInfo.ActiveItems.ToArray()[indexNo];
+        Product? product = _pageInfo.ActiveItems.ElementAtOrDefault(indexNo);
 
         return product is null ? NotFound() : PartialView("_ProductCard", product);
     }

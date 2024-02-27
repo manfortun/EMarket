@@ -31,7 +31,7 @@ public class PageInfo<T>
     {
         ArgumentOutOfRangeException.ThrowIfNegativeOrZero(noOfItemsPerPage);
 
-        _items = new List<T>();
+        _items = [];
         NoOfItemsPerPage = noOfItemsPerPage;
     }
 

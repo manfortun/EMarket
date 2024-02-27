@@ -9,7 +9,7 @@ namespace EMarketWeb.Controllers
 {
     public class AddProductController : Controller
     {
-        private ApplicationDbContext _dbContext;
+        private readonly ApplicationDbContext _dbContext;
         private readonly IImageService _imgService;
 
         public AddProductController(
