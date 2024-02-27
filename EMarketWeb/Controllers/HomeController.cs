@@ -14,6 +14,7 @@ namespace EMarketWeb.Controllers;
 public class HomeController : Controller
 {
     private readonly ApplicationDbContext _dbContext;
+    private readonly SignInManager<IdentityUser> _signInManager;
     private readonly UserManager<IdentityUser> _userManager;
     private static readonly PageInfo<Product> _pageInfo = new(noOfItemsPerPage: 11);
     private readonly CategoryFilterService _categoryFilter;
@@ -21,16 +22,26 @@ public class HomeController : Controller
 
     public HomeController(
         ApplicationDbContext dbContext,
+        SignInManager<IdentityUser> signInManager,
         UserManager<IdentityUser> userManager,
         IUserCache userCache)
     {
         _dbContext = dbContext;
+        _signInManager = signInManager;
         _userManager = userManager;
         _categoryFilter = userCache.Get<CategoryFilterService>();
     }
 
     public async Task<IActionResult> Index()
     {
+        bool isVerified = await IsUserVerified(User);
+
+        if (!isVerified)
+        {
+            await _signInManager.SignOutAsync();
+            return RedirectToAction("Login", "Account");
+        }
+
         await InitCartCountOfUserAsync(User);
 
         if (!_categoryFilter.IsCategoriesSet)
@@ -50,6 +61,15 @@ public class HomeController : Controller
         ViewBag.CategoryFilter = _categoryFilter;
 
         return View();
+    }
+
+    private async Task<bool> IsUserVerified(ClaimsPrincipal user)
+    {
+        string userId = await _userManager.GetUserIdAsync(user);
+
+        IdentityUser? identityUser = await _userManager.FindByIdAsync(userId);
+
+        return identityUser is not null;
     }
 
     public IActionResult Privacy()

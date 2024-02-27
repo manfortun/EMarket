@@ -10,8 +10,8 @@ namespace EMarketWeb.Controllers
     [AllowAnonymous]
     public class AccountController : Controller
     {
-        private SignInManager<IdentityUser> _signInManager;
-        private IUserCache _userService;
+        private readonly SignInManager<IdentityUser> _signInManager;
+        private readonly IUserCache _userService;
 
         public AccountController(
             SignInManager<IdentityUser> signInManager,

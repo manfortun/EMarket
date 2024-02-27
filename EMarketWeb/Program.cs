@@ -42,8 +42,7 @@ builder.Services.AddMvc(options =>
                                 .Build();
 
     options.Filters.Add(new AuthorizeFilter(policy));
-})
-    .AddXmlSerializerFormatters();
+}).AddXmlSerializerFormatters();
 
 var app = builder.Build();
 
