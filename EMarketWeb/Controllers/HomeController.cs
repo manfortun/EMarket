@@ -109,7 +109,10 @@ public class HomeController : Controller
 
         cart.Quantity++;
         _dbContext.SaveChanges();
-        return Ok();
+
+        string productName = _dbContext.Products.Find(productId)?.Name ?? string.Empty;
+
+        return Ok(productName);
     }
 
     public IActionResult Edit(int itemId)
