@@ -77,7 +77,7 @@ public class CartController : Controller
 
         _orderSummaryViewModel = new OrderSummaryViewModel
         {
-            Carts = carts,
+            Purchases = carts,
             IsEditMode = editMode
         };
 
@@ -86,7 +86,7 @@ public class CartController : Controller
 
     public IActionResult ChangeCount(int cartId, int count)
     {
-        Purchase? target = _orderSummaryViewModel.Carts.Find(c => c.Id == cartId);
+        Purchase? target = _orderSummaryViewModel.Purchases.Find(c => c.Id == cartId);
 
         if (target is null)
         {
@@ -97,7 +97,7 @@ public class CartController : Controller
 
         if (target.Quantity < 1)
         {
-            _orderSummaryViewModel.Carts.Remove(target);
+            _orderSummaryViewModel.Purchases.Remove(target);
         }
 
         return PartialView("OrderSummary", _orderSummaryViewModel);
@@ -133,7 +133,7 @@ public class CartController : Controller
     {
         await ClearCartAsync();
 
-        await _dbContext.Purchases.AddRangeAsync(_orderSummaryViewModel.Carts
+        await _dbContext.Purchases.AddRangeAsync(_orderSummaryViewModel.Purchases
             .Select(c => new Purchase
             {
                 OwnerId = c.OwnerId,

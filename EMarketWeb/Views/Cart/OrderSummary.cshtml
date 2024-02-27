@@ -4,12 +4,12 @@
     const string FORMAT = "N2";
     string shippingDetailsProp = Model.IsEditMode ? "disabled" : "";
     string editBtnProp = Model.IsEditMode ? "" : "d-none";
-    double totalCheckout = Cart.GetSumPurchase(Model.Carts);
-    double totalNumOfItems = Cart.GetCountOfPurchases(Model.Carts);
+    double totalCheckout = Purchase.GetSumPurchase(Model.Purchases);
+    double totalNumOfItems = Purchase.GetCountOfPurchases(Model.Purchases);
 }
 
 <ul class="list-group" style="min-width: 450px; width: auto">
-    @foreach (Cart cart in Model.Carts)
+    @foreach (Purchase cart in Model.Purchases)
     {
         <li class="list-group-item text-secondary">
             <div class="row align-items-center">
