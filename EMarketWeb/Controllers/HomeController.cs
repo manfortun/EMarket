@@ -43,11 +43,8 @@ public class HomeController : Controller
             await _signInManager.SignOutAsync();
             return RedirectToAction("Login", "Account");
         }
-
-        if (!_categoryFilter.IsCategoriesSet)
-        {
-            _categoryFilter.SetCategories(GetExtendedCategoriesList());
-        }
+ 
+        _categoryFilter.SetCategories(GetExtendedCategoriesList());
 
         int[] selectedCategories = _categoryFilter.GetSelectedCategories();
 
