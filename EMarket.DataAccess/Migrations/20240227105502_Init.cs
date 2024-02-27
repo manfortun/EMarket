@@ -278,16 +278,26 @@ namespace EMarket.DataAccess.Migrations
                 columns: new[] { "Id", "DateCreated", "Description", "ImageSource", "Name", "UnitPrice" },
                 values: new object[,]
                 {
-                    { 1, new DateTime(2024, 1, 27, 11, 35, 38, 865, DateTimeKind.Local).AddTicks(5350), "Sleek black tee: Style redefined. Elevate your look effortlessly! 🔥 #FashionEssential", "~/images/OIP.jpg", "T-Shirt", 299.0 },
-                    { 2, new DateTime(2024, 1, 27, 11, 35, 38, 865, DateTimeKind.Local).AddTicks(5358), "Unleash limitless power with our latest cellphone innovation!", "~/images/cellphone.jpg", "Cellphone", 13999.0 },
-                    { 3, new DateTime(2024, 1, 27, 11, 35, 38, 865, DateTimeKind.Local).AddTicks(5360), "Unleash precision in the palm of your hand. Elevate your tools with our sleek knife.", "~/images/ec3596459302e2e8e4d586517816a69a.jpg", "Knife", 240.0 },
-                    { 4, new DateTime(2024, 1, 27, 11, 35, 38, 865, DateTimeKind.Local).AddTicks(5363), "Indulge in luxury with our hydrating lotion. Elevate your skincare routine effortlessly.", "~/images/lotion.jpg", "Lotion", 250.0 },
-                    { 5, new DateTime(2024, 1, 27, 11, 35, 38, 865, DateTimeKind.Local).AddTicks(5365), "Step up your game with our stylish rubber shoes. Elevate your look with every stride.", "~/images/rubbershoes.jpg", "Rubber Shoes", 5500.0 },
-                    { 6, new DateTime(2024, 1, 27, 11, 35, 38, 865, DateTimeKind.Local).AddTicks(5367), "Master clean code principles. Robert Martin's essential guide.", "~/images/cleancode.jpg", "Clean Code", 2890.0 },
-                    { 7, new DateTime(2024, 1, 27, 11, 35, 38, 865, DateTimeKind.Local).AddTicks(5369), "Immerse in endless adventures. Explore, create, survive. Minecraft awaits!", "~/images/Minecraft.jpg", "Minecraft", 150.0 },
-                    { 8, new DateTime(2024, 1, 27, 11, 35, 38, 865, DateTimeKind.Local).AddTicks(5371), "Upgrade your cleaning game with our durable fiber cloth.", "~/images/fibrecloth.jpg", "Fibre Cloth", 40.0 },
-                    { 9, new DateTime(2024, 1, 27, 11, 35, 38, 865, DateTimeKind.Local).AddTicks(5373), "Pure nourishment for your pet. Goat's milk: natural goodness.", "~/images/goatsmilk.jpg", "Goat's Milk", 380.0 },
-                    { 10, new DateTime(2024, 1, 27, 11, 35, 38, 865, DateTimeKind.Local).AddTicks(5375), "Elegant luxury, timeless beauty. Elevate your style with 14k gold.", "~/images/necklace.jpg", "14K Gold Necklace", 21500.0 }
+                    { 1, new DateTime(2024, 1, 27, 18, 55, 2, 238, DateTimeKind.Local).AddTicks(879), "Sleek black tee: Style redefined. Elevate your look effortlessly! 🔥 #FashionEssential", "~/images/OIP.jpg", "T-Shirt", 299.0 },
+                    { 2, new DateTime(2024, 1, 27, 18, 55, 2, 238, DateTimeKind.Local).AddTicks(889), "Unleash limitless power with our latest cellphone innovation!", "~/images/cellphone.jpg", "Cellphone", 13999.0 },
+                    { 3, new DateTime(2024, 1, 27, 18, 55, 2, 238, DateTimeKind.Local).AddTicks(891), "Unleash precision in the palm of your hand. Elevate your tools with our sleek knife.", "~/images/ec3596459302e2e8e4d586517816a69a.jpg", "Knife", 240.0 },
+                    { 4, new DateTime(2024, 1, 27, 18, 55, 2, 238, DateTimeKind.Local).AddTicks(893), "Indulge in luxury with our hydrating lotion. Elevate your skincare routine effortlessly.", "~/images/lotion.jpg", "Lotion", 250.0 },
+                    { 5, new DateTime(2024, 1, 27, 18, 55, 2, 238, DateTimeKind.Local).AddTicks(895), "Step up your game with our stylish rubber shoes. Elevate your look with every stride.", "~/images/rubbershoes.jpg", "Rubber Shoes", 5500.0 },
+                    { 6, new DateTime(2024, 1, 27, 18, 55, 2, 238, DateTimeKind.Local).AddTicks(897), "Master clean code principles. Robert Martin's essential guide.", "~/images/cleancode.jpg", "Clean Code", 2890.0 },
+                    { 7, new DateTime(2024, 1, 27, 18, 55, 2, 238, DateTimeKind.Local).AddTicks(898), "Immerse in endless adventures. Explore, create, survive. Minecraft awaits!", "~/images/Minecraft.jpg", "Minecraft", 150.0 },
+                    { 8, new DateTime(2024, 1, 27, 18, 55, 2, 238, DateTimeKind.Local).AddTicks(900), "Upgrade your cleaning game with our durable fiber cloth.", "~/images/fibrecloth.jpg", "Fibre Cloth", 40.0 },
+                    { 9, new DateTime(2024, 1, 27, 18, 55, 2, 238, DateTimeKind.Local).AddTicks(902), "Pure nourishment for your pet. Goat's milk: natural goodness.", "~/images/goatsmilk.jpg", "Goat's Milk", 380.0 },
+                    { 10, new DateTime(2024, 1, 27, 18, 55, 2, 238, DateTimeKind.Local).AddTicks(903), "Elegant luxury, timeless beauty. Elevate your style with 14k gold.", "~/images/necklace.jpg", "14K Gold Necklace", 21500.0 },
+                    { 11, new DateTime(2024, 1, 27, 18, 55, 2, 238, DateTimeKind.Local).AddTicks(905), "Powerful laptop with high-speed performance. Perfect for work or entertainment on the go.", "~/images/laptop.jpg", "Laptop", 50000.0 },
+                    { 12, new DateTime(2024, 1, 27, 18, 55, 2, 238, DateTimeKind.Local).AddTicks(907), "Track your fitness, receive notifications, and more, all from your wrist.", "~/images/smartwatch.jpg", "Smartwatch", 9999.9500000000007 },
+                    { 13, new DateTime(2024, 1, 27, 18, 55, 2, 238, DateTimeKind.Local).AddTicks(908), "Enjoy crisp sound quality and freedom from wires with these wireless earbuds.", "~/images/wirelessearbuds.jpg", "Wireless Earbuds", 3999.9499999999998 },
+                    { 14, new DateTime(2024, 1, 27, 18, 55, 2, 238, DateTimeKind.Local).AddTicks(910), "Take your music anywhere with this portable Bluetooth speaker.", "~/images/bluetoothspeaker.jpg", "Portable Bluetooth Speaker", 2499.9499999999998 },
+                    { 15, new DateTime(2024, 1, 27, 18, 55, 2, 238, DateTimeKind.Local).AddTicks(911), "Monitor your health and track your fitness goals with this sleek fitness tracker.", "~/images/fitnesstracker.jpg", "Fitness Tracker", 2995.0 },
+                    { 16, new DateTime(2024, 1, 27, 18, 55, 2, 238, DateTimeKind.Local).AddTicks(913), "Brew your favorite coffee just the way you like it.", "~/images/coffeemaker.jpg", "Coffee Maker", 6850.5 },
+                    { 17, new DateTime(2024, 1, 27, 18, 55, 2, 238, DateTimeKind.Local).AddTicks(915), "Gentle on gums, powerful on plaque.", "~/images/electrictoothbrush.jpg", "Electric Toothbrush", 1999.0 },
+                    { 18, new DateTime(2024, 1, 27, 18, 55, 2, 238, DateTimeKind.Local).AddTicks(916), "Capture every moment with stunning clarity using this digital camera.", "~/images/digitalcamera.jpg", "Digital Camera", 14560.6 },
+                    { 19, new DateTime(2024, 1, 27, 18, 55, 2, 238, DateTimeKind.Local).AddTicks(918), "Enjoy healthier cooking without sacrificing flavor with this air fryer.", "~/images/airfryer.jpg", "Air Fryer", 4499.0 },
+                    { 20, new DateTime(2024, 1, 27, 18, 55, 2, 238, DateTimeKind.Local).AddTicks(920), "Never run out of battery again with this portable power bank.", "~/images/powerbank.jpg", "Portable Power Bank", 1499.0 }
                 });
 
             migrationBuilder.InsertData(
@@ -305,7 +315,22 @@ namespace EMarket.DataAccess.Migrations
                     { 7, 7 },
                     { 8, 8 },
                     { 9, 9 },
-                    { 10, 10 }
+                    { 10, 10 },
+                    { 2, 11 },
+                    { 2, 12 },
+                    { 5, 12 },
+                    { 10, 12 },
+                    { 2, 13 },
+                    { 2, 14 },
+                    { 2, 15 },
+                    { 5, 15 },
+                    { 10, 15 },
+                    { 2, 16 },
+                    { 2, 17 },
+                    { 2, 18 },
+                    { 2, 19 },
+                    { 3, 19 },
+                    { 2, 20 }
                 });
 
             migrationBuilder.CreateIndex(

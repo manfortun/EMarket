@@ -43,7 +43,17 @@ public class ApplicationDbContext : IdentityDbContext
             new() { Id = 7, Name = "Minecraft", UnitPrice = 150.00, ImageSource="~/images/Minecraft.jpg", DateCreated = DateTime.Now.AddMonths(-1), Description = "Immerse in endless adventures. Explore, create, survive. Minecraft awaits!" },
             new() { Id = 8, Name = "Fibre Cloth", UnitPrice = 40.00, ImageSource="~/images/fibrecloth.jpg", DateCreated = DateTime.Now.AddMonths(-1), Description = "Upgrade your cleaning game with our durable fiber cloth." },
             new() { Id = 9, Name = "Goat's Milk", UnitPrice = 380.00, ImageSource="~/images/goatsmilk.jpg", DateCreated = DateTime.Now.AddMonths(-1), Description = "Pure nourishment for your pet. Goat's milk: natural goodness." },
-            new() { Id = 10, Name = "14K Gold Necklace", UnitPrice = 21500.00, ImageSource="~/images/necklace.jpg", DateCreated = DateTime.Now.AddMonths(-1), Description = "Elegant luxury, timeless beauty. Elevate your style with 14k gold." }
+            new() { Id = 10, Name = "14K Gold Necklace", UnitPrice = 21500.00, ImageSource="~/images/necklace.jpg", DateCreated = DateTime.Now.AddMonths(-1), Description = "Elegant luxury, timeless beauty. Elevate your style with 14k gold." },
+            new() { Id = 11, Name = "Laptop", UnitPrice = 50000.0, ImageSource="~/images/laptop.jpg", DateCreated = DateTime.Now.AddMonths(-1), Description = "Powerful laptop with high-speed performance. Perfect for work or entertainment on the go." },
+            new() { Id = 12, Name = "Smartwatch", UnitPrice = 9999.95, ImageSource="~/images/smartwatch.jpg", DateCreated = DateTime.Now.AddMonths(-1), Description = "Track your fitness, receive notifications, and more, all from your wrist." },
+            new() { Id = 13, Name = "Wireless Earbuds", UnitPrice = 3999.95, ImageSource="~/images/wirelessearbuds.jpg", DateCreated = DateTime.Now.AddMonths(-1), Description = "Enjoy crisp sound quality and freedom from wires with these wireless earbuds." },
+            new() { Id = 14, Name = "Portable Bluetooth Speaker", UnitPrice = 2499.95, ImageSource="~/images/bluetoothspeaker.jpg", DateCreated = DateTime.Now.AddMonths(-1), Description = "Take your music anywhere with this portable Bluetooth speaker." },
+            new() { Id = 15, Name = "Fitness Tracker", UnitPrice = 2995.00, ImageSource="~/images/fitnesstracker.jpg", DateCreated = DateTime.Now.AddMonths(-1), Description = "Monitor your health and track your fitness goals with this sleek fitness tracker." },
+            new() { Id = 16, Name = "Coffee Maker", UnitPrice = 6850.50, ImageSource="~/images/coffeemaker.jpg", DateCreated = DateTime.Now.AddMonths(-1), Description = "Brew your favorite coffee just the way you like it." },
+            new() { Id = 17, Name = "Electric Toothbrush", UnitPrice = 1999.0, ImageSource="~/images/electrictoothbrush.jpg", DateCreated = DateTime.Now.AddMonths(-1), Description = "Gentle on gums, powerful on plaque." },
+            new() { Id = 18, Name = "Digital Camera", UnitPrice = 14560.60, ImageSource="~/images/digitalcamera.jpg", DateCreated = DateTime.Now.AddMonths(-1), Description = "Capture every moment with stunning clarity using this digital camera." },
+            new() { Id = 19, Name = "Air Fryer", UnitPrice = 4499.0, ImageSource="~/images/airfryer.jpg", DateCreated = DateTime.Now.AddMonths(-1), Description = "Enjoy healthier cooking without sacrificing flavor with this air fryer." },
+            new() { Id = 20, Name = "Portable Power Bank", UnitPrice = 1499.0, ImageSource="~/images/powerbank.jpg", DateCreated = DateTime.Now.AddMonths(-1), Description = "Never run out of battery again with this portable power bank." },
         ];
 
         ProductCategory[] seedProductCategories =
@@ -59,6 +69,21 @@ public class ApplicationDbContext : IdentityDbContext
             new() { ProductId = 8, CategoryId = 8 },
             new() { ProductId = 9, CategoryId = 9 },
             new() { ProductId = 10, CategoryId = 10 },
+            new() { ProductId = 11, CategoryId = 2 },
+            new() { ProductId = 12, CategoryId = 2 },
+            new() { ProductId = 12, CategoryId = 5 },
+            new() { ProductId = 12, CategoryId = 10 },
+            new() { ProductId = 13, CategoryId = 2 },
+            new() { ProductId = 14, CategoryId = 2 },
+            new() { ProductId = 15, CategoryId = 2 },
+            new() { ProductId = 15, CategoryId = 5 },
+            new() { ProductId = 15, CategoryId = 10 },
+            new() { ProductId = 16, CategoryId = 2 },
+            new() { ProductId = 17, CategoryId = 2 },
+            new() { ProductId = 18, CategoryId = 2 },
+            new() { ProductId = 19, CategoryId = 2 },
+            new() { ProductId = 19, CategoryId = 3 },
+            new() { ProductId = 20, CategoryId = 2 },
         ];
 
         modelBuilder.Entity<ProductCategory>()

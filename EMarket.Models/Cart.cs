@@ -21,4 +21,14 @@ public class Cart
     public virtual Product Product { get; set; } = default!;
 
     public virtual IdentityUser Owner { get; set; } = default!;
+
+    public static double GetSumPurchase(IEnumerable<Cart> carts)
+    {
+        return carts.Sum(c => c.Quantity * c.Product.UnitPrice);
+    }
+
+    public static int GetCountOfPurchases(IEnumerable<Cart> carts)
+    {
+        return carts.Sum(c => c.Quantity);
+    }
 }

@@ -35,7 +35,7 @@ public class CartController : Controller
 
         try
         {
-            await ClearCart();
+            await ClearCartAsync();
 
             _dbContext.Receivers.Add(receiver);
             _dbContext.SaveChanges();
@@ -131,12 +131,7 @@ public class CartController : Controller
 
     public async Task<IActionResult> Save()
     {
-        string userId = await _userManager.GetUserIdAsync(User);
-
-        List<Cart> carts = [.. _dbContext.Carts.Where(c => c.OwnerId == userId)];
-
-        _dbContext.Carts.RemoveRange(carts);
-        await _dbContext.SaveChangesAsync();
+        await ClearCartAsync();
 
         await _dbContext.Carts.AddRangeAsync(_orderSummaryViewModel.Carts
             .Select(c => new Cart
@@ -165,35 +160,18 @@ public class CartController : Controller
     /// Removes the record of the cart from database
     /// </summary>
     /// <exception cref="InvalidProgramException"></exception>
-    private async Task ClearCart()
-    {
-        Checkout? checkoutModel = await GetCheckoutModelAsync() ??
-            throw new InvalidProgramException();
-
-        int[] purchaseIds = checkoutModel.GetPurchases();
-
-        foreach (var id in purchaseIds)
-        {
-            Cart? cart = _dbContext.Carts.Find(id);
-            if (cart is not null) _dbContext.Carts.Remove(cart);
-        }
-    }
-
-    /// <summary>
-    /// Creates a Checkout model of the current logged in user
-    /// </summary>
-    /// <returns>Checkout model of the user</returns>
-    private async Task<Checkout?> GetCheckoutModelAsync()
+    private async Task ClearCartAsync()
     {
         string? userId = await _userManager.GetUserIdAsync(User);
 
-        if (string.IsNullOrEmpty(userId))
+        if (userId == null)
         {
-            return null;
+            return;
         }
 
-        IEnumerable<Cart> carts = GetUserCart(_dbContext, userId);
+        List<Cart> cart = GetUserCart(_dbContext, userId);
 
-        return new Checkout(carts, userId);
+        _dbContext.Carts.RemoveRange(cart);
+        await _dbContext.SaveChangesAsync();
     }
 }

@@ -4,8 +4,8 @@
     const string FORMAT = "N2";
     string shippingDetailsProp = Model.IsEditMode ? "disabled" : "";
     string editBtnProp = Model.IsEditMode ? "" : "d-none";
-    double totalCheckout = Checkout.GetSumPurchase(Model.Carts);
-    double totalNumOfItems = Checkout.GetCountOfPurchases(Model.Carts);
+    double totalCheckout = Cart.GetSumPurchase(Model.Carts);
+    double totalNumOfItems = Cart.GetCountOfPurchases(Model.Carts);
 }
 
 <ul class="list-group" style="min-width: 450px; width: auto">

@@ -11,13 +11,15 @@
             <h4 class="text-light text-uppercase">Your favorite</h4>
             <h1 class="text-light">EMarket <i class="bi bi-shop"></i></h1>
         </div>
-        <div class="col-7 container-fluid d-flex d-lg-flex" id="featuredProductContainer">
-            @if (pageInfo.ActiveItems.Any())
-            {
-                <button class="btn btn-sm circle text-white align-self-center" onclick="navigate(-1)"><i class="bi bi-arrow-left"></i></button>
-                <div class="flex-grow-1 d-flex align-content-center p-2" id="featuredProductDiv"></div>
-                <button class="btn btn-sm text-white align-self-center" onclick="navigate(1)"><i class="bi bi-arrow-right"></i></button>
-            }
+        <div class="col-7 d-none d-lg-block">
+            <div class="container-fluid d-none d-lg-flex" id="featuredProductContainer">
+                @if (pageInfo.ActiveItems.Any())
+                {
+                    <button class="btn btn-sm circle text-white align-self-center" onclick="navigate(-1)"><i class="bi bi-arrow-left"></i></button>
+                    <div class="flex-grow-1 d-flex align-content-center p-2" id="featuredProductDiv"></div>
+                    <button class="btn btn-sm text-white align-self-center" onclick="navigate(1)"><i class="bi bi-arrow-right"></i></button>
+                }
+            </div>
         </div>
     </div>
 </div>
@@ -56,22 +58,25 @@
         }
         else
         {
-            <div class="container-fluid ps-0">
-                <ul class="pagination pagination-sm">
-                    <li class="page-item">
-                        <a class="page-link" asp-action="Navigate" asp-route-pageNo="@(pageInfo.ActivePage - 1)">&laquo;</a>
-                    </li>
-                    @foreach (var pageNo in Enumerable.Range(1, pageInfo.NoOfPages))
-                    {
+            @if (pageInfo.NoOfPages > 1)
+            {
+                <div class="container-fluid ps-0">
+                    <ul class="pagination pagination-sm">
                         <li class="page-item">
-                            <a class="page-link @(pageInfo.ActivePage == pageNo ? "active" : "")" asp-action="Navigate" asp-route-pageNo="@pageNo">@pageNo</a>
+                            <a class="page-link" asp-action="Navigate" asp-route-pageNo="@(pageInfo.ActivePage - 1)">&laquo;</a>
                         </li>
-                    }
-                    <li class="page-item">
-                        <a class="page-link" asp-action="Navigate" asp-route-pageNo="@(pageInfo.ActivePage + 1)">&raquo;</a>
-                    </li>
-                </ul>
-            </div>
+                        @foreach (var pageNo in Enumerable.Range(1, pageInfo.NoOfPages))
+                        {
+                            <li class="page-item">
+                                <a class="page-link @(pageInfo.ActivePage == pageNo ? "active" : "")" asp-action="Navigate" asp-route-pageNo="@pageNo">@pageNo</a>
+                            </li>
+                        }
+                        <li class="page-item">
+                            <a class="page-link" asp-action="Navigate" asp-route-pageNo="@(pageInfo.ActivePage + 1)">&raquo;</a>
+                        </li>
+                    </ul>
+                </div>
+            }
 
             <div class="card-deck d-flex flex-wrap justify-content-start ps-0">
                 @foreach (Product product in pageInfo.ActiveItems)
