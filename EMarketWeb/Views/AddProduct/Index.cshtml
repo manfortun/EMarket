@@ -6,17 +6,19 @@
 
 <div class="container col-md-6 col-lg-5 mt-3">
     <form class="border p-3" method="post" asp-action="modifycategory" id="categoryForm">
-        <div class="mx-auto d-block m-3 position-relative" style="height: 200px; width: 200px;">
-            <img title="@Model.Name" class="card-img rounded shadow-sm" style="max-height: 100%; max-width: 100%; object-fit: cover;" src="@(string.IsNullOrEmpty(Model.ImageSource) ? "~/images/no-image.jpg" : Model.ImageSource)" asp-append-version="true" />
-        </div>
 
         <input asp-for="Id" hidden />
         <input asp-for="ImageSource" id="modelImageInput" hidden />
         <input asp-for="CategoriesStringed" hidden />
         <input asp-for="NumberParameter" id="numberParameter" value="0" hidden />
         <input asp-for="DateCreated" hidden />
-        <div class=" mb-3">
-            <input asp-for="ImageSource" class="form-control" type="file" name="file" id="imageSourceInput" oninput="setImageSource()" value="@Model?.ImageSource?.Split('/').Last()"/>
+
+        <div class="mx-auto d-block m-3 position-relative" style="height: 200px; width: 200px;">
+            <img title="@Model.Name" class="card-img rounded shadow-sm" style="height: inherit; object-fit: cover;" src="@(string.IsNullOrEmpty(Model.ImageSource) ? "~/images/no-image.jpg" : Model.ImageSource)" asp-append-version="true" />
+            <label for="imageSourceInput" class="btn btn-light border position-absolute bottom-0 end-0" style="display: inline-block;cursor: pointer;border-radius: 4px;">
+                <i class="bi bi-pencil"></i>
+            </label>
+            <input asp-for="ImageSource" type="file" name="file" id="imageSourceInput" oninput="setImageSource()" hidden/>
             <button type="submit" asp-action="changeimage" id="submitImageBtn" hidden></button>
         </div>
 
