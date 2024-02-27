@@ -1,0 +1,53 @@
+﻿@model OrderSummaryViewModel
+
+@{
+    const string FORMAT = "N2";
+    string shippingDetailsProp = Model.IsEditMode ? "disabled" : "";
+    string editBtnProp = Model.IsEditMode ? "" : "d-none";
+    double totalCheckout = Checkout.GetSumPurchase(Model.Carts);
+    double totalNumOfItems = Checkout.GetCountOfPurchases(Model.Carts);
+}
+
+<ul class="list-group" style="min-width: 450px; width: auto">
+    @foreach (Cart cart in Model.Carts)
+    {
+        <li class="list-group-item text-secondary">
+            <div class="row align-items-center">
+                <div class="col">
+                    <div class="text-primary-emphasis">
+                        <b>@cart.Product.Name</b>
+                    </div>
+                </div>
+
+                <div class="col justify-content-center align-items-center text-center d-flex">
+                    <button onclick="modifyCountClicked(@cart.Id, @cart.Quantity - 1)" class="btn btn-sm bg-danger @editBtnProp">-</button>
+                    <h5 style="min-width: 50px"><b>@cart.Quantity</b></h5>
+                    <button onclick="modifyCountClicked(@cart.Id, @cart.Quantity + 1)" class="btn btn-sm bg-success @editBtnProp">+</button>
+                </div>
+
+                <div class="col text-end align-items-center">
+                    <b>@((cart.Quantity * cart.Product.UnitPrice).ToString(FORMAT))</b>
+                </div>
+            </div>
+        </li>
+    }
+
+    <li class="list-group-item">
+        <div class="row align-items-center">
+            <div class="col">
+                <h5>
+                    <b>Total</b>
+                </h5>
+                <small class="text-secondary">
+                </small>
+            </div>
+            <div class="col justify-content-center align-items-center text-center">
+                <h5><b>@totalNumOfItems</b><div class="text-secondary" style="font-size: 10px">@(totalNumOfItems > 1 ? "items" : "item")</div></h5>
+            </div>
+            <div class="col text-end align-items-center">
+                <h5><b>@totalCheckout.ToString(FORMAT)</b></h5>
+            </div>
+        </div>
+    </li>
+
+</ul>

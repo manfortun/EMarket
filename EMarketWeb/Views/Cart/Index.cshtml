@@ -1,129 +1,237 @@
-﻿@model Checkout;
+﻿@model Receiver
 
 @{
     ViewData["Title"] = "Cart";
-    const string FORMAT = "N2";
-    double totalCheckout = Checkout.GetSumPurchase(ViewBag.Carts);
-    bool isEditMode = ViewBag.IsEditMode;
-    string shippingDetailsProp = isEditMode ? "disabled" : "";
-    string editBtnProp = isEditMode ? "" : "d-none";
 }
 
-<div class="container p-3">
-    @if (Model.HasPurchases())
-    {
-        <div class="mb-5">
-            <div class="container-fluid">
-                <h1>Check out your items.</h1>
-            </div>
+<div class="container p-3 d-none" id="parentContainer">
+    <div class="mb-5" id="titleDiv">
+        <div class="container-fluid">
+            <h1>Check out your items.</h1>
         </div>
-    }
+    </div>
 
     <div class="row d-flex flex-column-reverse flex-lg-row">
-        @if (!Model.HasPurchases())
-        {
-            <div class="text-center mt-5">
-                <h6>Add items to cart from the Home menu.</h6>
+        <div class="text-center mt-5" id="noOrderDiv">
+            <h6>Add items to cart from the Home menu.</h6>
+        </div>
+        <form class="col p-3 d-flex flex-column-reverse flex-lg-row" method="post" id="col1">
+            <div class="col container border p-3 me-lg-2">
+                <div class="justify-content-center align-items-center flex-grow-1">
+                    <h2 class="mb-2">Checkout.</h2>
+                    <p class="text-uppercase">Shipping details</p>
+                    <hr/>
+                    <div class="m-2">
+                        <div class="row">
+                            <div class="col-md-6 mb-3 p-1 form-floating">
+                                <input asp-for="FirstName" class="form-control" id="firstNameControl"/>
+                                <label asp-for="FirstName"></label>
+                                <span asp-validation-for="FirstName" class="text-danger"></span>
+                            </div>
+                            <div class="col-md-6 mb-3 p-1 form-floating">
+                                <input asp-for="LastName" class="form-control" id="lastNameControl"/>
+                                <label asp-for="LastName"></label>
+                                <span asp-validation-for="LastName" class="text-danger"></span>
+                            </div>
+                        </div>
+                        <div class="row mb-3 p-1 form-floating">
+                            <input asp-for="ContactNo" class="form-control" id="contactNoControl"/>
+                            <label asp-for="ContactNo"></label>
+                            <span asp-validation-for="ContactNo" class="text-danger"></span>
+                        </div>
+                        <div class="row mb-3 p-1 form-floating">
+                            <input asp-for="Address" class="form-control" id="addressControl"/>
+                            <label asp-for="Address"></label>
+                            <span asp-validation-for="Address" class="text-danger"></span>
+                        </div>
+                    </div>
+                </div>
+                <div class="container col-md-5 p-0 text-end">
+                    <button type="submit" class="btn btn-warning w-100" id="submitButton">Purchase</button>
+                </div>
             </div>
-        }
-        else
-        {
-            <form class="col p-3 d-flex flex-column-reverse flex-lg-row" method="post">
-                <div class="col container border p-3 me-lg-2">
-                    <div class="justify-content-center align-items-center flex-grow-1">
-                        <h2 class="mb-2">Checkout.</h2>
-                        <p class="text-uppercase">Shipping details</p>
-                        <hr/>
-                        <div class="m-2">
-                            <div class="row">
-                                <input asp-for="OwnerId" hidden/>
-                                <input asp-for="Id" hidden/>
-                                <input asp-for="PurchasesStringed" hidden />
-                                <div class="col-md-6 mb-3 p-1 form-floating">
-                                    <input asp-for="FirstName" class="form-control" disabled="@isEditMode">
-                                    <label asp-for="FirstName"></label>
-                                    <span asp-validation-for="FirstName" class="text-danger"></span>
-                                </div>
-                                <div class="col-md-6 mb-3 p-1 form-floating">
-                                    <input asp-for="LastName" class="form-control" disabled="@isEditMode" />
-                                    <label asp-for="LastName"></label>
-                                    <span asp-validation-for="LastName" class="text-danger"></span>
-                                </div>
-                            </div>
-                            <div class="row mb-3 p-1 form-floating">
-                                <input asp-for="ContactNo" class="form-control" disabled="@isEditMode" />
-                                <label asp-for="ContactNo"></label>
-                                <span asp-validation-for="ContactNo" class="text-danger"></span>
-                            </div>
-                            <div class="row mb-3 p-1 form-floating">
-                                <input asp-for="Address" class="form-control" disabled="@isEditMode" />
-                                <label asp-for="Address"></label>
-                                <span asp-validation-for="Address" class="text-danger"></span>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="container col-md-5 p-0 text-end">
-                        <button type="submit" class="btn btn-warning w-100" asp-action="checkout" disabled="@isEditMode">Purchase Php @totalCheckout.ToString(FORMAT)</button>
-                    </div>
+        </form>
+
+        <div class="col d-flex flex-column mb-4" id="col2">
+            <div>
+                <div class="d-flex mb-1">
+                    <label class="text-uppercase flex-grow-1">Your Order</label>
+                    <button onclick="toggleEditMode(false, false)" class="text-uppercase btn btn-sm" id="toggleBtnCancel">Cancel</button>
+                    <button onclick="toggleEditMode(!editMode, true)" id="toggleBtn" class="btn btn-sm"></button>
                 </div>
-
-                <div class="col d-flex flex-column mb-4">
-                    <div>
-                        <div class="d-flex mb-1">
-                            <label class="text-uppercase flex-grow-1">Your Order</label>
-                            <button type="submit" asp-action="canceleditmode" class="text-uppercase btn btn-sm @(isEditMode ? "" : "d-none")">
-                                Cancel
-                            </button>
-                            <button type="submit" asp-action="toggleeditmode" class="btn btn-sm @(isEditMode ? "btn-warning" : "btn-primary")">
-                                <i class="bi @(isEditMode ? "bi-floppy" : "bi-pencil")"></i> @(isEditMode ? "Save" : "Edit")
-                            </button>
-                        </div>
-                        <ul class="list-group" style="min-width: 450px; width: auto">
-                            @foreach (Cart cart in ViewBag.Carts)
-                            {
-                                <li class="list-group-item text-secondary">
-                                    <div class="row align-items-center">
-                                        <div class="col">
-                                            <div class="text-primary-emphasis">
-                                                <b>@cart.Product.Name</b>
-                                            </div>
-                                        </div>
-
-                                        <div class="col justify-content-center align-items-center text-center d-flex">
-                                            <button asp-action="setcount" asp-route-cartId="@cart.Id" asp-route-alterVal="-1" class="btn btn-sm bg-danger @editBtnProp">-</button>
-                                            <h5 style="min-width: 50px"><b>@cart.Quantity</b></h5>
-                                            <button asp-action="setcount" asp-route-cartId="@cart.Id" asp-route-alterVal="1" class="btn btn-sm bg-success @editBtnProp">+</button>
-                                        </div>
-
-                                        <div class="col text-end align-items-center">
-                                            <b>@((cart.Quantity * cart.Product.UnitPrice).ToString(FORMAT))</b>
-                                        </div>
-                                    </div>
-                                </li>
-                            }
-
-                            <li class="list-group-item">
-                                <div class="row align-items-center">
-                                    <div class="col">
-                                        <h5>
-                                            <b>Total</b>
-                                        </h5>
-                                        <small class="text-secondary">
-                                        </small>
-                                    </div>
-                                    <div class="col justify-content-center align-items-center text-center">
-                                        <h5><b>@Checkout.GetCountOfPurchases(ViewBag.Carts)</b><p class="text-secondary" style="font-size: 10px"> items</p></h5>
-                                    </div>
-                                    <div class="col text-end align-items-center">
-                                        <h5><b>@totalCheckout.ToString(FORMAT)</b></h5>
-                                    </div>
-                                </div>
-                            </li>
-
-                        </ul>
-                    </div>
-                </div>
-            </form>
-        }
+                <div id="orderSummary"></div>
+            </div>
+        </div>
     </div>
 </div>
+@section Scripts {
+    @{
+            <partial name="_ValidationScriptsPartial" />
+    }
+    <script>
+        var editMode = true;
+
+        window.onload = function () {
+            toggleEditMode(false, false);
+        }
+
+        function toggleEditMode(varEditMode, willSave) {
+            editMode = varEditMode;
+
+            if (willSave && editMode == false) {
+                saveOrder(updateOrderSummary, editMode);
+            } else {
+                updateOrderSummary(editMode);
+            }
+
+            updateToggleBtn(editMode);
+            toggleForm(editMode);
+        }
+
+        function load() {
+            var checkoutForm = $('#col1');
+            var orderSummary = $('#col2');
+            var titleDiv = $('#titleDiv');
+            var noOrderDiv = $('#noOrderDiv');
+
+            $.ajax({
+                url: '/Cart/HasOrders',
+                method: 'GET',
+                success: function (result) {
+                    if (result) {
+                        if (checkoutForm.hasClass('d-none')) {
+                            checkoutForm.removeClass('d-none');
+                        }
+
+                        if (orderSummary.hasClass('d-none')) {
+                            orderSummary.removeClass('d-none');
+                        }
+
+                        if (titleDiv.hasClass('d-none')) {
+                            titleDiv.removeClass('d-none');
+                        }
+
+                        if (noOrderDiv.hasClass('d-none') == false) {
+                            noOrderDiv.addClass('d-none');
+                        }
+                    } else {
+                        if (checkoutForm.hasClass('d-none') == false) {
+                            checkoutForm.addClass('d-none');
+                        }
+
+                        if (orderSummary.hasClass('d-none') == false) {
+                            orderSummary.addClass('d-none');
+                        }
+
+                        if (titleDiv.hasClass('d-none') == false) {
+                            titleDiv.addClass('d-none');
+                        }
+
+                        if (noOrderDiv.hasClass('d-none')) {
+                            noOrderDiv.removeClass('d-none');
+                        }
+                    }
+
+                    $('#parentContainer').removeClass('d-none');
+                },
+                error: function () {
+                    console.log('Something went wrong.')
+                }
+            });
+        }
+
+        function saveOrder(callback, editMode) {
+            $.ajax({
+                url: '/Cart/Save',
+                type: 'GET',
+                success: function () {
+                    callback(editMode);
+                    console.log('Success');
+                },
+                error: function () {
+                    console.log('Error');
+                }
+            });
+        }
+
+        function updateOrderSummary(editMode) {
+            $.ajax({
+                url: '/Cart/GetOrderSummary',
+                type: 'GET',
+                data: { editMode: editMode },
+                success: function (result) {
+                    $('#orderSummary').html(result);
+                    load();
+                    console.log('Obtained order summary');
+                },
+                error: function () {
+                    console.log('Not found');
+                }
+            });
+        }
+
+        function modifyCountClicked(cartId, count) {
+            $.ajax({
+                url: '/Cart/ChangeCount',
+                type: 'GET',
+                data: { cartId: cartId, count: count },
+                success: function (result) {
+                    $('#orderSummary').html(result);
+                },
+                error: function () {
+                    console.log('Not found');
+                }
+            });
+        }
+
+        function toggleForm(editMode) {
+            toggleControl(document.getElementById('firstNameControl'), editMode);
+            toggleControl(document.getElementById('lastNameControl'), editMode);
+            toggleControl(document.getElementById('contactNoControl'), editMode);
+            toggleControl(document.getElementById('addressControl'), editMode);
+        }
+
+        function toggleControl(control, editMode) {
+            if (editMode) {
+                control.setAttribute('disabled', '');
+            } else {
+                control.removeAttribute('disabled');
+            }
+        }
+
+        function updateToggleBtn(editMode) {
+            var toggleBtn = $('#toggleBtn');
+            var toggleBtnCancel = $('#toggleBtnCancel');
+
+            if (editMode == true) {
+                if (toggleBtn.hasClass('btn-primary')) {
+                    toggleBtn.removeClass('btn-primary');
+                }
+
+                if (toggleBtn.hasClass('btn-warning') == false) {
+                    toggleBtn.addClass('btn-warning');
+                }
+
+                if (toggleBtnCancel.hasClass('d-none')) {
+                    toggleBtnCancel.removeClass('d-none');
+                }
+
+                toggleBtn.html('<i class="bi bi-floppy"></i> Save');
+            } else {
+                if (toggleBtn.hasClass('btn-warning')) {
+                    toggleBtn.removeClass('btn-warning');
+                }
+
+                if (toggleBtn.hasClass('btn-primary') == false) {
+                    toggleBtn.addClass('btn-primary');
+                }
+
+                if (toggleBtnCancel.hasClass('d-none') == false) {
+                    toggleBtnCancel.addClass('d-none');
+                }
+
+                toggleBtn.html('<i class="bi bi-pencil"></i> Edit');
+            }
+        }
+    </script>
+}

@@ -1,215 +1,199 @@
 ﻿using EMarket.DataAccess.Data;
 using EMarket.Models;
+using EMarket.Models.ViewModels;
 using EMarket.Utility;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 
-namespace EMarketWeb.Controllers
+namespace EMarketWeb.Controllers;
+
+public class CartController : Controller
 {
-    public class CartController : Controller
+    private readonly ApplicationDbContext _dbContext;
+    private readonly UserManager<IdentityUser> _userManager;
+    private static List<Cart> _carts = default!;
+    private static OrderSummaryViewModel _orderSummaryViewModel = default!;
+
+    public CartController(
+        ApplicationDbContext dbContext,
+        UserManager<IdentityUser> userManager)
     {
-        private readonly ApplicationDbContext _dbContext;
-        private readonly UserManager<IdentityUser> _userManager;
-        private static Checkout? _checkout = default!;
-        private static Checkout? _tempCheckout = default!;
-        private static List<Cart> _carts = default!;
-        private static bool _isEditMode = false;
+        _dbContext = dbContext;
+        _userManager = userManager;
+    }
 
-        public CartController(
-            ApplicationDbContext dbContext,
-            UserManager<IdentityUser> userManager)
+    [HttpGet]
+    public IActionResult Index()
+    {
+        return View();
+    }
+
+    [HttpPost]
+    public async Task<IActionResult> Index(Receiver receiver)
+    {
+        receiver.OwnerId = await _userManager.GetUserIdAsync(User);
+
+        try
         {
-            _dbContext = dbContext;
-            _userManager = userManager;
+            await ClearCart();
+
+            _dbContext.Receivers.Add(receiver);
+            _dbContext.SaveChanges();
+            TempData["success"] = "Successfully checked out your cart!";
+        }
+        catch
+        {
+            return BadRequest();
         }
 
-        public async Task<IActionResult> Index(bool init = true)
+        return RedirectToAction("Index", "Home");
+    }
+
+    public async Task<IActionResult> HasOrders()
+    {
+        string? userId = await _userManager.GetUserIdAsync(User);
+
+        if (string.IsNullOrEmpty(userId))
         {
-            if (init)
-            {
-                _checkout = default!;
-                _tempCheckout = default!;
-                _carts = default!;
-                _isEditMode = false;
-            }
-
-            // obtain checkout model
-            _checkout ??= await GetCheckoutModelAsync();
-
-            // obtain user cart
-            if (!_isEditMode)
-            {
-                string? userId = await _userManager.GetUserIdAsync(User);
-
-                if (string.IsNullOrEmpty(userId))
-                {
-                    return NotFound();
-                }
-                _carts = GetUserCart(_dbContext, userId);
-            }
-
-            ViewBag.IsEditMode = _isEditMode;
-            ViewBag.Carts = _carts;
-
-            return View(_checkout);
+            return NotFound();
         }
 
-        public async Task<IActionResult> Checkout(Checkout checkoutWrapper)
+        bool hasOrders = GetUserCart(_dbContext, userId).Count > 0;
+
+        return Ok(hasOrders);
+    }
+
+    [HttpGet]
+    public async Task<IActionResult> GetOrderSummary(bool editMode)
+    {
+        string userId = await _userManager.GetUserIdAsync(User);
+
+        if (string.IsNullOrEmpty(userId))
         {
-            if (!ModelState.IsValid)
-            {
-                _checkout = checkoutWrapper;
-                return RedirectToAction("Index", new { init = false });
-            }
-
-            try
-            {
-                await ClearCart();
-                var receiver = new Receiver
-                {
-                    Id = checkoutWrapper.Id,
-                    OwnerId = checkoutWrapper.OwnerId,
-                    FirstName = checkoutWrapper.FirstName,
-                    LastName = checkoutWrapper.LastName,
-                    ContactNo = checkoutWrapper.ContactNo,
-                    Address = checkoutWrapper.Address,
-                };
-
-                _dbContext.Receivers.Add(receiver);
-                _dbContext.SaveChanges();
-                TempData["success"] = "Successfully checked out your cart!";
-            }
-            catch
-            {
-                return BadRequest();
-            }
-
-            return RedirectToAction("Index", "Home");
+            return NotFound();
         }
 
-        public async Task<IActionResult> ToggleEditMode(Checkout checkout)
+        List<Cart> carts = GetUserCart(_dbContext, userId);
+
+        _orderSummaryViewModel = new OrderSummaryViewModel
         {
-            _isEditMode = !_isEditMode;
-            _checkout = checkout;
+            Carts = carts,
+            IsEditMode = editMode
+        };
 
-            if (_isEditMode)
-            {
-                _tempCheckout = (Checkout)checkout.Clone();
-            }
-            else if (_tempCheckout is not null)
-            {
-                _tempCheckout.SetPurchases(_carts);
-                _checkout = _tempCheckout;
+        return PartialView("OrderSummary", _orderSummaryViewModel);
+    }
 
-                Cart[] originalCart = [.. _dbContext.Carts
-                    .Where(c => c.OwnerId == checkout.OwnerId)];
+    public IActionResult ChangeCount(int cartId, int count)
+    {
+        Cart? target = _orderSummaryViewModel.Carts.Find(c => c.Id == cartId);
 
-                _dbContext.Carts.RemoveRange(originalCart);
-                await _dbContext.SaveChangesAsync();
-
-                foreach (var c in _carts)
-                {
-                    _dbContext.Carts.Add(new Cart
-                    {
-                        OwnerId = c.OwnerId,
-                        ProductId = c.ProductId,
-                        Quantity = c.Quantity,
-                    });
-                }
-
-                await _dbContext.SaveChangesAsync();
-            }
-            else
-            {
-                return BadRequest();
-            }
-
-            return RedirectToAction("Index", new { init = false });
+        if (target is null)
+        {
+            return NotFound();
         }
 
-        public IActionResult CancelEditMode()
-        {
-            _isEditMode = false;
-            _carts = default!;
-            if (_tempCheckout is not null)
-            {
-                _checkout = (Checkout)_tempCheckout.Clone();
-            }
+        target.Quantity = count;
 
-            return RedirectToAction("Index", new { init = false });
+        if (target.Quantity < 1)
+        {
+            _orderSummaryViewModel.Carts.Remove(target);
         }
 
-        public IActionResult SetCount(int cartId, int alterVal)
+        return PartialView("OrderSummary", _orderSummaryViewModel);
+    }
+
+    public IActionResult SetCount(int cartId, int alterVal)
+    {
+        if (_carts is null)
         {
-            if (_carts is null)
-            {
-                return BadRequest();
-            }
-
-            Cart? cart = _carts.Find(c => c.Id == cartId);
-
-            if (cart is null)
-            {
-                return NotFound();
-            }
-
-            cart.Quantity += alterVal;
-
-            if (cart.Quantity < 1)
-            {
-                _carts.Remove(cart);
-            }
-
-            ViewBag.Carts = _carts;
-
-            return RedirectToAction("Index", new { init = false });
+            return BadRequest();
         }
 
-        /// <summary>
-        /// Get the user's cart from database
-        /// </summary>
-        /// <param name="userId">ID of the user</param>
-        /// <returns>IEnumerable<Cart> of user</returns>
-        private static List<Cart> GetUserCart(ApplicationDbContext dbContext, string userId)
+        Cart? cart = _carts.Find(c => c.Id == cartId);
+
+        if (cart is null)
         {
-            List<Cart> carts = [.. dbContext.Carts.Where(c => c.OwnerId == userId)];
-            return carts;
+            return NotFound();
         }
 
-        /// <summary>
-        /// Removes the record of the cart from database
-        /// </summary>
-        /// <exception cref="InvalidProgramException"></exception>
-        private async Task ClearCart()
+        cart.Quantity += alterVal;
+
+        if (cart.Quantity < 1)
         {
-            Checkout? checkoutModel = await GetCheckoutModelAsync() ??
-                throw new InvalidProgramException();
+            _carts.Remove(cart);
+        }
 
-            int[] purchaseIds = checkoutModel.GetPurchases();
+        ViewBag.Carts = _carts;
 
-            foreach (var id in purchaseIds)
+        return RedirectToAction("Index", new { init = false });
+    }
+
+    public async Task<IActionResult> Save()
+    {
+        string userId = await _userManager.GetUserIdAsync(User);
+
+        List<Cart> carts = [.. _dbContext.Carts.Where(c => c.OwnerId == userId)];
+
+        _dbContext.Carts.RemoveRange(carts);
+        await _dbContext.SaveChangesAsync();
+
+        await _dbContext.Carts.AddRangeAsync(_orderSummaryViewModel.Carts
+            .Select(c => new Cart
             {
-                Cart? cart = _dbContext.Carts.Find(id);
-                if (cart is not null) _dbContext.Carts.Remove(cart);
-            }
-        }
+                OwnerId = c.OwnerId,
+                ProductId = c.ProductId,
+                Quantity = c.Quantity
+            }));
+        await _dbContext.SaveChangesAsync();
 
-        /// <summary>
-        /// Creates a Checkout model of the current logged in user
-        /// </summary>
-        /// <returns>Checkout model of the user</returns>
-        private async Task<Checkout?> GetCheckoutModelAsync()
+        return Ok();
+    }
+
+    /// <summary>
+    /// Get the user's cart from database
+    /// </summary>
+    /// <param name="userId">ID of the user</param>
+    /// <returns>IEnumerable<Cart> of user</returns>
+    private static List<Cart> GetUserCart(ApplicationDbContext dbContext, string userId)
+    {
+        List<Cart> carts = [.. dbContext.Carts.Where(c => c.OwnerId == userId)];
+        return carts;
+    }
+
+    /// <summary>
+    /// Removes the record of the cart from database
+    /// </summary>
+    /// <exception cref="InvalidProgramException"></exception>
+    private async Task ClearCart()
+    {
+        Checkout? checkoutModel = await GetCheckoutModelAsync() ??
+            throw new InvalidProgramException();
+
+        int[] purchaseIds = checkoutModel.GetPurchases();
+
+        foreach (var id in purchaseIds)
         {
-            string? userId = await _userManager.GetUserIdAsync(User);
-
-            if (string.IsNullOrEmpty(userId))
-            {
-                return null;
-            }
-
-            IEnumerable<Cart> carts = GetUserCart(_dbContext, userId);
-
-            return new Checkout(carts, userId);
+            Cart? cart = _dbContext.Carts.Find(id);
+            if (cart is not null) _dbContext.Carts.Remove(cart);
         }
+    }
+
+    /// <summary>
+    /// Creates a Checkout model of the current logged in user
+    /// </summary>
+    /// <returns>Checkout model of the user</returns>
+    private async Task<Checkout?> GetCheckoutModelAsync()
+    {
+        string? userId = await _userManager.GetUserIdAsync(User);
+
+        if (string.IsNullOrEmpty(userId))
+        {
+            return null;
+        }
+
+        IEnumerable<Cart> carts = GetUserCart(_dbContext, userId);
+
+        return new Checkout(carts, userId);
     }
 }
