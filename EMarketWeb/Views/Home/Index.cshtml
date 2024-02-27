@@ -53,6 +53,15 @@
     <div class="col">
         <div id="message" class="d-flex justify-content-center"></div>
 
+        <div class="card-deck d-flex flex-wrap justify-content-start ps-0" id="itemsDisplay">
+            @foreach (Product product in pageInfo.ActiveItems)
+            {
+                <div class="me-lg-3 mt-2 mb-2 me-2 ms-lg-0">
+                    @await Html.PartialAsync("_ProductCard", product)
+                </div>
+            }
+        </div>
+
         @if (Model.NoOfPages > 1)
         {
             <div class="container-fluid ps-0">
@@ -72,15 +81,6 @@
                 </ul>
             </div>
         }
-
-        <div class="card-deck d-flex flex-wrap justify-content-start ps-0" id="itemsDisplay">
-            @foreach (Product product in pageInfo.ActiveItems)
-            {
-                <div class="me-lg-3 mt-2 mb-2 me-2 ms-lg-0">
-                    @await Html.PartialAsync("_ProductCard", product)
-                </div>
-            }
-        </div>
     </div>
 </div>
 
