@@ -41,14 +41,14 @@ public static class ProductExtension
         // filter based on search key
         var filteredProducts = items.Where(item =>
         {
-            if (item.Name.Contains(searchKey))
+            if (item.Name.Contains(searchKey, StringComparison.OrdinalIgnoreCase))
             {
                 return true;
             }
 
-            string[] categoryNames = item.Category?.Select(c => c.Category.Name).ToArray() ?? [];
+            List<string> categoryNames = item.Category?.Select(c => c.Category.Name).ToList() ?? [];
 
-            if (categoryNames.Contains(searchKey)) return true;
+            if (categoryNames.Exists(c => c.Contains(searchKey, StringComparison.OrdinalIgnoreCase))) return true;
 
             return false;
         }).ToList();
