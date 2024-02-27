@@ -1,5 +1,4 @@
 ﻿using EMarket.Models;
-using Microsoft.EntityFrameworkCore;
 
 namespace EMarket.Utility;
 

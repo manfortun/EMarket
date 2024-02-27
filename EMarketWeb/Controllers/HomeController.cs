@@ -43,7 +43,7 @@ public class HomeController : Controller
             await _signInManager.SignOutAsync();
             return RedirectToAction("Login", "Account");
         }
- 
+
         _categoryFilter.SetCategories(GetExtendedCategoriesList());
 
         _ = GetItems();

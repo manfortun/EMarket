@@ -16,9 +16,9 @@
             <div class="container-fluid d-none d-lg-flex" id="featuredProductContainer">
                 @if (pageInfo.ActiveItems.Any())
                 {
-                    <button class="btn btn-sm circle text-white align-self-center" onclick="navigate(-1)"><i class="bi bi-arrow-left"></i></button>
+                    <button class="btn btn-sm circle text-white align-self-center" onclick="navigate(-1)"><i class="bi bi-chevron-left"></i></button>
                     <div class="flex-grow-1 d-flex align-content-center p-2" id="featuredProductDiv"></div>
-                    <button class="btn btn-sm text-white align-self-center" onclick="navigate(1)"><i class="bi bi-arrow-right"></i></button>
+                    <button class="btn btn-sm text-white align-self-center" onclick="navigate(1)"><i class="bi bi-chevron-right"></i></button>
                 }
             </div>
         </div>
@@ -40,7 +40,8 @@
                 {
                     <form method="post" asp-action="oncategoryticked" asp-route-categoryId="@category.Id">
                         <div class="form-check ms-3 ms-lg-0">
-                            <input class="form-check-input" type="checkbox" id="@category.Id" onchange="this.form.submit()" @(categoryFilter.IsDisplayed(category.Id) ? "checked" : "")/>
+                            <input class="form-check-input" type="checkbox" id="@category.Id"
+                            onchange="this.form.submit()" @(categoryFilter.IsDisplayed(category.Id) ? "checked" : "")/>
                             <label class="form-check-label" for="@category.Id">
                                 @category.Name
                             </label>
@@ -67,7 +68,7 @@
             <div class="container-fluid ps-0">
                 <ul class="pagination pagination-sm">
                     <li class="page-item @(Model.ActivePage <= 1 ? "disabled" : "")">
-                        <a class="page-link" asp-action="Navigate" asp-route-pageNo="@(Model.ActivePage - 1)"><i class="bi bi-arrow-left"></i></a>
+                        <a class="page-link" asp-action="Navigate" asp-route-pageNo="@(Model.ActivePage - 1)"><i class="bi bi-chevron-left"></i></a>
                     </li>
                     @foreach (var pageNo in Enumerable.Range(1, Model.NoOfPages))
                     {
@@ -76,7 +77,7 @@
                         </li>
                     }
                     <li class="page-item @(Model.ActivePage >= Model.NoOfPages ? "disabled" : "")">
-                        <a class="page-link" asp-action="Navigate" asp-route-pageNo="@(Model.ActivePage + 1)"><i class="bi bi-arrow-right"></i></a>
+                        <a class="page-link" asp-action="Navigate" asp-route-pageNo="@(Model.ActivePage + 1)"><i class="bi bi-chevron-right"></i></a>
                     </li>
                 </ul>
             </div>

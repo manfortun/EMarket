@@ -1,6 +1,4 @@
-﻿using Newtonsoft.Json;
-
-namespace EMarket.Models.ViewModels;
+﻿namespace EMarket.Models.ViewModels;
 
 public class OrderSummaryViewModel
 {
