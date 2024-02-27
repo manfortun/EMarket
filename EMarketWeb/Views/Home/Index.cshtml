@@ -57,8 +57,8 @@
         {
             <div class="container-fluid ps-0">
                 <ul class="pagination pagination-sm">
-                    <li class="page-item">
-                        <a class="page-link" asp-action="Navigate" asp-route-pageNo="@(Model.ActivePage - 1)">&laquo;</a>
+                    <li class="page-item @(Model.ActivePage <= 1 ? "disabled" : "")">
+                        <a class="page-link" asp-action="Navigate" asp-route-pageNo="@(Model.ActivePage - 1)"><i class="bi bi-arrow-left"></i></a>
                     </li>
                     @foreach (var pageNo in Enumerable.Range(1, Model.NoOfPages))
                     {
@@ -66,8 +66,8 @@
                             <a class="page-link @(Model.ActivePage == pageNo ? "active" : "")" asp-action="Navigate" asp-route-pageNo="@pageNo">@pageNo</a>
                         </li>
                     }
-                    <li class="page-item">
-                        <a class="page-link" asp-action="Navigate" asp-route-pageNo="@(Model.ActivePage + 1)">&raquo;</a>
+                    <li class="page-item @(Model.ActivePage >= Model.NoOfPages ? "disabled" : "")">
+                        <a class="page-link" asp-action="Navigate" asp-route-pageNo="@(Model.ActivePage + 1)"><i class="bi bi-arrow-right"></i></a>
                     </li>
                 </ul>
             </div>
