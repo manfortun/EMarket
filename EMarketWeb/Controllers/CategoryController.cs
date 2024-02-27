@@ -17,7 +17,7 @@ public class CategoryController : Controller
 
     public IActionResult Index()
     {
-        List<Category> categoryList = _dbContext.Categories.ToList() ?? [];
+        List<Category> categoryList = [.. _dbContext.Categories];
         return View(categoryList);
     }
 
@@ -35,6 +35,7 @@ public class CategoryController : Controller
             return View();
         }
 
+        // try add to database
         if (TryExecuteActionToDbContext(category, _dbContext.Categories.Add))
         {
             TempData["success"] = "Category created successfully";
@@ -67,6 +68,7 @@ public class CategoryController : Controller
             return View();
         }
 
+        // try update to database
         if (TryExecuteActionToDbContext(category, _dbContext.Categories.Update))
         {
             TempData["success"] = "Category edited successfully";
@@ -94,6 +96,7 @@ public class CategoryController : Controller
     [HttpPost]
     public IActionResult Delete(Category category)
     {
+        // try delete from database
         if (TryExecuteActionToDbContext(category, _dbContext.Categories.Remove))
         {
             TempData["success"] = "Category deleted successfully";

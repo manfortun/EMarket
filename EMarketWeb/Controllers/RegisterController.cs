@@ -29,43 +29,22 @@ namespace EMarketWeb.Controllers
         [HttpPost]
         public async Task<IActionResult> Index(RegisterCredentials user)
         {
-            if (!ModelState.IsValid)
-            {
-                return View();
-            }
+            IdentityUser identUser = user.ToIdentityUser();
+            IdentityResult identityResult = await _userManager.CreateAsync(identUser, user.Password);
 
-            IdentityResult result = await TrySignInUserAsync(user);
-
-            if (result.Succeeded)
+            if (identityResult.Succeeded)
             {
+                await _signInManager.SignInAsync(identUser, isPersistent: false);
                 return RedirectToAction("Index", "Home");
             }
             else
             {
-                foreach (IdentityError error in result.Errors)
+                foreach (IdentityError error in identityResult.Errors)
                 {
                     ModelState.AddModelError("", error.Description);
                 }
                 return View();
             }
-        }
-
-        private async Task<IdentityResult> TrySignInUserAsync(RegisterCredentials user)
-        {
-            IdentityUser identUser = user.ToIdentityUser();
-            IdentityResult passwordResult = await _userManager.CreateAsync(identUser, user.Password);
-
-            if (passwordResult.Succeeded)
-            {
-                await SignInUserAsync(identUser);
-            }
-
-            return passwordResult;
-        }
-
-        private async Task SignInUserAsync(IdentityUser user)
-        {
-            await _signInManager.SignInAsync(user, isPersistent: false);
         }
     }
 }

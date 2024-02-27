@@ -31,6 +31,7 @@ namespace EMarketWeb.Controllers
 
         public IActionResult ModifyCategory(EditProductViewModel viewModel)
         {
+            // check the parameter
             if (viewModel.NumberParameter is null)
             {
                 return BadRequest();
@@ -44,6 +45,7 @@ namespace EMarketWeb.Controllers
 
         public IActionResult Save(EditProductViewModel viewModel)
         {
+            // DateCreated is the date the product is saved
             viewModel.DateCreated = DateTime.Now;
 
             if (!ModelState.IsValid)
@@ -51,9 +53,11 @@ namespace EMarketWeb.Controllers
                 return RedirectToAction("Index");
             }
 
+            // add and save the products first before inserting to ProductCategories (FK constraint)
             _dbContext.Products.Add(viewModel);
             _dbContext.SaveChanges();
 
+            // check if product has assigned category then save
             if (viewModel.GetCategories().Any())
             {
                 _dbContext.ProductCategories.AddRange(viewModel.GetCategories()
@@ -66,6 +70,7 @@ namespace EMarketWeb.Controllers
 
             _dbContext.SaveChanges();
 
+            // remove any unused image from the web root to save space
             _ = _imgService.RemoveExcept([.. _dbContext.Products.Select(p => p.ImageSource).ToList()]);
 
             TempData["success"] = "Product added successfully";
@@ -75,12 +80,14 @@ namespace EMarketWeb.Controllers
         [HttpPost]
         public IActionResult Upload(IFormFile file)
         {
+            // check if uploaded file is valid image format
             if (!_imgService.IsValid(file))
             {
                 TempData["error"] = "The file selected is not an image.";
                 return BadRequest("Please select a correct image format.");
             }
 
+            // upload to web root
             _imgService.Upload(file, out string finalizedFileName);
 
             return Content($"~/images/{finalizedFileName}");

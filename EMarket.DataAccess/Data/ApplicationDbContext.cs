@@ -8,7 +8,7 @@ public class ApplicationDbContext : IdentityDbContext
 {
     public DbSet<Category> Categories { get; set; }
     public DbSet<Product> Products { get; set; }
-    public DbSet<Cart> Carts { get; set; }
+    public DbSet<Purchase> Purchases { get; set; }
     public DbSet<Receiver> Receivers { get; set; }
     public DbSet<ProductCategory> ProductCategories { get; set; }
 

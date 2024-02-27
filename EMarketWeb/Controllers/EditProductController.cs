@@ -38,6 +38,7 @@ namespace EMarketWeb.Controllers
                 return RedirectToAction("Index", new { jsonString });
             }
 
+            // obtain the product that is being edited from the database
             Product? product = _dbContext.Products
                 .Include(p => p.Category)
                 .FirstOrDefault(p => p.Id == viewModel.Id);
@@ -47,8 +48,10 @@ namespace EMarketWeb.Controllers
                 return NotFound();
             }
 
+            // edit the properties of the product from the view
             UpdateProductFromViewModel(viewModel, product);
 
+            // check if necessary to edit the product-category table
             if (HasNewCategories(viewModel, product, out var newCategories))
             {
                 if (product.Category is not null)
@@ -62,6 +65,7 @@ namespace EMarketWeb.Controllers
             _dbContext.Update(product);
             _dbContext.SaveChanges();
 
+            // remove the images from the web root that are not in use to save space
             _ = _imgService.RemoveExcept([.. _dbContext.Products.Select(p => p.ImageSource)]);
 
             TempData["success"] = "Successfully modified product.";
@@ -70,6 +74,7 @@ namespace EMarketWeb.Controllers
 
         public IActionResult Delete(EditProductViewModel viewModel)
         {
+            // obtain the product that is being edited from the database
             Product? product = _dbContext.Products.Find(viewModel.Id);
 
             if (product is null)
@@ -77,6 +82,7 @@ namespace EMarketWeb.Controllers
                 return NotFound();
             }
 
+            // remove the product from the database
             _dbContext.Products.Remove(product);
             _dbContext.SaveChanges();
 
@@ -87,6 +93,7 @@ namespace EMarketWeb.Controllers
         [HttpPost]
         public IActionResult ModifyCategory(EditProductViewModel viewModel)
         {
+            // check the parameter
             if (viewModel.NumberParameter is null)
             {
                 return BadRequest();
@@ -101,6 +108,7 @@ namespace EMarketWeb.Controllers
         [HttpPost]
         public IActionResult Upload(IFormFile file)
         {
+            // check if the uploaded file is a valid image file
             if (!_imgService.IsValid(file))
             {
                 TempData["error"] = "The file selected is not an image.";
@@ -147,6 +155,7 @@ namespace EMarketWeb.Controllers
             var oldCategoryList = product.Category?.Select(c => c.CategoryId).ToArray() ?? [];
             var newCategoryList = viewModel.GetCategories();
 
+            // check for changes
             bool hasChanges = oldCategoryList.Length != newCategoryList.Length ||
                 oldCategoryList.Except(newCategoryList).Any();
 

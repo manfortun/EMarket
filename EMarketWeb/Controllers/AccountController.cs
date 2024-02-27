@@ -53,6 +53,7 @@ namespace EMarketWeb.Controllers
         {
             await _signInManager.SignOutAsync();
 
+            // clear any user session cache
             _userService.ClearUserCache();
 
             return RedirectToAction("Login", "Account");

@@ -11,7 +11,7 @@ public class CartController : Controller
 {
     private readonly ApplicationDbContext _dbContext;
     private readonly UserManager<IdentityUser> _userManager;
-    private static List<Cart> _carts = default!;
+    private static List<Purchase> _carts = default!;
     private static OrderSummaryViewModel _orderSummaryViewModel = default!;
 
     public CartController(
@@ -73,7 +73,7 @@ public class CartController : Controller
             return NotFound();
         }
 
-        List<Cart> carts = GetUserCart(_dbContext, userId);
+        List<Purchase> carts = GetUserCart(_dbContext, userId);
 
         _orderSummaryViewModel = new OrderSummaryViewModel
         {
@@ -86,7 +86,7 @@ public class CartController : Controller
 
     public IActionResult ChangeCount(int cartId, int count)
     {
-        Cart? target = _orderSummaryViewModel.Carts.Find(c => c.Id == cartId);
+        Purchase? target = _orderSummaryViewModel.Carts.Find(c => c.Id == cartId);
 
         if (target is null)
         {
@@ -110,7 +110,7 @@ public class CartController : Controller
             return BadRequest();
         }
 
-        Cart? cart = _carts.Find(c => c.Id == cartId);
+        Purchase? cart = _carts.Find(c => c.Id == cartId);
 
         if (cart is null)
         {
@@ -133,8 +133,8 @@ public class CartController : Controller
     {
         await ClearCartAsync();
 
-        await _dbContext.Carts.AddRangeAsync(_orderSummaryViewModel.Carts
-            .Select(c => new Cart
+        await _dbContext.Purchases.AddRangeAsync(_orderSummaryViewModel.Carts
+            .Select(c => new Purchase
             {
                 OwnerId = c.OwnerId,
                 ProductId = c.ProductId,
@@ -150,9 +150,9 @@ public class CartController : Controller
     /// </summary>
     /// <param name="userId">ID of the user</param>
     /// <returns>IEnumerable<Cart> of user</returns>
-    private static List<Cart> GetUserCart(ApplicationDbContext dbContext, string userId)
+    private static List<Purchase> GetUserCart(ApplicationDbContext dbContext, string userId)
     {
-        List<Cart> carts = [.. dbContext.Carts.Where(c => c.OwnerId == userId)];
+        List<Purchase> carts = [.. dbContext.Purchases.Where(c => c.OwnerId == userId)];
         return carts;
     }
 
@@ -169,9 +169,9 @@ public class CartController : Controller
             return;
         }
 
-        List<Cart> cart = GetUserCart(_dbContext, userId);
+        List<Purchase> cart = GetUserCart(_dbContext, userId);
 
-        _dbContext.Carts.RemoveRange(cart);
+        _dbContext.Purchases.RemoveRange(cart);
         await _dbContext.SaveChangesAsync();
     }
 }

@@ -38,13 +38,14 @@ public class HomeController : Controller
 
     public async Task<IActionResult> Index()
     {
+        // check if the user exists in database
         if (!await IsUserVerified(User))
         {
             await _signInManager.SignOutAsync();
             return RedirectToAction("Login", "Account");
         }
 
-        _categoryFilter.SetCategories(GetExtendedCategoriesList());
+        _categoryFilter.SetCategories(GetExtendedCategoriesListFromDb(_dbContext));
 
         _ = GetItems();
 
@@ -56,14 +57,17 @@ public class HomeController : Controller
 
     public IActionResult GetItems()
     {
+        // get the categories selected from the view
         int[] selectedCategories = _categoryFilter.GetSelectedCategories();
 
+        // filter the products based on the search key and the selected categories
         var filteredProducts = _dbContext.Products.ToList()
             .AddFilter(_searchKey)
             .AddFilter(selectedCategories);
 
         _pageInfo.RefreshNoOfPages(filteredProducts);
 
+        // filters returned no items
         if (_pageInfo.NoOfPages < 1)
         {
             return NoContent();
@@ -72,26 +76,15 @@ public class HomeController : Controller
         return PartialView("HomeItemsDisplay", _pageInfo);
     }
 
-    private async Task<bool> IsUserVerified(ClaimsPrincipal user)
-    {
-        string userId = await _userManager.GetUserIdAsync(user);
-
-        IdentityUser? identityUser = await _userManager.FindByIdAsync(userId);
-
-        return identityUser is not null;
-    }
-
-    public IActionResult Privacy()
-    {
-        return View();
-    }
-
     [HttpGet]
     public IActionResult Search(string searchString)
     {
-        PageInfo<Product> searchInfo = new PageInfo<Product>(12);
-        searchInfo.RefreshNoOfPages(_pageInfo.Items.ToList().AddFilter(searchString));
+        IEnumerable<Product> filteredProducts = _pageInfo.Items.ToList().AddFilter(searchString);
 
+        PageInfo<Product> searchInfo = new PageInfo<Product>(_pageInfo.NoOfItemsPerPage);
+        searchInfo.RefreshNoOfPages(filteredProducts);
+
+        // filter returned no items
         if (searchInfo.NoOfPages < 1)
         {
             return NoContent();
@@ -111,25 +104,24 @@ public class HomeController : Controller
     public async Task<IActionResult> AddToCart(int productId)
     {
         string userId = await _userManager.GetUserIdAsync(User);
-        if (string.IsNullOrEmpty(userId)) return BadRequest();
 
-        Cart? cart = _dbContext.Carts.FirstOrDefault(x => x.OwnerId == userId && x.ProductId == productId);
-
-        if (cart is null)
+        if (string.IsNullOrEmpty(userId))
         {
-            cart = new Cart
-            {
-                OwnerId = userId,
-                ProductId = productId,
-            };
-
-            _dbContext.Carts.Add(cart);
+            return BadRequest();
         }
 
-        cart.Quantity++;
-        _dbContext.SaveChanges();
+        string? productName = _dbContext.Products.Find(productId)?.Name;
 
-        string productName = _dbContext.Products.Find(productId)?.Name ?? string.Empty;
+        if (productName is null)
+        {
+            return NotFound();
+        }
+
+        // get or create the purchase of the user of specific productId
+        Purchase? purchase = GetOrCreatePurchase(_dbContext, userId, productId);
+
+        purchase.Quantity++;
+        _dbContext.SaveChanges();
 
         return Ok(productName);
     }
@@ -143,6 +135,7 @@ public class HomeController : Controller
             return NotFound();
         }
 
+        // convert to /EditProduct view model
         var viewModel = EditProductViewModel.Convert(product);
 
         string jsonString = viewModel.ToJson();
@@ -166,27 +159,24 @@ public class HomeController : Controller
     {
         if (semaphoreSlim.CurrentCount == 0)
         {
+            // cancel prior processes
             cts.Cancel();
         }
 
+        // wait for the process to finish
         await semaphoreSlim.WaitAsync();
 
         Product? product = default!;
 
         try
         {
-            int maxCount = await _dbContext.Products.CountAsync(cts.Token);
+            // get the upperbound
+            int maxCount = await _dbContext.Products.CountAsync(cts.Token) - 1;
 
             _featuredProductIndex += direction;
 
-            if (_featuredProductIndex > maxCount - 1)
-            {
-                _featuredProductIndex = 0;
-            }
-            else if (_featuredProductIndex < 0)
-            {
-                _featuredProductIndex = maxCount - 1;
-            }
+            // keep index within the range
+            LoopWithinRange(0, maxCount, ref _featuredProductIndex);
 
             product = await _dbContext.Products.ElementAtOrDefaultAsync(_featuredProductIndex, cts.Token);
         }
@@ -196,10 +186,16 @@ public class HomeController : Controller
         }
         finally
         {
+            // release the semaphore to allow pending processes
             semaphoreSlim.Release();
         }
 
         return product is null ? NotFound() : PartialView("FeaturedProduct", product);
+    }
+
+    public IActionResult Privacy()
+    {
+        return View();
     }
 
     [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
@@ -207,17 +203,82 @@ public class HomeController : Controller
     {
         return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
     }
+    
+    /// <summary>
+    /// Checks if the user exists in the database
+    /// </summary>
+    /// <param name="user">The user to evaluate.</param>
+    /// <returns>True if the user exists in database. Otherwise, false.</returns>
+    private async Task<bool> IsUserVerified(ClaimsPrincipal user)
+    {
+        string userId = await _userManager.GetUserIdAsync(user);
+
+        IdentityUser? identityUser = await _userManager.FindByIdAsync(userId);
+
+        return identityUser is not null;
+    }
 
     /// <summary>
     /// Obtains all available categories including the 'Uncategorized' category
     /// </summary>
     /// <returns></returns>
-    private List<Category> GetExtendedCategoriesList()
+    private static List<Category> GetExtendedCategoriesListFromDb(ApplicationDbContext dbContext)
     {
-        var categoryListFromDb = _dbContext.Categories.ToList();
+        var categoryListFromDb = dbContext.Categories.ToList();
         // the 'Uncategorized' category is added to the list
         categoryListFromDb.Add(CategoryExtension.GetUncategorizedCategory());
 
         return categoryListFromDb;
+    }
+
+    /// <summary>
+    /// Bounds a value to a range. When a value is outside the range, it returns to the other end of the range in a circular fashion.
+    /// </summary>
+    /// <param name="firstBound">The first value the output can have.</param>
+    /// <param name="secondBound">The last value the output can have.</param>
+    /// <param name="value">Returns the original value if the value is within range. Otherwise, whichever bound the value is closest to.</param>
+    private static void LoopWithinRange(int firstBound, int secondBound, ref int value)
+    {
+        if (firstBound > secondBound)
+        {
+            (secondBound, firstBound) = (firstBound, secondBound);
+        }
+
+        if (value > secondBound)
+        {
+            value = firstBound;
+        }
+        else if (value < firstBound)
+        {
+            value = secondBound;
+        }
+    }
+
+    /// <summary>
+    /// Attempts to get the purchase record from database. When not existing, a new record is created instead where quantity is 0.
+    /// </summary>
+    /// <param name="dbContext">Database</param>
+    /// <param name="userId">User ID</param>
+    /// <param name="productId">Product ID</param>
+    /// <returns>The obtained or created purchase record.</returns>
+    private static Purchase GetOrCreatePurchase(ApplicationDbContext dbContext, string userId, int productId)
+    {
+        Purchase? purchase = dbContext.Purchases
+            .FirstOrDefault(p => p.OwnerId == userId && p.ProductId == productId);
+
+        if (purchase is null)
+        {
+            purchase = new Purchase
+            {
+                OwnerId = userId,
+                ProductId = productId,
+                Quantity = 0,
+            };
+
+            dbContext.Purchases.Add(purchase);
+            dbContext.SaveChanges();
+        }
+
+        return purchase;
     }
 }
