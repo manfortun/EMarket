@@ -21,7 +21,7 @@ public class Receiver
 
     [Required]
     [DisplayName("Contact No.")]
-    [RegularExpression(@"^\d{4}-\d{3}-\d{4}$", ErrorMessage = "Contact number must be in the format XXXX-XXX-XXXX.")]
+    [StringLength(11)]
     public string ContactNo { get; set; } = default!;
 
     [Required]
