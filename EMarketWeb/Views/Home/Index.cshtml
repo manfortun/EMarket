@@ -85,7 +85,9 @@
     </div>
 </div>
 
-@section Scripts{
+@section Scripts {
+    <script src="~/lib/jquery/dist/jquery.min.js"></script>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/js/toastr.min.js"></script>
     <script>
         navigate(0);
 
@@ -116,5 +118,19 @@
             });
         }
 
+        function addtocart(productId) {
+            $.ajax({
+                url: '/Home/AddToCart',
+                type: 'GET',
+                data: { productId: productId },
+                success: function (result) {
+                    console.log('Added to cart');
+                    toastr.success(message);
+                },
+                error: function () {
+                    console.log('Not found');
+                }
+            });
+        }
     </script>
 }

@@ -21,10 +21,8 @@
 
     <div class="position-relative">
         <div class="position-absolute bottom-0 end-0 m-2">
-            <button class="badge bg-outline-primary rounded-pill border-0 p-1" type="submit">
-                <a asp-controller="Home" asp-action="AddToCart" asp-route-productId="@Model.Id">
-                    <i class="bi bi-plus text-primary" style="font-size: 20px"></i>
-                </a>
+            <button class="badge bg-outline-primary rounded-pill border-0 p-1" onclick="addtocart(@Model.Id)">
+                <i class="bi bi-plus text-primary" style="font-size: 20px"></i>
             </button>
         </div>
     </div>

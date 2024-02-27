@@ -44,8 +44,6 @@ public class HomeController : Controller
             return RedirectToAction("Login", "Account");
         }
 
-        await InitCartCountOfUserAsync(User);
-
         if (!_categoryFilter.IsCategoriesSet)
         {
             _categoryFilter.SetCategories(GetExtendedCategoriesList());
@@ -114,10 +112,7 @@ public class HomeController : Controller
 
         cart.Quantity++;
         _dbContext.SaveChanges();
-
-        InitCartCountOfUser(userId);
-
-        return RedirectToAction("Index");
+        return Ok();
     }
 
     public IActionResult Edit(int itemId)
@@ -205,27 +200,5 @@ public class HomeController : Controller
         categoryListFromDb.Add(CategoryExtension.GetUncategorizedCategory());
 
         return categoryListFromDb;
-    }
-
-    /// <summary>
-    /// Sets the number of items in the cart in the navbar
-    /// </summary>
-    /// <param name="userId"></param>
-    private void InitCartCountOfUser(string userId)
-    {
-        ViewData["cartcount"] = _dbContext.Carts
-            .Where(user => user.OwnerId == userId)
-            .Sum(cart => cart.Quantity);
-    }
-
-    /// <summary>
-    /// Sets the number of items in the cart in the navbar
-    /// </summary>
-    /// <param name="userId"></param>
-    private async Task InitCartCountOfUserAsync(ClaimsPrincipal principal)
-    {
-        string userId = await _userManager.GetUserIdAsync(principal);
-
-        InitCartCountOfUser(userId);
     }
 }
