@@ -8,6 +8,8 @@ public class PageInfo<T>
     public int ActivePage { get; set; } = 0;
     public int NoOfPages { get; set; } = 0;
 
+    public IEnumerable<T> Items => _items;
+
     public IEnumerable<T> ActiveItems
     {
         get

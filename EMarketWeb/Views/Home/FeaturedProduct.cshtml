@@ -1,0 +1,9 @@
+﻿@model Product
+
+<div>@await Html.PartialAsync("_ProductCard", Model);</div>
+<div class="text-white flex-grow-1 d-flex flex-column align-items-center justify-content-center ms-4">
+    <h4>@Model.Description</h4>
+    <div class="container text-end">
+        <h3>Php @Model.UnitPrice.ToString("N2")</h3>
+    </div>
+</div>

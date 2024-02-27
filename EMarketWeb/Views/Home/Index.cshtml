@@ -11,19 +11,11 @@
             <h4 class="text-light text-uppercase">Your favorite</h4>
             <h1 class="text-light">EMarket <i class="bi bi-shop"></i></h1>
         </div>
-        <div class="col-7 container-fluid d-flex d-lg-flex d-none">
+        <div class="col-7 container-fluid d-flex d-lg-flex" id="featuredProductContainer">
             @if (pageInfo.ActiveItems.Any())
             {
                 <button class="btn btn-sm circle text-white align-self-center" onclick="navigate(-1)"><i class="bi bi-arrow-left"></i></button>
-                <div class="flex-grow-1 d-flex align-content-center p-2">
-                    <div id="productCard" class="shadow" ></div>
-                    <div class="text-white flex-grow-1 d-flex flex-column align-items-center justify-content-center ms-4">
-                        <h4 id="productDescription"></h4>
-                        <div class="container text-end">
-                            <h3 id="productPrice"></h3>
-                        </div>
-                    </div>
-                </div>
+                <div class="flex-grow-1 d-flex align-content-center p-2" id="featuredProductDiv"></div>
                 <button class="btn btn-sm text-white align-self-center" onclick="navigate(1)"><i class="bi bi-arrow-right"></i></button>
             }
         </div>
@@ -106,47 +98,31 @@
 
 @section Scripts{
     <script>
-        var currentIndex = 0;
-
         navigate(0);
 
         function navigate(direction) {
-            var products = @Html.Raw(Json.Serialize(pageInfo.ActiveItems
-                .Select(x => new Product
-                    {
-                        Description = x.Description,
-                        UnitPrice = x.UnitPrice
-                    })
-                    .ToArray()));
+            var container = $('#featuredProductContainer');
 
-            var maxCount = products.length;
-            
-            currentIndex += direction;
-            console.log(products.length);
-            if (currentIndex < 0) {
-                currentIndex = maxCount - 1;
-            } else if (currentIndex >= maxCount) {
-                currentIndex = 0;
-            }
-            
-            var product = products[currentIndex];
-
-            loadProductCard(currentIndex);
-
-            $('#productDescription').html(product['description']);
-            $('#productPrice').html('Php ' + product['unitPrice']);
-        }
-
-        function loadProductCard(indexNo) {
             $.ajax({
-                url: '/Home/GetProductCardView',
+                url: '/Home/GetFeaturedProductView',
                 type: 'GET',
-                data: { indexNo: indexNo },
+                data: { direction: direction },
                 success: function (result) {
-                    $('#productCard').html(result);
+                    $('#featuredProductDiv').html(result);
+                    if (container.hasClass('d-none')) {
+                        container.removeClass('d-none');
+                        container.addClass('d-flex');
+                        container.addClass('d-lg-flex');
+                    }
                 },
                 error: function () {
-                    console.log('Not found')
+                    console.log('Not found');
+                    if (container.hasClass('d-none') == false) {
+                        container.addClass('d-none');
+                        container.removeClass('d-flex');
+                        container.removeClass('d-lg-flex');
+                        console.log('huh');
+                    }
                 }
             });
         }

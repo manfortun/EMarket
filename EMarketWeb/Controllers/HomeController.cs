@@ -6,6 +6,7 @@ using EMarketWeb.Services;
 using EMarketWeb.Services.Interfaces;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using System.Diagnostics;
 using System.Security.Claims;
 
@@ -18,6 +19,9 @@ public class HomeController : Controller
     private readonly UserManager<IdentityUser> _userManager;
     private static readonly PageInfo<Product> _pageInfo = new(noOfItemsPerPage: 11);
     private readonly CategoryFilterService _categoryFilter;
+    private static readonly SemaphoreSlim semaphoreSlim = new SemaphoreSlim(1);
+    private static CancellationTokenSource cts = new CancellationTokenSource();
+    private static int _featuredProductIndex = 0;
     private static string? _searchKey = default!;
 
     public HomeController(
@@ -144,11 +148,44 @@ public class HomeController : Controller
         return RedirectToAction("Index");
     }
 
-    public IActionResult GetProductCardView(int indexNo)
+    public async Task<IActionResult> GetFeaturedProductView(int direction)
     {
-        Product? product = _pageInfo.ActiveItems.ElementAtOrDefault(indexNo);
+        if (semaphoreSlim.CurrentCount == 0)
+        {
+            cts.Cancel();
+        }
 
-        return product is null ? NotFound() : PartialView("_ProductCard", product);
+        await semaphoreSlim.WaitAsync();
+
+        Product? product = default!;
+
+        try
+        {
+            int maxCount = await _dbContext.Products.CountAsync(cts.Token);
+
+            _featuredProductIndex += direction;
+
+            if (_featuredProductIndex > maxCount - 1)
+            {
+                _featuredProductIndex = 0;
+            }
+            else if (_featuredProductIndex < 0)
+            {
+                _featuredProductIndex = maxCount - 1;
+            }
+
+            product = await _dbContext.Products.ElementAtOrDefaultAsync(_featuredProductIndex, cts.Token);
+        }
+        catch (Exception)
+        {
+            // FALLTHROUGH
+        }
+        finally
+        {
+            semaphoreSlim.Release();
+        }
+
+        return product is null ? NotFound() : PartialView("FeaturedProduct", product);
     }
 
     [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
