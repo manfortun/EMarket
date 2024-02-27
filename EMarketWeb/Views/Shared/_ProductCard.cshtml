@@ -1,13 +1,13 @@
 ﻿@model Product
 
-<div class="card position-relative" style="width: 200px; min-height: 200px">
+<div class="card position-relative" style="width: 200px; min-height: 200px" title="@Model.Name">
 
     <a asp-action="Edit" asp-route-itemId="@Model.Id" style="text-decoration: none">
         <div class="card-body text-center">
             <div style="height: 150px">
                 <img class="card-img" style="height: inherit;object-fit:cover" src="@(string.IsNullOrEmpty(Model.ImageSource) ? "~/images/no-image.jpg" : Model.ImageSource)" asp-append-version="true" />
             </div>
-            <h6 class="card-title mt-4 mb-1 text-primary-emphasis">@Model.Name</h6>
+            <h6 class="card-title mt-4 mb-1 text-primary-emphasis overflow-hidden" style="white-space:nowrap; text-overflow: ellipsis">@Model.Name</h6>
             <div class="row">
                 <small class="text-body-tertiary overflow-hidden" style="font-size: 12px; white-space: nowrap; text-overflow: ellipsis">
                     @Model.GetCategoriesFormattedString()

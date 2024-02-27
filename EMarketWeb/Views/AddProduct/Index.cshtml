@@ -5,9 +5,9 @@
 }
 
 <div class="container col-md-6 col-lg-5 mt-3">
-    <h3>@ViewData["Title"]</h3>
     <form class="border p-3" method="post" asp-action="modifycategory" id="categoryForm">
-
+        <legend>@ViewData["Title"]</legend>
+        <hr />
         <input asp-for="Id" hidden />
         <input asp-for="ImageSource" id="modelImageInput" hidden />
         <input asp-for="CategoriesStringed" hidden />
@@ -60,9 +60,9 @@
             </div>
         </div>
 
-        <div class="d-grid gap-2 d-md-flex justify-content-md-end">
-            <button class="btn btn-outline-secondary ml-md-auto ps-5 pe-5" asp-controller="home" asp-action="index">Cancel</button>
+        <div class="d-grid gap-2 d-xl-flex flex-row-reverse justify-content-xl-start">
             <button class="btn btn-primary ml-md-auto ps-5 pe-5" asp-action="save" type="submit">Save</button>
+            <button class="btn btn-outline-secondary ml-md-auto ps-5 pe-5" asp-controller="home" asp-action="index">Cancel</button>
         </div>
     </form>
 </div>
