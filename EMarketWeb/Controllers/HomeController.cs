@@ -17,7 +17,7 @@ public class HomeController : Controller
     private readonly ApplicationDbContext _dbContext;
     private readonly SignInManager<IdentityUser> _signInManager;
     private readonly UserManager<IdentityUser> _userManager;
-    private static readonly PageInfo<Product> _pageInfo = new(noOfItemsPerPage: 11);
+    private static readonly PageInfo<Product> _pageInfo = new(noOfItemsPerPage: 12);
     private readonly CategoryFilterService _categoryFilter;
     private static readonly SemaphoreSlim semaphoreSlim = new SemaphoreSlim(1);
     private static CancellationTokenSource cts = new CancellationTokenSource();

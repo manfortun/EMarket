@@ -75,7 +75,7 @@
                                 Cancel
                             </button>
                             <button type="submit" asp-action="toggleeditmode" class="btn btn-sm @(isEditMode ? "btn-warning" : "btn-primary")">
-                                <i class="bi @(isEditMode ? "bi-floppy" : "bi-pencil")"></i>
+                                <i class="bi @(isEditMode ? "bi-floppy" : "bi-pencil")"></i> @(isEditMode ? "Save" : "Edit")
                             </button>
                         </div>
                         <ul class="list-group" style="min-width: 450px; width: auto">

@@ -5,6 +5,7 @@
 }
 
 <div class="container col-md-6 col-lg-5 mt-3">
+    <h3>@ViewData["Title"]</h3>
     <form class="border p-3" method="post" asp-action="modifycategory" id="categoryForm">
 
         <input asp-for="Id" hidden />
@@ -60,6 +61,7 @@
         </div>
 
         <div class="d-grid gap-2 d-md-flex justify-content-md-end">
+            <button class="btn btn-outline-secondary ml-md-auto ps-5 pe-5" asp-controller="home" asp-action="index">Cancel</button>
             <button class="btn btn-danger ml-md-auto ps-5 pe-5" asp-action="Delete" type="submit">Delete</button>
             <button class="btn btn-primary ml-md-auto ps-5 pe-5" asp-action="Submit" type="submit">Save</button>
         </div>
