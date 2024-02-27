@@ -278,16 +278,16 @@ namespace EMarket.DataAccess.Migrations
                 columns: new[] { "Id", "DateCreated", "Description", "ImageSource", "Name", "UnitPrice" },
                 values: new object[,]
                 {
-                    { 1, new DateTime(2024, 1, 26, 22, 38, 45, 364, DateTimeKind.Local).AddTicks(1007), null, "~/images/OIP.jpg", "T-Shirt", 299.0 },
-                    { 2, new DateTime(2024, 1, 26, 22, 38, 45, 364, DateTimeKind.Local).AddTicks(1014), null, "~/images/cellphone.jpg", "Cellphone", 13999.0 },
-                    { 3, new DateTime(2024, 1, 26, 22, 38, 45, 364, DateTimeKind.Local).AddTicks(1016), null, "~/images/ec3596459302e2e8e4d586517816a69a.jpg", "Knife", 240.0 },
-                    { 4, new DateTime(2024, 1, 26, 22, 38, 45, 364, DateTimeKind.Local).AddTicks(1017), null, "~/images/lotion.jpg", "Lotion", 250.0 },
-                    { 5, new DateTime(2024, 1, 26, 22, 38, 45, 364, DateTimeKind.Local).AddTicks(1019), null, "~/images/rubbershoes.jpg", "Rubber Shoes", 5500.0 },
-                    { 6, new DateTime(2024, 1, 26, 22, 38, 45, 364, DateTimeKind.Local).AddTicks(1020), null, "~/images/cleancode.jpg", "Clean Code", 2890.0 },
-                    { 7, new DateTime(2024, 1, 26, 22, 38, 45, 364, DateTimeKind.Local).AddTicks(1022), null, "~/images/Minecraft.jpg", "Minecraft", 150.0 },
-                    { 8, new DateTime(2024, 1, 26, 22, 38, 45, 364, DateTimeKind.Local).AddTicks(1024), null, "~/images/fibrecloth.jpg", "Fibre Cloth", 40.0 },
-                    { 9, new DateTime(2024, 1, 26, 22, 38, 45, 364, DateTimeKind.Local).AddTicks(1025), null, "~/images/goatsmilk.jpg", "Goat's Milk", 380.0 },
-                    { 10, new DateTime(2024, 1, 26, 22, 38, 45, 364, DateTimeKind.Local).AddTicks(1027), null, "~/images/necklace.jpg", "14K Gold Necklace", 21500.0 }
+                    { 1, new DateTime(2024, 1, 27, 11, 35, 38, 865, DateTimeKind.Local).AddTicks(5350), "Sleek black tee: Style redefined. Elevate your look effortlessly! 🔥 #FashionEssential", "~/images/OIP.jpg", "T-Shirt", 299.0 },
+                    { 2, new DateTime(2024, 1, 27, 11, 35, 38, 865, DateTimeKind.Local).AddTicks(5358), "Unleash limitless power with our latest cellphone innovation!", "~/images/cellphone.jpg", "Cellphone", 13999.0 },
+                    { 3, new DateTime(2024, 1, 27, 11, 35, 38, 865, DateTimeKind.Local).AddTicks(5360), "Unleash precision in the palm of your hand. Elevate your tools with our sleek knife.", "~/images/ec3596459302e2e8e4d586517816a69a.jpg", "Knife", 240.0 },
+                    { 4, new DateTime(2024, 1, 27, 11, 35, 38, 865, DateTimeKind.Local).AddTicks(5363), "Indulge in luxury with our hydrating lotion. Elevate your skincare routine effortlessly.", "~/images/lotion.jpg", "Lotion", 250.0 },
+                    { 5, new DateTime(2024, 1, 27, 11, 35, 38, 865, DateTimeKind.Local).AddTicks(5365), "Step up your game with our stylish rubber shoes. Elevate your look with every stride.", "~/images/rubbershoes.jpg", "Rubber Shoes", 5500.0 },
+                    { 6, new DateTime(2024, 1, 27, 11, 35, 38, 865, DateTimeKind.Local).AddTicks(5367), "Master clean code principles. Robert Martin's essential guide.", "~/images/cleancode.jpg", "Clean Code", 2890.0 },
+                    { 7, new DateTime(2024, 1, 27, 11, 35, 38, 865, DateTimeKind.Local).AddTicks(5369), "Immerse in endless adventures. Explore, create, survive. Minecraft awaits!", "~/images/Minecraft.jpg", "Minecraft", 150.0 },
+                    { 8, new DateTime(2024, 1, 27, 11, 35, 38, 865, DateTimeKind.Local).AddTicks(5371), "Upgrade your cleaning game with our durable fiber cloth.", "~/images/fibrecloth.jpg", "Fibre Cloth", 40.0 },
+                    { 9, new DateTime(2024, 1, 27, 11, 35, 38, 865, DateTimeKind.Local).AddTicks(5373), "Pure nourishment for your pet. Goat's milk: natural goodness.", "~/images/goatsmilk.jpg", "Goat's Milk", 380.0 },
+                    { 10, new DateTime(2024, 1, 27, 11, 35, 38, 865, DateTimeKind.Local).AddTicks(5375), "Elegant luxury, timeless beauty. Elevate your style with 14k gold.", "~/images/necklace.jpg", "14K Gold Necklace", 21500.0 }
                 });
 
             migrationBuilder.InsertData(

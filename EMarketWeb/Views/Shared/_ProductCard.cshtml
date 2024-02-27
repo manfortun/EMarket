@@ -1,0 +1,39 @@
+﻿@model Product
+
+<div class="card position-relative" style="width: 200px; min-height: 200px">
+
+    <a asp-action="Edit" asp-route-itemId="@Model.Id" style="text-decoration: none">
+        <div class="card-body text-center">
+            <div style="height: 150px">
+                <img class="card-img" style="height: inherit;object-fit:cover" src="@(string.IsNullOrEmpty(Model.ImageSource) ? "~/images/no-image.jpg" : Model.ImageSource)" asp-append-version="true" />
+            </div>
+            <h6 class="card-title mt-4 mb-1 text-primary-emphasis">@Model.Name</h6>
+            <div class="row">
+                <small class="text-body-tertiary overflow-hidden" style="font-size: 12px; white-space: nowrap; text-overflow: ellipsis">
+                    @Model.GetCategoriesFormattedString()
+                </small>
+                <small class="card-text text-body-tertiary">
+                    Php @Model.UnitPrice.ToString("N2")
+                </small>
+            </div>
+        </div>
+    </a>
+
+    <div class="position-relative">
+        <div class="position-absolute bottom-0 end-0 m-2">
+            <button class="badge bg-outline-primary rounded-pill border-0 p-1" type="submit">
+                <a asp-controller="Home" asp-action="AddToCart" asp-route-productId="@Model.Id">
+                    <i class="bi bi-plus text-primary" style="font-size: 20px"></i>
+                </a>
+            </button>
+        </div>
+    </div>
+
+    @if (DateTime.Now - Model.DateCreated < TimeSpan.FromDays(7))
+    {
+        <span class="position-absolute top-0 start-0 m-2 badge rounded-pill bg-warning">
+            New
+        </span>
+    }
+
+</div>

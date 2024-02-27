@@ -155,7 +155,8 @@ namespace EMarket.DataAccess.Migrations
                         new
                         {
                             Id = 1,
-                            DateCreated = new DateTime(2024, 1, 26, 22, 38, 45, 364, DateTimeKind.Local).AddTicks(1007),
+                            DateCreated = new DateTime(2024, 1, 27, 11, 35, 38, 865, DateTimeKind.Local).AddTicks(5350),
+                            Description = "Sleek black tee: Style redefined. Elevate your look effortlessly! 🔥 #FashionEssential",
                             ImageSource = "~/images/OIP.jpg",
                             Name = "T-Shirt",
                             UnitPrice = 299.0
@@ -163,7 +164,8 @@ namespace EMarket.DataAccess.Migrations
                         new
                         {
                             Id = 2,
-                            DateCreated = new DateTime(2024, 1, 26, 22, 38, 45, 364, DateTimeKind.Local).AddTicks(1014),
+                            DateCreated = new DateTime(2024, 1, 27, 11, 35, 38, 865, DateTimeKind.Local).AddTicks(5358),
+                            Description = "Unleash limitless power with our latest cellphone innovation!",
                             ImageSource = "~/images/cellphone.jpg",
                             Name = "Cellphone",
                             UnitPrice = 13999.0
@@ -171,7 +173,8 @@ namespace EMarket.DataAccess.Migrations
                         new
                         {
                             Id = 3,
-                            DateCreated = new DateTime(2024, 1, 26, 22, 38, 45, 364, DateTimeKind.Local).AddTicks(1016),
+                            DateCreated = new DateTime(2024, 1, 27, 11, 35, 38, 865, DateTimeKind.Local).AddTicks(5360),
+                            Description = "Unleash precision in the palm of your hand. Elevate your tools with our sleek knife.",
                             ImageSource = "~/images/ec3596459302e2e8e4d586517816a69a.jpg",
                             Name = "Knife",
                             UnitPrice = 240.0
@@ -179,7 +182,8 @@ namespace EMarket.DataAccess.Migrations
                         new
                         {
                             Id = 4,
-                            DateCreated = new DateTime(2024, 1, 26, 22, 38, 45, 364, DateTimeKind.Local).AddTicks(1017),
+                            DateCreated = new DateTime(2024, 1, 27, 11, 35, 38, 865, DateTimeKind.Local).AddTicks(5363),
+                            Description = "Indulge in luxury with our hydrating lotion. Elevate your skincare routine effortlessly.",
                             ImageSource = "~/images/lotion.jpg",
                             Name = "Lotion",
                             UnitPrice = 250.0
@@ -187,7 +191,8 @@ namespace EMarket.DataAccess.Migrations
                         new
                         {
                             Id = 5,
-                            DateCreated = new DateTime(2024, 1, 26, 22, 38, 45, 364, DateTimeKind.Local).AddTicks(1019),
+                            DateCreated = new DateTime(2024, 1, 27, 11, 35, 38, 865, DateTimeKind.Local).AddTicks(5365),
+                            Description = "Step up your game with our stylish rubber shoes. Elevate your look with every stride.",
                             ImageSource = "~/images/rubbershoes.jpg",
                             Name = "Rubber Shoes",
                             UnitPrice = 5500.0
@@ -195,7 +200,8 @@ namespace EMarket.DataAccess.Migrations
                         new
                         {
                             Id = 6,
-                            DateCreated = new DateTime(2024, 1, 26, 22, 38, 45, 364, DateTimeKind.Local).AddTicks(1020),
+                            DateCreated = new DateTime(2024, 1, 27, 11, 35, 38, 865, DateTimeKind.Local).AddTicks(5367),
+                            Description = "Master clean code principles. Robert Martin's essential guide.",
                             ImageSource = "~/images/cleancode.jpg",
                             Name = "Clean Code",
                             UnitPrice = 2890.0
@@ -203,7 +209,8 @@ namespace EMarket.DataAccess.Migrations
                         new
                         {
                             Id = 7,
-                            DateCreated = new DateTime(2024, 1, 26, 22, 38, 45, 364, DateTimeKind.Local).AddTicks(1022),
+                            DateCreated = new DateTime(2024, 1, 27, 11, 35, 38, 865, DateTimeKind.Local).AddTicks(5369),
+                            Description = "Immerse in endless adventures. Explore, create, survive. Minecraft awaits!",
                             ImageSource = "~/images/Minecraft.jpg",
                             Name = "Minecraft",
                             UnitPrice = 150.0
@@ -211,7 +218,8 @@ namespace EMarket.DataAccess.Migrations
                         new
                         {
                             Id = 8,
-                            DateCreated = new DateTime(2024, 1, 26, 22, 38, 45, 364, DateTimeKind.Local).AddTicks(1024),
+                            DateCreated = new DateTime(2024, 1, 27, 11, 35, 38, 865, DateTimeKind.Local).AddTicks(5371),
+                            Description = "Upgrade your cleaning game with our durable fiber cloth.",
                             ImageSource = "~/images/fibrecloth.jpg",
                             Name = "Fibre Cloth",
                             UnitPrice = 40.0
@@ -219,7 +227,8 @@ namespace EMarket.DataAccess.Migrations
                         new
                         {
                             Id = 9,
-                            DateCreated = new DateTime(2024, 1, 26, 22, 38, 45, 364, DateTimeKind.Local).AddTicks(1025),
+                            DateCreated = new DateTime(2024, 1, 27, 11, 35, 38, 865, DateTimeKind.Local).AddTicks(5373),
+                            Description = "Pure nourishment for your pet. Goat's milk: natural goodness.",
                             ImageSource = "~/images/goatsmilk.jpg",
                             Name = "Goat's Milk",
                             UnitPrice = 380.0
@@ -227,7 +236,8 @@ namespace EMarket.DataAccess.Migrations
                         new
                         {
                             Id = 10,
-                            DateCreated = new DateTime(2024, 1, 26, 22, 38, 45, 364, DateTimeKind.Local).AddTicks(1027),
+                            DateCreated = new DateTime(2024, 1, 27, 11, 35, 38, 865, DateTimeKind.Local).AddTicks(5375),
+                            Description = "Elegant luxury, timeless beauty. Elevate your style with 14k gold.",
                             ImageSource = "~/images/necklace.jpg",
                             Name = "14K Gold Necklace",
                             UnitPrice = 21500.0

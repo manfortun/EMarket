@@ -26,6 +26,7 @@ builder.Services.AddIdentity<IdentityUser, IdentityRole>(options =>
         options.User.RequireUniqueEmail = true;
         options.Password.RequireNonAlphanumeric = false;
         options.Password.RequireUppercase = false;
+        options.Password.RequireLowercase = false;
         options.Password.RequireDigit = false;
     })
     .AddEntityFrameworkStores<ApplicationDbContext>()

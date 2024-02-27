@@ -34,9 +34,7 @@ public class HomeController : Controller
 
     public async Task<IActionResult> Index()
     {
-        bool isVerified = await IsUserVerified(User);
-
-        if (!isVerified)
+        if (!await IsUserVerified(User))
         {
             await _signInManager.SignOutAsync();
             return RedirectToAction("Login", "Account");
@@ -144,6 +142,13 @@ public class HomeController : Controller
         _pageInfo.GoToPage(pageNo);
 
         return RedirectToAction("Index");
+    }
+
+    public IActionResult GetProductCardView(int indexNo)
+    {
+        Product? product = _pageInfo.ActiveItems.ToArray()[indexNo];
+
+        return product is null ? NotFound() : PartialView("_ProductCard", product);
     }
 
     [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]

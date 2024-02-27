@@ -5,10 +5,28 @@
     CategoryFilterService categoryFilter = ViewBag.CategoryFilter;
 }
 
-<div class="bg-primary container-fluid p-2 pt-3 p-lg-5 mb-3">
-    <div class="container-fluid">
-        <h4 class="text-light text-uppercase">Your favorite</h4>
-        <h1 class="text-light">EMarket <i class="bi bi-shop"></i></h1>
+<div class="bg-primary container-fluid p-1 pt-3 p-lg-4 mb-3">
+    <div class="container-fluid d-flex flex-row">
+        <div class="col">
+            <h4 class="text-light text-uppercase">Your favorite</h4>
+            <h1 class="text-light">EMarket <i class="bi bi-shop"></i></h1>
+        </div>
+        <div class="col-7 container-fluid d-flex d-lg-flex d-none">
+            @if (pageInfo.ActiveItems.Any())
+            {
+                <button class="btn btn-sm circle text-white align-self-center" onclick="navigate(-1)"><i class="bi bi-arrow-left"></i></button>
+                <div class="flex-grow-1 d-flex align-content-center p-2">
+                    <div id="productCard" class="shadow" ></div>
+                    <div class="text-white flex-grow-1 d-flex flex-column align-items-center justify-content-center ms-4">
+                        <h4 id="productDescription"></h4>
+                        <div class="container text-end">
+                            <h3 id="productPrice"></h3>
+                        </div>
+                    </div>
+                </div>
+                <button class="btn btn-sm text-white align-self-center" onclick="navigate(1)"><i class="bi bi-arrow-right"></i></button>
+            }
+        </div>
     </div>
 </div>
 
@@ -46,7 +64,7 @@
         }
         else
         {
-            <div>
+            <div class="container-fluid ps-0">
                 <ul class="pagination pagination-sm">
                     <li class="page-item">
                         <a class="page-link" asp-action="Navigate" asp-route-pageNo="@(pageInfo.ActivePage - 1)">&laquo;</a>
@@ -63,45 +81,11 @@
                 </ul>
             </div>
 
-            <div class="card-deck d-flex flex-wrap justify-content-center justify-content-lg-start">
+            <div class="card-deck d-flex flex-wrap justify-content-start ps-0">
                 @foreach (Product product in pageInfo.ActiveItems)
                 {
-                    <div class="card me-lg-3 mt-2 mb-2 me-2 ms-lg-0 ms-2 position-relative" style="width: 200px; min-height: 200px" title="@product.Description">
-
-                        <a asp-action="Edit" asp-route-itemId="@product.Id" style="text-decoration: none">
-                            <div class="card-body text-center">
-                                <div style="height: 150px">
-                                    <img class="card-img" style="height: inherit;object-fit:cover" src="@(string.IsNullOrEmpty(product.ImageSource) ? "~/images/no-image.jpg" : product.ImageSource)" asp-append-version="true"/>
-                                </div>
-                                <h6 class="card-title mt-4 mb-1 text-primary-emphasis">@product.Name</h6>
-                                <div class="row">    
-                                    <small class="text-body-tertiary overflow-hidden" style="font-size: 12px; white-space: nowrap; text-overflow: ellipsis">
-                                        @product.GetCategoriesFormattedString()
-                                    </small>
-                                    <small class="card-text text-body-tertiary">
-                                        Php @product.UnitPrice.ToString("N2")
-                                    </small>
-                                </div>
-                            </div>
-                        </a>
-
-                        <div class="position-relative">
-                            <div class="position-absolute bottom-0 end-0 m-2">
-                                <button class="badge bg-outline-primary rounded-pill border-0 p-1" type="submit">
-                                    <a asp-controller="Home" asp-action="AddToCart" asp-route-productId="@product.Id">
-                                        <i class="bi bi-plus text-primary" style="font-size: 20px"></i>
-                                    </a>
-                                </button>
-                            </div>
-                        </div>
-
-                        @if(DateTime.Now - product.DateCreated < TimeSpan.FromDays(7))
-                        {
-                            <span class="position-absolute top-0 start-0 m-2 badge rounded-pill bg-warning">
-                                New
-                            </span>
-                        }
-
+                    <div class="me-lg-3 mt-2 mb-2 me-2 ms-lg-0">
+                        @await Html.PartialAsync("_ProductCard", product)
                     </div>
                 }
 
@@ -119,3 +103,53 @@
         }
     </div>
 </div>
+
+@section Scripts{
+    <script>
+        var currentIndex = 0;
+
+        navigate(0);
+
+        function navigate(direction) {
+            var products = @Html.Raw(Json.Serialize(pageInfo.ActiveItems
+                .Select(x => new Product
+                    {
+                        Description = x.Description,
+                        UnitPrice = x.UnitPrice
+                    })
+                    .ToArray()));
+
+            var maxCount = products.length;
+            
+            currentIndex += direction;
+            console.log(products.length);
+            if (currentIndex < 0) {
+                currentIndex = maxCount - 1;
+            } else if (currentIndex >= maxCount) {
+                currentIndex = 0;
+            }
+            
+            var product = products[currentIndex];
+
+            loadProductCard(currentIndex);
+
+            $('#productDescription').html(product['description']);
+            $('#productPrice').html('Php ' + product['unitPrice']);
+        }
+
+        function loadProductCard(indexNo) {
+            $.ajax({
+                url: '/Home/GetProductCardView',
+                type: 'GET',
+                data: { indexNo: indexNo },
+                success: function (result) {
+                    $('#productCard').html(result);
+                },
+                error: function () {
+                    console.log('Not found')
+                }
+            });
+        }
+
+    </script>
+}

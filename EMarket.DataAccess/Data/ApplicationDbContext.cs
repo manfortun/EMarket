@@ -34,16 +34,16 @@ public class ApplicationDbContext : IdentityDbContext
 
         Product[] seedProducts =
         [
-            new() { Id = 1, Name = "T-Shirt", UnitPrice = 299.00, ImageSource="~/images/OIP.jpg", DateCreated = DateTime.Now.AddMonths(-1) },
-            new() { Id = 2, Name = "Cellphone", UnitPrice = 13999.00, ImageSource="~/images/cellphone.jpg", DateCreated = DateTime.Now.AddMonths(-1) },
-            new() { Id = 3, Name = "Knife", UnitPrice = 240.00, ImageSource="~/images/ec3596459302e2e8e4d586517816a69a.jpg", DateCreated = DateTime.Now.AddMonths(-1) },
-            new() { Id = 4, Name = "Lotion", UnitPrice = 250.00, ImageSource="~/images/lotion.jpg", DateCreated = DateTime.Now.AddMonths(-1) },
-            new() { Id = 5, Name = "Rubber Shoes", UnitPrice = 5500.00, ImageSource="~/images/rubbershoes.jpg", DateCreated = DateTime.Now.AddMonths(-1) },
-            new() { Id = 6, Name = "Clean Code", UnitPrice = 2890.00, ImageSource="~/images/cleancode.jpg", DateCreated = DateTime.Now.AddMonths(-1) },
-            new() { Id = 7, Name = "Minecraft", UnitPrice = 150.00, ImageSource="~/images/Minecraft.jpg", DateCreated = DateTime.Now.AddMonths(-1) },
-            new() { Id = 8, Name = "Fibre Cloth", UnitPrice = 40.00, ImageSource="~/images/fibrecloth.jpg", DateCreated = DateTime.Now.AddMonths(-1) },
-            new() { Id = 9, Name = "Goat's Milk", UnitPrice = 380.00, ImageSource="~/images/goatsmilk.jpg", DateCreated = DateTime.Now.AddMonths(-1) },
-            new() { Id = 10, Name = "14K Gold Necklace", UnitPrice = 21500.00, ImageSource="~/images/necklace.jpg", DateCreated = DateTime.Now.AddMonths(-1) }
+            new() { Id = 1, Name = "T-Shirt", UnitPrice = 299.00, ImageSource="~/images/OIP.jpg", DateCreated = DateTime.Now.AddMonths(-1), Description = "Sleek black tee: Style redefined. Elevate your look effortlessly! 🔥 #FashionEssential" },
+            new() { Id = 2, Name = "Cellphone", UnitPrice = 13999.00, ImageSource="~/images/cellphone.jpg", DateCreated = DateTime.Now.AddMonths(-1), Description = "Unleash limitless power with our latest cellphone innovation!" },
+            new() { Id = 3, Name = "Knife", UnitPrice = 240.00, ImageSource="~/images/ec3596459302e2e8e4d586517816a69a.jpg", DateCreated = DateTime.Now.AddMonths(-1), Description = "Unleash precision in the palm of your hand. Elevate your tools with our sleek knife." },
+            new() { Id = 4, Name = "Lotion", UnitPrice = 250.00, ImageSource="~/images/lotion.jpg", DateCreated = DateTime.Now.AddMonths(-1), Description = "Indulge in luxury with our hydrating lotion. Elevate your skincare routine effortlessly." },
+            new() { Id = 5, Name = "Rubber Shoes", UnitPrice = 5500.00, ImageSource="~/images/rubbershoes.jpg", DateCreated = DateTime.Now.AddMonths(-1), Description = "Step up your game with our stylish rubber shoes. Elevate your look with every stride." },
+            new() { Id = 6, Name = "Clean Code", UnitPrice = 2890.00, ImageSource="~/images/cleancode.jpg", DateCreated = DateTime.Now.AddMonths(-1), Description = "Master clean code principles. Robert Martin's essential guide." },
+            new() { Id = 7, Name = "Minecraft", UnitPrice = 150.00, ImageSource="~/images/Minecraft.jpg", DateCreated = DateTime.Now.AddMonths(-1), Description = "Immerse in endless adventures. Explore, create, survive. Minecraft awaits!" },
+            new() { Id = 8, Name = "Fibre Cloth", UnitPrice = 40.00, ImageSource="~/images/fibrecloth.jpg", DateCreated = DateTime.Now.AddMonths(-1), Description = "Upgrade your cleaning game with our durable fiber cloth." },
+            new() { Id = 9, Name = "Goat's Milk", UnitPrice = 380.00, ImageSource="~/images/goatsmilk.jpg", DateCreated = DateTime.Now.AddMonths(-1), Description = "Pure nourishment for your pet. Goat's milk: natural goodness." },
+            new() { Id = 10, Name = "14K Gold Necklace", UnitPrice = 21500.00, ImageSource="~/images/necklace.jpg", DateCreated = DateTime.Now.AddMonths(-1), Description = "Elegant luxury, timeless beauty. Elevate your style with 14k gold." }
         ];
 
         ProductCategory[] seedProductCategories =
