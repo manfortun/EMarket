@@ -14,6 +14,8 @@
         <input asp-for="NumberParameter" id="numberParameter" value="0" hidden />
         <input asp-for="DateCreated" hidden />
 
+        <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+
         <div class="mx-auto d-block m-3 position-relative" style="height: 200px; width: 200px;">
             <img title="@Model.Name" class="card-img rounded shadow-sm" style="height: inherit; object-fit: cover;" src="@(string.IsNullOrEmpty(Model.ImageSource) ? "~/images/no-image.jpg" : Model.ImageSource)" asp-append-version="true" />
             <label for="imageSourceInput" class="btn btn-light border position-absolute bottom-0 end-0" style="display: inline-block;cursor: pointer;border-radius: 4px;">
@@ -68,6 +70,8 @@
 </div>
 
 @section Scripts {
+    <script src="~/lib/jquery/dist/jquery.min.js"></script>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/js/toastr.min.js"></script>
     <script>
         document.querySelectorAll('.submit-button').forEach(button => {
             button.addEventListener('click', function () {
@@ -97,7 +101,7 @@
 
                     console.log('File uploaded successfully');
                 } else {
-                    document.getElementById('submitImageBtn').click();
+                    toastr.error(xhr.responseText);
                     console.error('Failed to upload file');
                 }
             };
