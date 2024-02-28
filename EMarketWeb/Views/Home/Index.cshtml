@@ -63,7 +63,7 @@
             }
         </div>
 
-        @if (Model.NoOfPages > 1)
+        @if (Model != null && Model.NoOfPages > 1)
         {
             <div class="container-fluid ps-0">
                 <ul class="pagination pagination-sm">
@@ -108,11 +108,12 @@
                             $('#itemsDisplay').html(result);
                             showItems(true);
                         }
+                        console.log(xhr.status);
                     },
                     error: function () {
                         console.log('Problem occured.');
                     }
-                })
+                });
             });
         }
 
@@ -207,8 +208,6 @@
         }
 
         function addtocart(productId) {
-            validateUser();
-
             $.ajax({
                 url: '/Home/AddToCart',
                 type: 'GET',

@@ -11,7 +11,7 @@ public interface ICategoryFilterService : ISessionService
 
     void Toggle(int categoryId);
 
-    int[] GetSelectedCategories();
+    HashSet<int> GetSelectedCategories();
 
     bool IsDisplayed(int categoryId);
 }

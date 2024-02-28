@@ -8,8 +8,6 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using System.Diagnostics;
-using System.Diagnostics.CodeAnalysis;
-using System.Security.Claims;
 
 namespace EMarketWeb.Controllers;
 
@@ -37,11 +35,8 @@ public class HomeController : Controller
         _categoryFilter = userCache.Get<CategoryFilterService>();
     }
 
-    public async Task<IActionResult> Index()
+    public IActionResult Index()
     {
-
-        _categoryFilter.SetCategories(GetExtendedCategoriesListFromDb(_dbContext));
-
         _ = GetItems();
 
         ViewBag.PageInfo = _pageInfo;
@@ -52,13 +47,25 @@ public class HomeController : Controller
 
     public IActionResult GetItems()
     {
+        // get new categories
+        List<Category> allCategories = GetExtendedCategoriesListFromDb(_dbContext);
+        List<Category> newCategories = [.. allCategories.ExceptBy(_categoryFilter.Categories.Select(c => c.Id), c => c.Id)];
+        
+        _categoryFilter.SetCategories(allCategories);
+
+        // add any new categories as selected categories
+        foreach (var c in newCategories)
+        {
+            _categoryFilter.Add(c.Id);
+        }
+
         // get the categories selected from the view
-        int[] selectedCategories = _categoryFilter.GetSelectedCategories();
+        HashSet<int> selectedCategories = _categoryFilter.GetSelectedCategories();
 
         // filter the products based on the search key and the selected categories
         var filteredProducts = _dbContext.Products
             .AddFilter(_searchKey)
-            .AddFilter(selectedCategories);
+            .AddFilter(selectedCategories.ToArray());
 
         _pageInfo.RefreshNoOfPages(filteredProducts);
 

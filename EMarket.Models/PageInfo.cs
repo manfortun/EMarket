@@ -46,7 +46,15 @@ public class PageInfo<T>
 
     public void GoToPage(int pageNo)
     {
-        ActivePage = Math.Min(NoOfPages, pageNo);
-        ActivePage = Math.Max(1, ActivePage);
+        if (pageNo > NoOfPages)
+        {
+            pageNo = NoOfPages;
+        }
+        else if (pageNo < 1)
+        {
+            pageNo = 1;
+        }
+
+        ActivePage = pageNo;
     }
 }

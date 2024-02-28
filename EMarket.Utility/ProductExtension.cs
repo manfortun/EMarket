@@ -68,7 +68,7 @@ public static class ProductExtension
         if (!itemsList.Any() ||
             categories.Length == 0)
         {
-            return itemsList;
+            return [];
         }
 
         var filteredProducts = itemsList.Where(item =>

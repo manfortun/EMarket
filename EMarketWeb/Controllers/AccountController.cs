@@ -51,10 +51,10 @@ namespace EMarketWeb.Controllers
         [HttpPost]
         public async Task<IActionResult> Logout()
         {
-            await _signInManager.SignOutAsync();
-
             // clear any user session cache
             _userService.ClearUserCache();
+
+            await _signInManager.SignOutAsync();
 
             return RedirectToAction("Login", "Account");
         }

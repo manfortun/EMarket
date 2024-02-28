@@ -6,20 +6,35 @@ namespace EMarketWeb.Services;
 
 public class CategoryFilterService : ICategoryFilterService
 {
-    public List<Category> Categories { get; set; } = default!;
+    private List<Category> _categories = default!;
+
+    public List<Category> Categories
+    {
+        get => _categories is null ? [] : _categories;
+        set => _categories = value;
+    }
+
     public bool IsCategoriesSet => Categories?.Count > 0;
     private HashSet<int>? _selectedCategories = default!;
 
     public void SetCategories(List<Category> categories)
     {
         Categories = categories;
+
+        // remove any obsolete categories
+        if (_selectedCategories != null)
+        {
+            IEnumerable<int> obsoleteCategories = _selectedCategories.Except(Categories.Select(c => c.Id));
+            foreach (var c in obsoleteCategories)
+            {
+                _selectedCategories.Remove(c);
+            }
+        }
     }
 
     public void Toggle(int categoryId)
     {
-        InitSelectedCategories();
-
-        ArgumentNullException.ThrowIfNull(_selectedCategories);
+        _selectedCategories = GetSelectedCategories();
 
         if (!_selectedCategories.Add(categoryId))
         {
@@ -27,13 +42,16 @@ public class CategoryFilterService : ICategoryFilterService
         }
     }
 
-    public int[] GetSelectedCategories()
+    public void Add(int categoryId)
     {
-        if (_selectedCategories is null)
-        {
-            _selectedCategories = Categories.Select(c => c.Id).ToHashSet();
-        }
-        return [.. _selectedCategories];
+        _selectedCategories = GetSelectedCategories();
+
+        _selectedCategories.Add(categoryId);
+    }
+
+    public HashSet<int> GetSelectedCategories()
+    {
+        return _selectedCategories ??= [];
     }
 
     public override string ToString()
@@ -49,14 +67,7 @@ public class CategoryFilterService : ICategoryFilterService
 
     public bool IsDisplayed(int categoryId)
     {
-        return _selectedCategories is null ? false : _selectedCategories.Contains(categoryId);
-    }
-
-    private void InitSelectedCategories()
-    {
-        if (_selectedCategories is null)
-        {
-            _selectedCategories = Categories.Select(c => c.Id).ToHashSet();
-        }
+        return _selectedCategories is not null &&
+            _selectedCategories.Contains(categoryId);
     }
 }
