@@ -12,7 +12,7 @@ public class Product
     public string Name { get; set; } = default!;
 
     [DisplayName("Price")]
-    [Range(1, double.MaxValue, ErrorMessage = "Price cannot be 0 or negative.")]
+    [Range(1, 1000000.00, ErrorMessage = $"Price cannot be less than 1 or greater than 1, 000, 000.00")]
     public double UnitPrice { get; set; }
 
     public string? ImageSource { get; set; }
