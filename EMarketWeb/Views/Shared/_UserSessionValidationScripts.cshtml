@@ -1,0 +1,32 @@
+﻿<script>
+    function executeWithValidation(callback) {
+        $.ajax({
+            url: '/Home/IsUserVerified',
+            type: 'GET',
+            success: function (result) {
+                console.log('User is validated.');
+                callback();
+            },
+            error: function () {
+                console.log('User is not validated.')
+                logout();
+            }
+        });
+    }
+
+    function logout() {
+        console.log('Logging out...');
+        $.ajax({
+            url: '/Account/Logout',
+            type: 'POST',
+            success: function(result) {
+                console.log('Logged out.');
+                window.location.href = '/Account/Login';
+                alert('You need to be logged in to continue.');
+            },
+            error: function () {
+                // FALLTHROUGH
+            }
+        });
+    }
+</script>

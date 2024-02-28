@@ -12,7 +12,7 @@ namespace EMarketWeb.Controllers
     {
         private readonly ApplicationDbContext _dbContext;
         private readonly IImageService _imgService;
-        private static List<string> _errorMessages = new List<string>();
+        private static readonly List<string> _errorMessages = new List<string>();
 
         public AddProductController(
             ApplicationDbContext dbContext,

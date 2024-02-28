@@ -86,6 +86,9 @@
 </div>
 
 @section Scripts {
+    @{
+            <partial name="_UserSessionValidationScripts"/>
+    }
     <script src="~/lib/jquery/dist/jquery.min.js"></script>
     <script src="//cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/js/toastr.min.js"></script>
     <script>
@@ -93,21 +96,23 @@
         navigate(0);
 
         function getItems() {
-            $.ajax({
-                url: '/Home/GetItems',
-                type: 'GET',
-                success: function (result, textStatus, xhr) {
-                    if (xhr.status == 204) {
-                        showItems(false);
-                        document.getElementById('message').innerHTML = '<h6>There are no products listed. <a href="/AddProduct">Try adding one!</a></h6>';
-                    } else {
-                        $('#itemsDisplay').html(result);
-                        showItems(true);
+            executeWithValidation(function () {
+                $.ajax({
+                    url: '/Home/GetItems',
+                    type: 'GET',
+                    success: function (result, textStatus, xhr) {
+                        if (xhr.status == 204) {
+                            showItems(false);
+                            document.getElementById('message').innerHTML = '<h6>There are no products listed. <a href="/AddProduct">Try adding one!</a></h6>';
+                        } else {
+                            $('#itemsDisplay').html(result);
+                            showItems(true);
+                        }
+                    },
+                    error: function () {
+                        console.log('Problem occured.');
                     }
-                },
-                error: function () {
-                    console.log('Problem occured.');
-                }
+                })
             });
         }
 
@@ -202,6 +207,8 @@
         }
 
         function addtocart(productId) {
+            validateUser();
+
             $.ajax({
                 url: '/Home/AddToCart',
                 type: 'GET',

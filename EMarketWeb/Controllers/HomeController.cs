@@ -8,6 +8,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using System.Diagnostics;
+using System.Diagnostics.CodeAnalysis;
 using System.Security.Claims;
 
 namespace EMarketWeb.Controllers;
@@ -38,12 +39,6 @@ public class HomeController : Controller
 
     public async Task<IActionResult> Index()
     {
-        // check if the user exists in database
-        if (!await IsUserVerified(User))
-        {
-            await _signInManager.SignOutAsync();
-            return RedirectToAction("Login", "Account");
-        }
 
         _categoryFilter.SetCategories(GetExtendedCategoriesListFromDb(_dbContext));
 
@@ -182,6 +177,7 @@ public class HomeController : Controller
         finally
         {
             // release the semaphore to allow pending processes
+            cts = new CancellationTokenSource();
             semaphoreSlim.Release();
         }
 
@@ -193,24 +189,20 @@ public class HomeController : Controller
         return View();
     }
 
+    [HttpGet]
+    public async Task<IActionResult> IsUserVerified()
+    {
+        string userId = await _userManager.GetUserIdAsync(User);
+
+        IdentityUser? identityUser = await _userManager.FindByIdAsync(userId);
+
+        return identityUser is null ? NotFound() : Ok();
+    }
+
     [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
     public IActionResult Error()
     {
         return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
-    }
-    
-    /// <summary>
-    /// Checks if the user exists in the database
-    /// </summary>
-    /// <param name="user">The user to evaluate.</param>
-    /// <returns>True if the user exists in database. Otherwise, false.</returns>
-    private async Task<bool> IsUserVerified(ClaimsPrincipal user)
-    {
-        string userId = await _userManager.GetUserIdAsync(user);
-
-        IdentityUser? identityUser = await _userManager.FindByIdAsync(userId);
-
-        return identityUser is not null;
     }
 
     /// <summary>
