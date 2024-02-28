@@ -14,7 +14,6 @@ namespace EMarketWeb.Controllers;
 public class HomeController : Controller
 {
     private readonly ApplicationDbContext _dbContext;
-    private readonly SignInManager<IdentityUser> _signInManager;
     private readonly UserManager<IdentityUser> _userManager;
     private static readonly PageInfo<Product> _pageInfo = new(noOfItemsPerPage: 12);
     private readonly CategoryFilterService _categoryFilter;
@@ -25,12 +24,10 @@ public class HomeController : Controller
 
     public HomeController(
         ApplicationDbContext dbContext,
-        SignInManager<IdentityUser> signInManager,
         UserManager<IdentityUser> userManager,
         IUserCache userCache)
     {
         _dbContext = dbContext;
-        _signInManager = signInManager;
         _userManager = userManager;
         _categoryFilter = userCache.Get<CategoryFilterService>();
     }
