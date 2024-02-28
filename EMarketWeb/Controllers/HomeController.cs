@@ -210,7 +210,7 @@ public class HomeController : Controller
     }
 
     /// <summary>
-    /// Obtains all available categories including the 'Uncategorized' category
+    /// Obtains all available categories including the <c>Uncategorized</c> category
     /// </summary>
     /// <returns></returns>
     private static List<Category> GetExtendedCategoriesListFromDb(ApplicationDbContext dbContext)
