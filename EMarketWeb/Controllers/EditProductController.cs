@@ -4,6 +4,7 @@ using EMarket.Models.ViewModels;
 using EMarket.Utility;
 using EMarketWeb.Services.Interfaces;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.ModelBinding;
 using Microsoft.EntityFrameworkCore;
 
 namespace EMarketWeb.Controllers
@@ -12,6 +13,7 @@ namespace EMarketWeb.Controllers
     {
         private readonly ApplicationDbContext _dbContext;
         private readonly IImageService _imgService;
+        private static List<string> _errorMessages = new List<string>();
 
         public EditProductController(
         ApplicationDbContext dbContext,
@@ -27,6 +29,12 @@ namespace EMarketWeb.Controllers
 
             ViewBag.Categories = _dbContext.Categories.ToList();
 
+            foreach (var e in _errorMessages)
+            {
+                ModelState.AddModelError(string.Empty, e);
+            }
+            _errorMessages.Clear();
+
             return View(viewModel);
         }
 
@@ -34,6 +42,11 @@ namespace EMarketWeb.Controllers
         {
             if (!ModelState.IsValid)
             {
+                IEnumerable<ModelError> modelErrors = ModelState.Values.SelectMany(c => c.Errors)
+                    .OfType<ModelError>();
+
+                _errorMessages.AddRange(modelErrors.Select(c => c.ErrorMessage));
+
                 string jsonString = viewModel.ToJson();
                 return RedirectToAction("Index", new { jsonString });
             }
@@ -111,7 +124,6 @@ namespace EMarketWeb.Controllers
             // check if the uploaded file is a valid image file
             if (!_imgService.IsValid(file))
             {
-                TempData["error"] = "The file selected is not an image.";
                 return BadRequest("Please select a correct image format.");
             }
 
