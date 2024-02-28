@@ -12,7 +12,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace EMarket.DataAccess.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20240227151608_Init")]
+    [Migration("20240228021248_Init")]
     partial class Init
     {
         /// <inheritdoc />
@@ -131,7 +131,7 @@ namespace EMarket.DataAccess.Migrations
                         new
                         {
                             Id = 1,
-                            DateCreated = new DateTime(2024, 1, 27, 23, 16, 8, 530, DateTimeKind.Local).AddTicks(1974),
+                            DateCreated = new DateTime(2024, 1, 28, 10, 12, 47, 282, DateTimeKind.Local).AddTicks(3357),
                             Description = "Sleek black tee: Style redefined. Elevate your look effortlessly! 🔥 #FashionEssential",
                             ImageSource = "~/images/OIP.jpg",
                             Name = "T-Shirt",
@@ -140,7 +140,7 @@ namespace EMarket.DataAccess.Migrations
                         new
                         {
                             Id = 2,
-                            DateCreated = new DateTime(2024, 1, 27, 23, 16, 8, 530, DateTimeKind.Local).AddTicks(1981),
+                            DateCreated = new DateTime(2024, 1, 28, 10, 12, 47, 282, DateTimeKind.Local).AddTicks(3372),
                             Description = "Unleash limitless power with our latest cellphone innovation!",
                             ImageSource = "~/images/cellphone.jpg",
                             Name = "Cellphone",
@@ -149,7 +149,7 @@ namespace EMarket.DataAccess.Migrations
                         new
                         {
                             Id = 3,
-                            DateCreated = new DateTime(2024, 1, 27, 23, 16, 8, 530, DateTimeKind.Local).AddTicks(1983),
+                            DateCreated = new DateTime(2024, 1, 28, 10, 12, 47, 282, DateTimeKind.Local).AddTicks(3378),
                             Description = "Unleash precision in the palm of your hand. Elevate your tools with our sleek knife.",
                             ImageSource = "~/images/ec3596459302e2e8e4d586517816a69a.jpg",
                             Name = "Knife",
@@ -158,7 +158,7 @@ namespace EMarket.DataAccess.Migrations
                         new
                         {
                             Id = 4,
-                            DateCreated = new DateTime(2024, 1, 27, 23, 16, 8, 530, DateTimeKind.Local).AddTicks(1985),
+                            DateCreated = new DateTime(2024, 1, 28, 10, 12, 47, 282, DateTimeKind.Local).AddTicks(3383),
                             Description = "Indulge in luxury with our hydrating lotion. Elevate your skincare routine effortlessly.",
                             ImageSource = "~/images/lotion.jpg",
                             Name = "Lotion",
@@ -167,7 +167,7 @@ namespace EMarket.DataAccess.Migrations
                         new
                         {
                             Id = 5,
-                            DateCreated = new DateTime(2024, 1, 27, 23, 16, 8, 530, DateTimeKind.Local).AddTicks(1987),
+                            DateCreated = new DateTime(2024, 1, 28, 10, 12, 47, 282, DateTimeKind.Local).AddTicks(3387),
                             Description = "Step up your game with our stylish rubber shoes. Elevate your look with every stride.",
                             ImageSource = "~/images/rubbershoes.jpg",
                             Name = "Rubber Shoes",
@@ -176,7 +176,7 @@ namespace EMarket.DataAccess.Migrations
                         new
                         {
                             Id = 6,
-                            DateCreated = new DateTime(2024, 1, 27, 23, 16, 8, 530, DateTimeKind.Local).AddTicks(1989),
+                            DateCreated = new DateTime(2024, 1, 28, 10, 12, 47, 282, DateTimeKind.Local).AddTicks(3391),
                             Description = "Master clean code principles. Robert Martin's essential guide.",
                             ImageSource = "~/images/cleancode.jpg",
                             Name = "Clean Code",
@@ -185,7 +185,7 @@ namespace EMarket.DataAccess.Migrations
                         new
                         {
                             Id = 7,
-                            DateCreated = new DateTime(2024, 1, 27, 23, 16, 8, 530, DateTimeKind.Local).AddTicks(1990),
+                            DateCreated = new DateTime(2024, 1, 28, 10, 12, 47, 282, DateTimeKind.Local).AddTicks(3396),
                             Description = "Immerse in endless adventures. Explore, create, survive. Minecraft awaits!",
                             ImageSource = "~/images/Minecraft.jpg",
                             Name = "Minecraft",
@@ -194,7 +194,7 @@ namespace EMarket.DataAccess.Migrations
                         new
                         {
                             Id = 8,
-                            DateCreated = new DateTime(2024, 1, 27, 23, 16, 8, 530, DateTimeKind.Local).AddTicks(1992),
+                            DateCreated = new DateTime(2024, 1, 28, 10, 12, 47, 282, DateTimeKind.Local).AddTicks(3400),
                             Description = "Upgrade your cleaning game with our durable fiber cloth.",
                             ImageSource = "~/images/fibrecloth.jpg",
                             Name = "Fibre Cloth",
@@ -203,7 +203,7 @@ namespace EMarket.DataAccess.Migrations
                         new
                         {
                             Id = 9,
-                            DateCreated = new DateTime(2024, 1, 27, 23, 16, 8, 530, DateTimeKind.Local).AddTicks(1994),
+                            DateCreated = new DateTime(2024, 1, 28, 10, 12, 47, 282, DateTimeKind.Local).AddTicks(3405),
                             Description = "Pure nourishment for your pet. Goat's milk: natural goodness.",
                             ImageSource = "~/images/goatsmilk.jpg",
                             Name = "Goat's Milk",
@@ -212,7 +212,7 @@ namespace EMarket.DataAccess.Migrations
                         new
                         {
                             Id = 10,
-                            DateCreated = new DateTime(2024, 1, 27, 23, 16, 8, 530, DateTimeKind.Local).AddTicks(1996),
+                            DateCreated = new DateTime(2024, 1, 28, 10, 12, 47, 282, DateTimeKind.Local).AddTicks(3410),
                             Description = "Elegant luxury, timeless beauty. Elevate your style with 14k gold.",
                             ImageSource = "~/images/necklace.jpg",
                             Name = "14K Gold Necklace",
@@ -221,7 +221,7 @@ namespace EMarket.DataAccess.Migrations
                         new
                         {
                             Id = 11,
-                            DateCreated = new DateTime(2024, 1, 27, 23, 16, 8, 530, DateTimeKind.Local).AddTicks(2025),
+                            DateCreated = new DateTime(2024, 1, 28, 10, 12, 47, 282, DateTimeKind.Local).AddTicks(3414),
                             Description = "Powerful laptop with high-speed performance. Perfect for work or entertainment on the go.",
                             ImageSource = "~/images/laptop.jpg",
                             Name = "Laptop",
@@ -230,7 +230,7 @@ namespace EMarket.DataAccess.Migrations
                         new
                         {
                             Id = 12,
-                            DateCreated = new DateTime(2024, 1, 27, 23, 16, 8, 530, DateTimeKind.Local).AddTicks(2027),
+                            DateCreated = new DateTime(2024, 1, 28, 10, 12, 47, 282, DateTimeKind.Local).AddTicks(3419),
                             Description = "Track your fitness, receive notifications, and more, all from your wrist.",
                             ImageSource = "~/images/smartwatch.jpg",
                             Name = "Smartwatch",
@@ -239,7 +239,7 @@ namespace EMarket.DataAccess.Migrations
                         new
                         {
                             Id = 13,
-                            DateCreated = new DateTime(2024, 1, 27, 23, 16, 8, 530, DateTimeKind.Local).AddTicks(2029),
+                            DateCreated = new DateTime(2024, 1, 28, 10, 12, 47, 282, DateTimeKind.Local).AddTicks(3424),
                             Description = "Enjoy crisp sound quality and freedom from wires with these wireless earbuds.",
                             ImageSource = "~/images/wirelessearbuds.jpg",
                             Name = "Wireless Earbuds",
@@ -248,7 +248,7 @@ namespace EMarket.DataAccess.Migrations
                         new
                         {
                             Id = 14,
-                            DateCreated = new DateTime(2024, 1, 27, 23, 16, 8, 530, DateTimeKind.Local).AddTicks(2031),
+                            DateCreated = new DateTime(2024, 1, 28, 10, 12, 47, 282, DateTimeKind.Local).AddTicks(3428),
                             Description = "Take your music anywhere with this portable Bluetooth speaker.",
                             ImageSource = "~/images/bluetoothspeaker.jpg",
                             Name = "Portable Bluetooth Speaker",
@@ -257,7 +257,7 @@ namespace EMarket.DataAccess.Migrations
                         new
                         {
                             Id = 15,
-                            DateCreated = new DateTime(2024, 1, 27, 23, 16, 8, 530, DateTimeKind.Local).AddTicks(2032),
+                            DateCreated = new DateTime(2024, 1, 28, 10, 12, 47, 282, DateTimeKind.Local).AddTicks(3432),
                             Description = "Monitor your health and track your fitness goals with this sleek fitness tracker.",
                             ImageSource = "~/images/fitnesstracker.jpg",
                             Name = "Fitness Tracker",
@@ -266,7 +266,7 @@ namespace EMarket.DataAccess.Migrations
                         new
                         {
                             Id = 16,
-                            DateCreated = new DateTime(2024, 1, 27, 23, 16, 8, 530, DateTimeKind.Local).AddTicks(2034),
+                            DateCreated = new DateTime(2024, 1, 28, 10, 12, 47, 282, DateTimeKind.Local).AddTicks(3437),
                             Description = "Brew your favorite coffee just the way you like it.",
                             ImageSource = "~/images/coffeemaker.jpg",
                             Name = "Coffee Maker",
@@ -275,7 +275,7 @@ namespace EMarket.DataAccess.Migrations
                         new
                         {
                             Id = 17,
-                            DateCreated = new DateTime(2024, 1, 27, 23, 16, 8, 530, DateTimeKind.Local).AddTicks(2036),
+                            DateCreated = new DateTime(2024, 1, 28, 10, 12, 47, 282, DateTimeKind.Local).AddTicks(3441),
                             Description = "Gentle on gums, powerful on plaque.",
                             ImageSource = "~/images/electrictoothbrush.jpg",
                             Name = "Electric Toothbrush",
@@ -284,7 +284,7 @@ namespace EMarket.DataAccess.Migrations
                         new
                         {
                             Id = 18,
-                            DateCreated = new DateTime(2024, 1, 27, 23, 16, 8, 530, DateTimeKind.Local).AddTicks(2038),
+                            DateCreated = new DateTime(2024, 1, 28, 10, 12, 47, 282, DateTimeKind.Local).AddTicks(3445),
                             Description = "Capture every moment with stunning clarity using this digital camera.",
                             ImageSource = "~/images/digitalcamera.jpg",
                             Name = "Digital Camera",
@@ -293,7 +293,7 @@ namespace EMarket.DataAccess.Migrations
                         new
                         {
                             Id = 19,
-                            DateCreated = new DateTime(2024, 1, 27, 23, 16, 8, 530, DateTimeKind.Local).AddTicks(2039),
+                            DateCreated = new DateTime(2024, 1, 28, 10, 12, 47, 282, DateTimeKind.Local).AddTicks(3451),
                             Description = "Enjoy healthier cooking without sacrificing flavor with this air fryer.",
                             ImageSource = "~/images/airfryer.jpg",
                             Name = "Air Fryer",
@@ -302,7 +302,7 @@ namespace EMarket.DataAccess.Migrations
                         new
                         {
                             Id = 20,
-                            DateCreated = new DateTime(2024, 1, 27, 23, 16, 8, 530, DateTimeKind.Local).AddTicks(2041),
+                            DateCreated = new DateTime(2024, 1, 28, 10, 12, 47, 282, DateTimeKind.Local).AddTicks(3455),
                             Description = "Never run out of battery again with this portable power bank.",
                             ImageSource = "~/images/powerbank.jpg",
                             Name = "Portable Power Bank",
