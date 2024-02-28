@@ -31,17 +31,22 @@ public class CategoryFilterService : ICategoryFilterService
             }
         }
     }
-
     public void Toggle(int categoryId)
     {
         _selectedCategories = GetSelectedCategories();
 
+        // when ID is already existing...
         if (!_selectedCategories.Add(categoryId))
         {
+            //...remove
             _selectedCategories.Remove(categoryId);
         }
     }
 
+    /// <summary>
+    /// Adds a <paramref name="categoryId"/> to selected categories list
+    /// </summary>
+    /// <param name="categoryId">Category ID</param>
     public void Add(int categoryId)
     {
         _selectedCategories = GetSelectedCategories();
@@ -54,18 +59,13 @@ public class CategoryFilterService : ICategoryFilterService
         return _selectedCategories ??= [];
     }
 
-    public override string ToString()
-    {
-        return JsonConvert.SerializeObject(_selectedCategories);
-    }
-
     public void Clear()
     {
         Categories?.Clear();
         _selectedCategories?.Clear();
     }
 
-    public bool IsDisplayed(int categoryId)
+    public bool IsSelected(int categoryId)
     {
         return _selectedCategories is not null &&
             _selectedCategories.Contains(categoryId);

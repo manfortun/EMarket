@@ -8,7 +8,11 @@ public class WebRootImageService : IImageService
     private readonly string[] CONST_EXCLUSIONS = ["no-image.jpg"];
     private const string WEBROOT_FOLDER = "images";
     private IWebHostEnvironment _webHostEnv;
-    public string WebRootDirectory => Path.Combine(_webHostEnv.WebRootPath, WEBROOT_FOLDER);
+
+    /// <summary>
+    /// Path of root directory
+    /// </summary>
+    public string RootDirectory => Path.Combine(_webHostEnv.WebRootPath, WEBROOT_FOLDER);
 
     public WebRootImageService(IWebHostEnvironment webHostEnv)
     {
@@ -21,7 +25,7 @@ public class WebRootImageService : IImageService
         int counter = 1;
         string cleanFileName = Path.GetFileNameWithoutExtension(fileName);
         string finalizedFileName = cleanFileName;
-        while (IsExisting(finalizedFileName, WebRootDirectory))
+        while (IsExisting(finalizedFileName, RootDirectory))
         {
             counter++;
             finalizedFileName = $"{cleanFileName}({counter})";
@@ -32,6 +36,12 @@ public class WebRootImageService : IImageService
         return finalizedFileName;
     }
 
+    /// <summary>
+    /// Checks if there is already an existing file in the <paramref name="directory"/> with the same file name as <paramref name="fileName"/>
+    /// </summary>
+    /// <param name="fileName">Filename to check</param>
+    /// <param name="directory">Directory to check</param>
+    /// <returns><c>true</c> if there is already an existing file name. Otherwise, <c>false</c>.</returns>
     private bool IsExisting(string fileName, string directory)
     {
         var existingFiles = Directory.GetFiles(directory).Select(Path.GetFileNameWithoutExtension);
@@ -68,7 +78,7 @@ public class WebRootImageService : IImageService
 
         finalizedFileName = GetFinalizedFileName(file.FileName);
 
-        using (var stream = new FileStream(Path.Combine(WebRootDirectory, finalizedFileName), FileMode.Create))
+        using (var stream = new FileStream(Path.Combine(RootDirectory, finalizedFileName), FileMode.Create))
         {
             file.CopyTo(stream);
         }
@@ -79,7 +89,7 @@ public class WebRootImageService : IImageService
     public int RemoveExcept(IEnumerable<string> fileNames)
     {
         int rowsAffected = 0;
-        IEnumerable<string> allFileNames = Directory.GetFiles(WebRootDirectory)
+        IEnumerable<string> allFileNames = Directory.GetFiles(RootDirectory)
             .Select(Path.GetFileName)
             .Except(CONST_EXCLUSIONS)
             .OfType<string>();
@@ -90,13 +100,16 @@ public class WebRootImageService : IImageService
 
         foreach (var forRemovalFileName in toRemove)
         {
-            string fullFilePath = Path.Combine(WebRootDirectory, forRemovalFileName);
+            string fullFilePath = Path.Combine(RootDirectory, forRemovalFileName);
             try
             {
                 File.Delete(fullFilePath);
                 rowsAffected++;
             }
-            catch { }
+            catch
+            {
+                // FALLTHROUGH
+            }
         }
 
         return rowsAffected;

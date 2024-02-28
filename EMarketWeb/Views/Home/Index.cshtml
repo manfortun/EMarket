@@ -41,7 +41,7 @@
                     <form method="post" asp-action="oncategoryticked" asp-route-categoryId="@category.Id">
                         <div class="form-check ms-3 ms-lg-0">
                             <input class="form-check-input" type="checkbox" id="@category.Id"
-                            onchange="this.form.submit()" @(categoryFilter.IsDisplayed(category.Id) ? "checked" : "")/>
+                            onchange="this.form.submit()" @(categoryFilter.IsSelected(category.Id) ? "checked" : "")/>
                             <label class="form-check-label" for="@category.Id">
                                 @category.Name
                             </label>
