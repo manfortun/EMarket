@@ -61,7 +61,7 @@ public class HomeController : Controller
         int[] selectedCategories = _categoryFilter.GetSelectedCategories();
 
         // filter the products based on the search key and the selected categories
-        var filteredProducts = _dbContext.Products.ToList()
+        var filteredProducts = _dbContext.Products
             .AddFilter(_searchKey)
             .AddFilter(selectedCategories);
 
@@ -79,7 +79,7 @@ public class HomeController : Controller
     [HttpGet]
     public IActionResult Search(string searchString)
     {
-        IEnumerable<Product> filteredProducts = _pageInfo.Items.ToList().AddFilter(searchString);
+        IEnumerable<Product> filteredProducts = _pageInfo.Items.AddFilter(searchString);
 
         PageInfo<Product> searchInfo = new PageInfo<Product>(_pageInfo.NoOfItemsPerPage);
         searchInfo.RefreshNoOfPages(filteredProducts);
@@ -92,7 +92,7 @@ public class HomeController : Controller
 
         return PartialView("HomeItemsDisplay", searchInfo);
     }
-
+    
     public IActionResult OnCategoryTicked(int categoryId)
     {
         _categoryFilter.Toggle(categoryId);
@@ -141,11 +141,6 @@ public class HomeController : Controller
         string jsonString = viewModel.ToJson();
 
         return RedirectToAction("Index", "EditProduct", new { jsonString });
-    }
-
-    public IActionResult AddProduct()
-    {
-        return RedirectToAction("Index", "AddProduct");
     }
 
     public IActionResult Navigate(int pageNo)

@@ -17,7 +17,8 @@ public static class ProductExtension
 
     public static Category[] GetCategoriesArray(this Product product)
     {
-        if (product.Category is null || product.Category.Count < 1)
+        if (product.Category is null ||
+            !product.Category.Any())
         {
             return [CategoryExtension.GetUncategorizedCategory()];
         }
@@ -30,15 +31,19 @@ public static class ProductExtension
         return product.GetCategoriesArray().Select(c => c.Id).ToArray();
     }
 
-    public static List<Product> AddFilter(this List<Product> items, string? searchKey)
+    public static IEnumerable<Product> AddFilter(this IEnumerable<Product> items, string? searchKey)
     {
-        if (items.Count == 0 || string.IsNullOrEmpty(searchKey))
+        // create a local copy in case the argument came from database
+        List<Product> itemsList = [.. items];
+
+        if (!itemsList.Any() ||
+            string.IsNullOrEmpty(searchKey))
         {
-            return items;
+            return itemsList;
         }
 
         // filter based on search key
-        var filteredProducts = items.Where(item =>
+        var filteredProducts = itemsList.Where(item =>
         {
             if (item.Name.Contains(searchKey, StringComparison.OrdinalIgnoreCase))
             {
@@ -55,14 +60,18 @@ public static class ProductExtension
         return filteredProducts;
     }
 
-    public static List<Product> AddFilter(this List<Product> items, int[] categories)
+    public static IEnumerable<Product> AddFilter(this IEnumerable<Product> items, int[] categories)
     {
-        if (items.Count == 0 || categories.Length == 0)
+        // create a local copy in case the argument came from database
+        List<Product> itemsList = [.. items];
+
+        if (!itemsList.Any() ||
+            categories.Length == 0)
         {
-            return items;
+            return itemsList;
         }
 
-        var filteredProducts = items.Where(item =>
+        var filteredProducts = itemsList.Where(item =>
         {
             int[] itemCatIds = item.GetCategoryIdsArray();
             return categories.Intersect(itemCatIds).Any();
