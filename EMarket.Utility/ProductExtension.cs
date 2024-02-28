@@ -4,7 +4,11 @@ namespace EMarket.Utility;
 
 public static class ProductExtension
 {
-
+    /// <summary>
+    /// Obtains the category names in a comma-separated format
+    /// </summary>
+    /// <param name="product"></param>
+    /// <returns></returns>
     public static string GetCategoriesFormattedString(this Product product)
     {
         string[] categoryNames = product
@@ -15,6 +19,11 @@ public static class ProductExtension
         return string.Join(", ", categoryNames);
     }
 
+    /// <summary>
+    /// Obtains the categories of a <paramref name="product"/>. When the <paramref name="product"/> does not belong to a category, returns the <c>Uncategorized</c> category
+    /// </summary>
+    /// <param name="product"></param>
+    /// <returns></returns>
     public static Category[] GetCategoriesArray(this Product product)
     {
         if (product.Category is null ||
@@ -26,16 +35,28 @@ public static class ProductExtension
         return product.Category.Select(c => c.Category).ToArray();
     }
 
+    /// <summary>
+    /// Obtains the array of IDs of the <paramref name="product"/> categories.
+    /// </summary>
+    /// <param name="product"></param>
+    /// <returns></returns>
     public static int[] GetCategoryIdsArray(this Product product)
     {
         return product.GetCategoriesArray().Select(c => c.Id).ToArray();
     }
 
+    /// <summary>
+    /// Applies a filter to a collection of <paramref name="items"/> based on a <paramref name="searchKey"/>.
+    /// </summary>
+    /// <param name="items">The items to filter.</param>
+    /// <param name="searchKey">Filter search key.</param>
+    /// <returns>Items that passed the filter.</returns>
     public static IEnumerable<Product> AddFilter(this IEnumerable<Product> items, string? searchKey)
     {
         // create a local copy in case the argument came from database
         List<Product> itemsList = [.. items];
 
+        // when the searchKey is null or empty, all items passed the filtration
         if (!itemsList.Any() ||
             string.IsNullOrEmpty(searchKey))
         {
@@ -45,14 +66,19 @@ public static class ProductExtension
         // filter based on search key
         var filteredProducts = itemsList.Where(item =>
         {
+            // check name
             if (item.Name.Contains(searchKey, StringComparison.OrdinalIgnoreCase))
             {
                 return true;
             }
 
-            List<string> categoryNames = item.Category?.Select(c => c.Category.Name).ToList() ?? [];
+            string categoryNames = item.GetCategoriesFormattedString();
 
-            if (categoryNames.Exists(c => c.Contains(searchKey, StringComparison.OrdinalIgnoreCase))) return true;
+            // check categories
+            if (categoryNames.Contains(searchKey, StringComparison.OrdinalIgnoreCase))
+            {
+                return true;
+            }
 
             return false;
         }).ToList();
@@ -60,22 +86,31 @@ public static class ProductExtension
         return filteredProducts;
     }
 
+    /// <summary>
+    /// Applies a filter to a collection of <paramref name="items"/> based on <paramref name="categories"/>.
+    /// </summary>
+    /// <param name="items">The items to filter.</param>
+    /// <param name="categories">Filter categories</param>
+    /// <returns></returns>
     public static IEnumerable<Product> AddFilter(this IEnumerable<Product> items, int[] categories)
     {
-        // create a local copy in case the argument came from database
+        // create a local copy to ensure data integrity
+        // This is particularly important if the items list originated from a database or external source
         List<Product> itemsList = [.. items];
 
+        // when there are no categories, all items are filtered out
         if (!itemsList.Any() ||
             categories.Length == 0)
         {
             return [];
         }
 
-        var filteredProducts = itemsList.Where(item =>
-        {
-            int[] itemCatIds = item.GetCategoryIdsArray();
-            return categories.Intersect(itemCatIds).Any();
-        }).ToList();
+        IEnumerable<Product> filteredProducts = [.. itemsList
+            .Where(item =>
+            {
+                int[] itemCatIds = item.GetCategoryIdsArray();
+                return categories.Intersect(itemCatIds).Any();
+            })];
 
         return filteredProducts;
     }

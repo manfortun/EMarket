@@ -64,7 +64,7 @@ public class HomeController : Controller
             .AddFilter(_searchKey)
             .AddFilter(selectedCategories.ToArray());
 
-        _pageInfo.RefreshNoOfPages(filteredProducts);
+        _pageInfo.SetItems(filteredProducts);
 
         // filters returned no items
         if (_pageInfo.NoOfPages < 1)
@@ -81,7 +81,7 @@ public class HomeController : Controller
         IEnumerable<Product> filteredProducts = _pageInfo.Items.AddFilter(searchString);
 
         PageInfo<Product> searchInfo = new PageInfo<Product>(_pageInfo.NoOfItemsPerPage);
-        searchInfo.RefreshNoOfPages(filteredProducts);
+        searchInfo.SetItems(filteredProducts);
 
         // filter returned no items
         if (searchInfo.NoOfPages < 1)
@@ -144,7 +144,7 @@ public class HomeController : Controller
 
     public IActionResult Navigate(int pageNo)
     {
-        _pageInfo.GoToPage(pageNo);
+        _pageInfo.ActivePage = pageNo;
 
         return RedirectToAction("Index");
     }

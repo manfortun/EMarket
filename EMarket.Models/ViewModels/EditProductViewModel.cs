@@ -4,10 +4,20 @@ namespace EMarket.Models.ViewModels;
 
 public class EditProductViewModel : Product
 {
+    /// <summary>
+    /// ID of the selected category used as argument from the view layer
+    /// </summary>
     public int? NumberParameter { get; set; }
 
+    /// <summary>
+    /// Serialized array of selected IDs
+    /// </summary>
     public string? CategoriesStringed { get; set; }
 
+    /// <summary>
+    /// Sets a <paramref name="categoryId"/> as either selected or unselected
+    /// </summary>
+    /// <param name="categoryId">The category ID to toggle</param>
     public void ToggleCategory(int categoryId)
     {
         HashSet<int> tempCategoryHashSet = [.. GetCategories()];
@@ -20,6 +30,11 @@ public class EditProductViewModel : Product
         CategoriesStringed = JsonConvert.SerializeObject(tempCategoryHashSet.ToArray());
     }
 
+    /// <summary>
+    /// Checks if the <paramref name="categoryId"/> is selected.
+    /// </summary>
+    /// <param name="categoryId">The category ID to evaluate</param>
+    /// <returns></returns>
     public bool HasCategory(int categoryId)
     {
         HashSet<int> tempCategoryHashSet = [.. GetCategories()];
@@ -27,11 +42,19 @@ public class EditProductViewModel : Product
         return tempCategoryHashSet.Contains(categoryId);
     }
 
+    /// <summary>
+    /// Serializes the <paramref name="selectedCategories"/> to CategoriesStringed as JSON string
+    /// </summary>
+    /// <param name="selectedCategories">The array of IDs to serialize</param>
     public void SetCategories(int[] selectedCategories)
     {
         CategoriesStringed = JsonConvert.SerializeObject(selectedCategories);
     }
 
+    /// <summary>
+    /// Deserializes CategoriesStringed into array of IDs
+    /// </summary>
+    /// <returns></returns>
     public int[] GetCategories()
     {
         if (string.IsNullOrEmpty(CategoriesStringed))
@@ -42,6 +65,11 @@ public class EditProductViewModel : Product
         return JsonConvert.DeserializeObject<int[]>(CategoriesStringed);
     }
 
+    /// <summary>
+    /// Converts <paramref name="product"/> to <c>EditProductViewModel</c>.
+    /// </summary>
+    /// <param name="product"></param>
+    /// <returns></returns>
     public static EditProductViewModel Convert(Product product)
     {
         var viewModel = new EditProductViewModel

@@ -2,8 +2,12 @@
 
 namespace EMarket.Utility;
 
-public class CategoryExtension
+public static class CategoryExtension
 {
+    /// <summary>
+    /// Returns the <c>Uncategorized</c> category
+    /// </summary>
+    /// <returns></returns>
     public static Category GetUncategorizedCategory()
     {
         return new Category
