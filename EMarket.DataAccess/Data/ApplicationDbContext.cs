@@ -6,12 +6,6 @@ namespace EMarket.DataAccess.Data;
 
 public class ApplicationDbContext : IdentityDbContext
 {
-    public DbSet<Category> Categories { get; set; }
-    public DbSet<Product> Products { get; set; }
-    public DbSet<Purchase> Purchases { get; set; }
-    public DbSet<Receiver> Receivers { get; set; }
-    public DbSet<ProductCategory> ProductCategories { get; set; }
-
     public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options) : base(options) { }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
