@@ -104,13 +104,10 @@ namespace EMarketWeb.Controllers
         public IActionResult Upload(IFormFile file)
         {
             // check if uploaded file is valid image format
-            if (!_imgService.IsValid(file))
+            if (!_imgService.Upload(file, out string finalizedFileName))
             {
                 return BadRequest("Please select a correct image format.");
             }
-
-            // upload to web root
-            _imgService.Upload(file, out string finalizedFileName);
 
             return Content($"~/images/{finalizedFileName}");
         }
