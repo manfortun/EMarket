@@ -1,5 +1,4 @@
 ﻿using EMarket.DataAccess.Data;
-using EMarket.DataAccess.Repositories;
 using EMarket.Models;
 using EMarket.Models.ViewModels;
 using EMarket.Utility;
@@ -12,15 +11,15 @@ namespace EMarketWeb.Controllers
 {
     public class EditProductController : Controller
     {
-        private readonly UnitOfWork _unitOfWork;
+        private readonly ApplicationDbContext _dbContext;
         private readonly IImageService _imgService;
         private static readonly List<string> _errorMessages = new List<string>();
 
         public EditProductController(
-            ApplicationDbContext dbContext,
-            IImageService imgService)
+        ApplicationDbContext dbContext,
+        IImageService imgService)
         {
-            _unitOfWork = new UnitOfWork(dbContext);
+            _dbContext = dbContext;
             _imgService = imgService;
         }
 
@@ -28,7 +27,7 @@ namespace EMarketWeb.Controllers
         {
             var viewModel = jsonString.FromJson<EditProductViewModel>();
 
-            ViewBag.Categories = _unitOfWork.CategoryRepository.Get();
+            ViewBag.Categories = _dbContext.Categories.ToList();
 
             foreach (var e in _errorMessages)
             {
@@ -53,9 +52,9 @@ namespace EMarketWeb.Controllers
             }
 
             // obtain the product that is being edited from the database
-            Product? product = _unitOfWork.ProductRepository
-                .FirstOrDefault(p => p.Id == viewModel.Id,
-                includeProperties: nameof(Category));
+            Product? product = _dbContext.Products
+                .Include(p => p.Category)
+                .FirstOrDefault(p => p.Id == viewModel.Id);
 
             if (product is null)
             {
@@ -70,18 +69,17 @@ namespace EMarketWeb.Controllers
             {
                 if (product.Category is not null)
                 {
-                    product.Category.ForEach(_unitOfWork.ProductCategoryRepository.Delete);
+                    _dbContext.ProductCategories.RemoveRange(product.Category);
                 }
 
-                newCategories.ForEach(_unitOfWork.ProductCategoryRepository.Insert);
+                _dbContext.ProductCategories.AddRange(newCategories);
             }
 
-            _unitOfWork.ProductRepository.Update(product);
-            _unitOfWork.Save();
+            _dbContext.Update(product);
+            _dbContext.SaveChanges();
 
             // remove the images from the web root that are not in use to save space
-            IEnumerable<string> usedFiles = [.. _unitOfWork.ProductRepository.Get().Select(record => record.ImageSource)];
-            _ = _imgService.RemoveExcept(usedFiles);
+            _ = _imgService.RemoveExcept([.. _dbContext.Products.Select(p => p.ImageSource)]);
 
             TempData["success"] = "Successfully modified product.";
             return RedirectToAction("Index", "Home");
@@ -90,8 +88,16 @@ namespace EMarketWeb.Controllers
         public IActionResult Delete(EditProductViewModel viewModel)
         {
             // obtain the product that is being edited from the database
-            _unitOfWork.ProductRepository.Delete(viewModel.Id);
-            _unitOfWork.Save();
+            Product? product = _dbContext.Products.Find(viewModel.Id);
+
+            if (product is null)
+            {
+                return NotFound();
+            }
+
+            // remove the product from the database
+            _dbContext.Products.Remove(product);
+            _dbContext.SaveChanges();
 
             TempData["success"] = "Product successfully deleted.";
             return RedirectToAction("Index", "Home");
@@ -158,8 +164,8 @@ namespace EMarketWeb.Controllers
         {
             newCategories = new List<ProductCategory>();
 
-            var oldCategoryList = product.GetCategoryIdsArray();
-            var newCategoryList = viewModel.GetCategoryIdsArray();
+            var oldCategoryList = product.Category?.Select(c => c.CategoryId).ToArray() ?? [];
+            var newCategoryList = viewModel.GetCategories();
 
             // check for changes
             bool hasChanges = oldCategoryList.Length != newCategoryList.Length ||

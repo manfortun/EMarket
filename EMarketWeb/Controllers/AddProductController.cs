@@ -1,5 +1,4 @@
 ﻿using EMarket.DataAccess.Data;
-using EMarket.DataAccess.Repositories;
 using EMarket.Models;
 using EMarket.Models.ViewModels;
 using EMarket.Utility;
@@ -11,7 +10,7 @@ namespace EMarketWeb.Controllers
 {
     public class AddProductController : Controller
     {
-        private readonly UnitOfWork _unitOfWork;
+        private readonly ApplicationDbContext _dbContext;
         private readonly IImageService _imgService;
         private static readonly List<string> _errorMessages = new List<string>();
 
@@ -19,17 +18,16 @@ namespace EMarketWeb.Controllers
             ApplicationDbContext dbContext,
             IImageService imgService)
         {
-            _unitOfWork = new UnitOfWork(dbContext);
+            _dbContext = dbContext;
             _imgService = imgService;
         }
 
         public IActionResult Index(string jsonString)
         {
-            var viewModel = string.IsNullOrEmpty(jsonString) ?
-                new EditProductViewModel() :
+            var viewModel = string.IsNullOrEmpty(jsonString) ? new EditProductViewModel() :
                 jsonString.FromJson<EditProductViewModel>();
 
-            ViewBag.Categories = _unitOfWork.CategoryRepository.Get();
+            ViewBag.Categories = _dbContext.Categories.ToList();
 
             foreach (var e in _errorMessages)
             {
@@ -71,30 +69,24 @@ namespace EMarketWeb.Controllers
             }
 
             // add and save the products first before inserting to ProductCategories (FK constraint)
-            _unitOfWork.ProductRepository.Insert(viewModel);
-            _unitOfWork.Save();
+            _dbContext.Products.Add(viewModel);
+            _dbContext.SaveChanges();
 
             // check if product has assigned category then save
-            if (viewModel.GetCategoryIdsArray().Any())
+            if (viewModel.GetCategories().Any())
             {
-                IEnumerable<ProductCategory> pcToSave = viewModel
-                    .GetCategoryIdsArray()
+                _dbContext.ProductCategories.AddRange(viewModel.GetCategories()
                     .Select(c => new ProductCategory
                     {
                         ProductId = viewModel.Id,
                         CategoryId = c
-                    });
-
-                foreach (ProductCategory pc in pcToSave)
-                {
-                    _unitOfWork.ProductCategoryRepository.Insert(pc);
-                }
-                _unitOfWork.Save();
+                    }));
             }
 
+            _dbContext.SaveChanges();
+
             // remove any unused image from the web root to save space
-            IEnumerable<string> usedFiles = [.. _unitOfWork.ProductRepository.Get().Select(record => record.ImageSource)];
-            _ = _imgService.RemoveExcept(usedFiles);
+            _ = _imgService.RemoveExcept([.. _dbContext.Products.Select(p => p.ImageSource).ToList()]);
 
             TempData["success"] = "Product added successfully";
             return RedirectToAction("Index", "Home");

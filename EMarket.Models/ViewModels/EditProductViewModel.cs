@@ -20,7 +20,7 @@ public class EditProductViewModel : Product
     /// <param name="categoryId">The category ID to toggle</param>
     public void ToggleCategory(int categoryId)
     {
-        HashSet<int> tempCategoryHashSet = [.. GetCategoryIdsArray()];
+        HashSet<int> tempCategoryHashSet = [.. GetCategories()];
 
         if (!tempCategoryHashSet.Add(categoryId))
         {
@@ -37,7 +37,7 @@ public class EditProductViewModel : Product
     /// <returns></returns>
     public bool HasCategory(int categoryId)
     {
-        HashSet<int> tempCategoryHashSet = [.. GetCategoryIdsArray()];
+        HashSet<int> tempCategoryHashSet = [.. GetCategories()];
 
         return tempCategoryHashSet.Contains(categoryId);
     }
@@ -55,7 +55,7 @@ public class EditProductViewModel : Product
     /// Deserializes CategoriesStringed into array of IDs
     /// </summary>
     /// <returns></returns>
-    public int[] GetCategoryIdsArray()
+    public int[] GetCategories()
     {
         if (string.IsNullOrEmpty(CategoriesStringed))
         {
@@ -66,7 +66,7 @@ public class EditProductViewModel : Product
     }
 
     /// <summary>
-    /// Converts <paramref name="product"/> to <see cref="EditProductViewModel"/>.
+    /// Converts <paramref name="product"/> to <c>EditProductViewModel</c>.
     /// </summary>
     /// <param name="product"></param>
     /// <returns></returns>
