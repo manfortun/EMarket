@@ -1,4 +1,5 @@
 using EMarket.DataAccess.Data;
+using EMarket.DataAccess.Repositories;
 using EMarket.Models;
 using EMarket.Models.ViewModels;
 using EMarket.Utility;
@@ -13,12 +14,10 @@ namespace EMarketWeb.Controllers;
 
 public class HomeController : Controller
 {
-    private readonly ApplicationDbContext _dbContext;
+    private readonly UnitOfWork _unitOfWork;
     private readonly UserManager<IdentityUser> _userManager;
     private static readonly PageInfo<Product> _pageInfo = new(noOfItemsPerPage: 12);
     private readonly CategoryFilterService _categoryFilter;
-    private static readonly SemaphoreSlim semaphoreSlim = new SemaphoreSlim(1);
-    private static CancellationTokenSource cts = new CancellationTokenSource();
     private static int _featuredProductIndex = 0;
     private static string? _searchKey = default!;
 
@@ -27,7 +26,7 @@ public class HomeController : Controller
         UserManager<IdentityUser> userManager,
         IUserCache userCache)
     {
-        _dbContext = dbContext;
+        _unitOfWork = new UnitOfWork(dbContext);
         _userManager = userManager;
         _categoryFilter = userCache.Get<CategoryFilterService>();
     }
@@ -45,9 +44,9 @@ public class HomeController : Controller
     public IActionResult GetItems()
     {
         // get new categories
-        List<Category> allCategories = GetExtendedCategoriesListFromDb(_dbContext);
+        List<Category> allCategories = GetExtendedCategoryList(_unitOfWork.CategoryRepository);
         List<Category> newCategories = [.. allCategories.ExceptBy(_categoryFilter.Categories.Select(c => c.Id), c => c.Id)];
-        
+
         _categoryFilter.SetCategories(allCategories);
 
         // add any new categories as selected categories
@@ -60,7 +59,7 @@ public class HomeController : Controller
         HashSet<int> selectedCategories = _categoryFilter.GetSelectedCategories();
 
         // filter the products based on the search key and the selected categories
-        var filteredProducts = _dbContext.Products
+        var filteredProducts = _unitOfWork.ProductRepository.Get()
             .AddFilter(_searchKey)
             .AddFilter(selectedCategories.ToArray());
 
@@ -91,7 +90,7 @@ public class HomeController : Controller
 
         return PartialView("HomeItemsDisplay", searchInfo);
     }
-    
+
     public IActionResult OnCategoryTicked(int categoryId)
     {
         _categoryFilter.Toggle(categoryId);
@@ -109,7 +108,7 @@ public class HomeController : Controller
             return BadRequest();
         }
 
-        string? productName = _dbContext.Products.Find(productId)?.Name;
+        string? productName = _unitOfWork.ProductRepository.GetById(productId)?.Name;
 
         if (productName is null)
         {
@@ -117,17 +116,17 @@ public class HomeController : Controller
         }
 
         // get or create the purchase of the user of specific productId
-        Purchase? purchase = GetOrCreatePurchase(_dbContext, userId, productId);
+        Purchase? purchase = GetOrCreatePurchase(_unitOfWork, userId, productId);
 
         purchase.Quantity++;
-        _dbContext.SaveChanges();
+        _unitOfWork.Save();
 
         return Ok(productName);
     }
 
     public IActionResult Edit(int itemId)
     {
-        Product? product = _dbContext.Products.Find(itemId);
+        Product? product = _unitOfWork.ProductRepository.GetById(itemId);
 
         if (product is null)
         {
@@ -149,41 +148,18 @@ public class HomeController : Controller
         return RedirectToAction("Index");
     }
 
-    public async Task<IActionResult> GetFeaturedProductView(int direction)
+    public IActionResult GetFeaturedProductView(int direction)
     {
-        if (semaphoreSlim.CurrentCount == 0)
-        {
-            // cancel prior processes
-            cts.Cancel();
-        }
+        _featuredProductIndex += direction;
 
-        // wait for the process to finish
-        await semaphoreSlim.WaitAsync();
+        // get the lower and upperbounds
+        int lowerBound = 0;
+        int upperBound = _unitOfWork.ProductRepository.GetCount() - 1;
 
-        Product? product = default!;
+        // keep index within the range
+        LoopWithinRange(lowerBound, upperBound, ref _featuredProductIndex);
 
-        try
-        {
-            // get the upperbound
-            int maxCount = await _dbContext.Products.CountAsync(cts.Token) - 1;
-
-            _featuredProductIndex += direction;
-
-            // keep index within the range
-            LoopWithinRange(0, maxCount, ref _featuredProductIndex);
-
-            product = await _dbContext.Products.ElementAtOrDefaultAsync(_featuredProductIndex, cts.Token);
-        }
-        catch (Exception)
-        {
-            // FALLTHROUGH
-        }
-        finally
-        {
-            // release the semaphore to allow pending processes
-            cts = new CancellationTokenSource();
-            semaphoreSlim.Release();
-        }
+        Product? product = _unitOfWork.ProductRepository.ElementAtOrDefault(_featuredProductIndex);
 
         return product is null ? NotFound() : PartialView("FeaturedProduct", product);
     }
@@ -213,9 +189,9 @@ public class HomeController : Controller
     /// Obtains all available categories including the <c>Uncategorized</c> category
     /// </summary>
     /// <returns></returns>
-    private static List<Category> GetExtendedCategoriesListFromDb(ApplicationDbContext dbContext)
+    private static List<Category> GetExtendedCategoryList(GenericRepository<Category> categoryRepository)
     {
-        var categoryListFromDb = dbContext.Categories.ToList();
+        List<Category> categoryListFromDb = [.. categoryRepository.Get()];
         // the 'Uncategorized' category is added to the list
         categoryListFromDb.Add(CategoryExtension.GetUncategorizedCategory());
 
@@ -252,9 +228,9 @@ public class HomeController : Controller
     /// <param name="userId">User ID</param>
     /// <param name="productId">Product ID</param>
     /// <returns>The obtained or created purchase record.</returns>
-    private static Purchase GetOrCreatePurchase(ApplicationDbContext dbContext, string userId, int productId)
+    private static Purchase GetOrCreatePurchase(UnitOfWork unitOfWork, string userId, int productId)
     {
-        Purchase? purchase = dbContext.Purchases
+        Purchase? purchase = unitOfWork.PurchaseRepository
             .FirstOrDefault(p => p.OwnerId == userId && p.ProductId == productId);
 
         if (purchase is null)
@@ -266,8 +242,8 @@ public class HomeController : Controller
                 Quantity = 0,
             };
 
-            dbContext.Purchases.Add(purchase);
-            dbContext.SaveChanges();
+            unitOfWork.PurchaseRepository.Insert(purchase);
+            unitOfWork.Save();
         }
 
         return purchase;

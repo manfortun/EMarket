@@ -21,15 +21,15 @@ namespace EMarket.Utility
         }
 
         /// <summary>
-        /// Obtains the user ID of a user asynchronously
+        /// Obtains the user ID of a <paramref name="user"/> asynchronously
         /// </summary>
         /// <param name="userManager"></param>
-        /// <param name="principal"></param>
+        /// <param name="user"></param>
         /// <returns></returns>
-        public static async Task<string> GetUserIdAsync(this UserManager<IdentityUser> userManager, ClaimsPrincipal principal)
+        public static async Task<string> GetUserIdAsync(this UserManager<IdentityUser> userManager, ClaimsPrincipal user)
         {
-            IdentityUser? user = await userManager.GetUserAsync(principal);
-            return user is not null ? user.Id : string.Empty;
+            IdentityUser? identityUser = await userManager.GetUserAsync(user);
+            return identityUser is not null ? identityUser.Id : string.Empty;
         }
     }
 }

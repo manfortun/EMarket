@@ -1,4 +1,5 @@
 ﻿using EMarket.DataAccess.Data;
+using EMarket.DataAccess.Repositories;
 using EMarket.Models;
 using EMarket.Models.ViewModels;
 using EMarket.Utility;
@@ -9,7 +10,7 @@ namespace EMarketWeb.Controllers;
 
 public class CartController : Controller
 {
-    private readonly ApplicationDbContext _dbContext;
+    private readonly UnitOfWork _unitOfWork;
     private readonly UserManager<IdentityUser> _userManager;
     private static List<Purchase> _carts = default!;
     private static OrderSummaryViewModel _orderSummaryViewModel = default!;
@@ -18,7 +19,7 @@ public class CartController : Controller
         ApplicationDbContext dbContext,
         UserManager<IdentityUser> userManager)
     {
-        _dbContext = dbContext;
+        _unitOfWork = new UnitOfWork(dbContext);
         _userManager = userManager;
     }
 
@@ -37,8 +38,8 @@ public class CartController : Controller
         {
             await ClearCartAsync();
 
-            _dbContext.Receivers.Add(receiver);
-            _dbContext.SaveChanges();
+            _unitOfWork.ReceiverRepository.Insert(receiver);
+            _unitOfWork.Save();
             TempData["success"] = "Successfully checked out your cart!";
         }
         catch
@@ -58,7 +59,7 @@ public class CartController : Controller
             return NotFound();
         }
 
-        bool hasOrders = GetUserCart(_dbContext, userId).Count > 0;
+        bool hasOrders = GetUserCart(_unitOfWork.PurchaseRepository, userId).Count > 0;
 
         return Ok(hasOrders);
     }
@@ -73,7 +74,7 @@ public class CartController : Controller
             return NotFound();
         }
 
-        List<Purchase> carts = GetUserCart(_dbContext, userId);
+        List<Purchase> carts = GetUserCart(_unitOfWork.PurchaseRepository, userId);
 
         _orderSummaryViewModel = new OrderSummaryViewModel
         {
@@ -133,14 +134,16 @@ public class CartController : Controller
     {
         await ClearCartAsync();
 
-        await _dbContext.Purchases.AddRangeAsync(_orderSummaryViewModel.Purchases
+        List<Purchase> purchases = [.. _orderSummaryViewModel.Purchases
             .Select(c => new Purchase
             {
                 OwnerId = c.OwnerId,
                 ProductId = c.ProductId,
-                Quantity = c.Quantity
-            }));
-        await _dbContext.SaveChangesAsync();
+                Quantity = c.Quantity,
+            })];
+
+        purchases.ForEach(_unitOfWork.PurchaseRepository.Insert);
+        _unitOfWork.Save();
 
         return Ok();
     }
@@ -150,9 +153,9 @@ public class CartController : Controller
     /// </summary>
     /// <param name="userId">ID of the user</param>
     /// <returns>IEnumerable<Cart> of user</returns>
-    private static List<Purchase> GetUserCart(ApplicationDbContext dbContext, string userId)
+    private static List<Purchase> GetUserCart(GenericRepository<Purchase> purchaseRepository, string userId)
     {
-        List<Purchase> carts = [.. dbContext.Purchases.Where(c => c.OwnerId == userId)];
+        List<Purchase> carts = [.. purchaseRepository.Get(c => c.OwnerId == userId)];
         return carts;
     }
 
@@ -169,9 +172,9 @@ public class CartController : Controller
             return;
         }
 
-        List<Purchase> cart = GetUserCart(_dbContext, userId);
+        List<Purchase> cart = GetUserCart(_unitOfWork.PurchaseRepository, userId);
 
-        _dbContext.Purchases.RemoveRange(cart);
-        await _dbContext.SaveChangesAsync();
+        cart.ForEach(_unitOfWork.PurchaseRepository.Delete);
+        _unitOfWork.Save();
     }
 }
