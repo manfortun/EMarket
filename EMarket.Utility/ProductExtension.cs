@@ -53,18 +53,15 @@ public static class ProductExtension
     /// <returns>Items that passed the filter.</returns>
     public static IEnumerable<Product> AddFilter(this IEnumerable<Product> items, string? searchKey)
     {
-        // create a local copy in case the argument came from database
-        List<Product> itemsList = [.. items];
-
         // when the searchKey is null or empty, all items passed the filtration
-        if (!itemsList.Any() ||
+        if (!items.Any() ||
             string.IsNullOrEmpty(searchKey))
         {
-            return itemsList;
+            return items;
         }
 
         // filter based on search key
-        var filteredProducts = itemsList.Where(item =>
+        var filteredProducts = items.Where(item =>
         {
             // check name
             if (item.Name.Contains(searchKey, StringComparison.OrdinalIgnoreCase))
@@ -94,18 +91,14 @@ public static class ProductExtension
     /// <returns></returns>
     public static IEnumerable<Product> AddFilter(this IEnumerable<Product> items, int[] categories)
     {
-        // create a local copy to ensure data integrity
-        // This is particularly important if the items list originated from a database or external source
-        List<Product> itemsList = [.. items];
-
         // when there are no categories, all items are filtered out
-        if (!itemsList.Any() ||
+        if (!items.Any() ||
             categories.Length == 0)
         {
             return [];
         }
 
-        IEnumerable<Product> filteredProducts = [.. itemsList
+        IEnumerable<Product> filteredProducts = [.. items
             .Where(item =>
             {
                 int[] itemCatIds = item.GetCategoryIdsArray();
